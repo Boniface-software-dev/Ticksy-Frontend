@@ -17,11 +17,10 @@ const LandingPage = () => {
       <section
         className="relative bg-cover bg-center text-white px-4 flex items-center justify-center"
         style={{
-          backgroundImage: "url('/piano.jpg')", // ✅ No backticks, direct string
+          backgroundImage: "url('/piano.jpg')",
           minHeight: "100vh",
         }}
       >
-        {/* Temporarily remove overlay for debugging */}
         {/* <div className="absolute inset-0 bg-black bg-opacity-50"></div> */}
 
         <div className="relative text-center z-10 max-w-2xl">
@@ -44,6 +43,61 @@ const LandingPage = () => {
             >
               Create an Event
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="bg-[#1A1A1A] py-16 px-4">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl font-bold text-center mb-12 text-[#9747FF]">
+            Our Core Features
+          </h2>
+
+          {/* Feature Grid */}
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                title: "Easy Ticketing",
+                desc:
+                  "Browse, select, and purchase event tickets with just a few clicks.",
+              },
+              {
+                title: "Real-time Insights",
+                desc:
+                  "Organizers can view live ticket sales, revenue data, and event analytics.",
+              },
+              {
+                title: "Secure Auth",
+                desc:
+                  "Users enjoy secure sign-up/login, and role based access with full control.",
+              },
+              {
+                title: "Calendar Integration",
+                desc:
+                  "Save events directly to your Google Calendar and never miss a moment.",
+              },
+              {
+                title: "Lipa na MPESA",
+                desc:
+                  "Enjoy smooth and instant MPESA STK Push payments for all your bookings.",
+              },
+              {
+                title: "Event Discovery",
+                desc:
+                  "Find events effortlessly by category, location, or tags; tailored to your interests.",
+              },
+            ].map((feature, i) => (
+              <div
+                key={i}
+                className="bg-[#2A2A2A] p-8 rounded-lg border-l-4 border-[#9747FF]"
+              >
+                <h3 className="text-2xl font-bold mb-4 text-white">
+                  {feature.title}
+                </h3>
+                <p className="text-[#E0E0E0]">{feature.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
