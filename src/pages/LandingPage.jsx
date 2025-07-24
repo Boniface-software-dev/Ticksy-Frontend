@@ -99,8 +99,42 @@ const LandingPage = () => {
           </div>
         </div>
       </section>
+
+        {/* Upcoming Events */}
+        {/* Upcoming Events Section */}
+<section className="py-16 px-4">
+  <div className="max-w-6xl mx-auto">
+    <h2 className="text-3xl font-bold text-center mb-12 text-[#9747FF]">
+      Upcoming Events
+    </h2>
+
+    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+      {[1, 2, 3, 4].map((event, i) => (
+        <div
+          key={i}
+          className="bg-white rounded-lg shadow p-4 flex flex-col"
+        >
+          <div className="h-40 bg-gray-300 rounded mb-4"></div> {/* Placeholder Image */}
+          <h3 className="text-xl font-semibold mb-2">Event Title {i + 1}</h3>
+          <p className="text-gray-600 text-sm mb-4">
+            Short description of the event goes here. It should be brief.
+          </p>
+          <Link
+            to={`/events/${i + 1}`}
+            className="mt-auto text-[#9747FF] font-medium hover:underline"
+          >
+            View Details
+          </Link>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
     </div>
   );
 };
+
+
 
 export default LandingPage;
