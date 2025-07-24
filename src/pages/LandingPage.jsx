@@ -5,12 +5,20 @@ import axios from "axios";
 const LandingPage = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    // Placeholder
+    axios
+      .get("https://ticksy-backend.onrender.com/events")
+      .then((res) => {
+        setEvents(res.data.slice(0, 4)); // Limit to 4 events
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError("Failed to load events.");
+        setLoading(false);
+      });
   }, []);
-
   return (
     <div className="font-poppins bg-[#F3F3F5] text-black min-h-screen">
       {/* Hero Section */}
@@ -100,36 +108,56 @@ const LandingPage = () => {
         </div>
       </section>
 
-        {/* Upcoming Events */}
-        {/* Upcoming Events Section */}
-<section className="py-16 px-4">
-  <div className="max-w-6xl mx-auto">
-    <h2 className="text-3xl font-bold text-center mb-12 text-[#9747FF]">
-      Upcoming Events
-    </h2>
+               {/* Upcoming Events */}
+        {/* Events Section */}
+      <section className="py-16 px-4">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl font-bold text-center mb-12 text-[#9747FF]">
+            Featured Events
+          </h2>
 
-    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-      {[1, 2, 3, 4].map((event, i) => (
-        <div
-          key={i}
-          className="bg-white rounded-lg shadow p-4 flex flex-col"
-        >
-          <div className="h-40 bg-gray-300 rounded mb-4"></div> {/* Placeholder Image */}
-          <h3 className="text-xl font-semibold mb-2">Event Title {i + 1}</h3>
-          <p className="text-gray-600 text-sm mb-4">
-            Short description of the event goes here. It should be brief.
-          </p>
-          <Link
-            to={`/events/${i + 1}`}
-            className="mt-auto text-[#9747FF] font-medium hover:underline"
-          >
-            View Details
-          </Link>
+          {loading ? (
+            <p className="text-center text-gray-600">Loading events...</p>
+          ) : error ? (
+            <p className="text-center text-red-500">{error}</p>
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {events.map((event) => (
+                <div
+                  key={event.id}
+                  className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition duration-300"
+                >
+                  <img
+                    src={event.image_url}
+                    alt={event.title}
+                    className="h-48 w-full object-cover"
+                  />
+                  <div className="p-4">
+                    <h3 className="text-xl font-semibold mb-2 text-gray-900">
+                      {event.title}
+                    </h3>
+                    <p className="text-sm text-gray-600 mb-1">
+                      By {event.organizer?.first_name}{" "}
+                      {event.organizer?.last_name}
+                    </p>
+                    <p className="text-sm text-gray-600 mb-1">
+                      📍 {event.location}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      🗓️{" "}
+                      {new Date(event.start_time).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
-      ))}
-    </div>
-  </div>
-</section>
+      </section>
 
     </div>
   );
