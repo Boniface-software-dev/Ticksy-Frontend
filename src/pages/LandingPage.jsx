@@ -107,9 +107,7 @@ const LandingPage = () => {
           </div>
         </div>
       </section>
-
-               {/* Upcoming Events */}
-        {/* Events Section */}
+     {/* Events Section */}
       <section className="py-16 px-4">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-bold text-center mb-12 text-[#9747FF]">
@@ -158,11 +156,53 @@ const LandingPage = () => {
           )}
         </div>
       </section>
+   {/* How It Works Section (Updated Wording) */}
+      <section className="bg-[#F3F3F5] py-20 px-5 font-sans">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-3xl font-semibold text-gray-800 mb-6">
+            Sign up Your Way
+          </h2>
+          <p className="text-lg text-gray-600 mb-12">
+            Join Ticksy as an event organizer or attendee
+          </p>
 
+          <div className="flex flex-col md:flex-row justify-between gap-8">
+            {/* Step 1 */}
+            <div className="md:w-1/3 text-left md:text-center">
+              <h3 className="text-xl font-medium text-gray-800 mb-4">
+                Discover or Host Events
+              </h3>
+              <p className="text-gray-600 leading-relaxed text-sm">
+                Find events you love, or set up your
+                own with custom ticket types and details.
+              </p>
+            </div>
+
+            {/* Step 2 */}
+            <div className="md:w-1/3 text-left md:text-center">
+              <h3 className="text-xl font-medium text-gray-800 mb-4">
+                Book or Manage Tickets
+              </h3>
+              <p className="text-gray-600 leading-relaxed text-sm">
+                Buy tickets instantly with MPESA or
+                track ticket sales in real-time as a host.
+              </p>
+            </div>
+
+            {/* Step 3 */}
+            <div className="md:w-1/3 text-left md:text-center">
+              <h3 className="text-xl font-medium text-gray-800 mb-4">
+                Attend and Have Fun!
+              </h3>
+              <p className="text-gray-600 leading-relaxed text-sm">
+                Get event reminders, access your tickets
+                easily, and leave reviews after attending.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };
-
-
-
 export default LandingPage;
