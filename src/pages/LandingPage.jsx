@@ -7,6 +7,19 @@ const LandingPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const [expandedItems, setExpandedItems] = useState({
+    paymentMethods: false,
+    trackSales: false,
+    pastTickets: false,
+  });
+
+  const toggleItem = (item) => {
+    setExpandedItems((prev) => ({
+      ...prev,
+      [item]: !prev[item],
+    }));
+  };
+
   useEffect(() => {
     axios
       .get("https://ticksy-backend.onrender.com/events")
@@ -19,6 +32,7 @@ const LandingPage = () => {
         setLoading(false);
       });
   }, []);
+
   return (
     <div className="font-poppins bg-[#F3F3F5] text-black min-h-screen">
       {/* Hero Section */}
@@ -156,7 +170,8 @@ const LandingPage = () => {
           )}
         </div>
       </section>
-   {/* How It Works Section (Updated Wording) */}
+
+   {/* How It Works Section */}
       <section className="bg-[#F3F3F5] py-20 px-5 font-sans">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-semibold text-gray-800 mb-6">
@@ -202,6 +217,129 @@ const LandingPage = () => {
           </div>
         </div>
       </section>
+
+    {/* FAQ Section */}
+      <section className="bg-[#F3F3F5] py-20 px-5 font-sans">
+      <div className="max-w-6xl mx-auto">
+        <h2 className="text-3xl font-semibold text-gray-800 mb-10 text-center md:text-left">
+          FAQs: What Ticksy Users Ask Most
+        </h2>
+        
+        <div className="flex flex-col md:flex-row gap-10">
+          {/* Image on the left */}
+          <div className="md:w-1/2">
+            <img
+              src="/Question.svg" 
+              alt="FAQ illustration"
+              className="w-full h-auto rounded-xl shadow-md"
+            />
+          </div>
+
+          {/* FAQ Content on the right */}
+          <div className="md:w-1/2 space-y-4">
+            {/* Create Event */}
+            <div className="border border-gray-300 rounded-lg p-4 bg-white">
+              <button
+                className="w-full flex justify-between items-center text-left"
+                onClick={() => toggleItem("createEvent")}
+              >
+                <span className="font-medium text-gray-800">
+                  How do I create an event on Ticksy?
+                </span>
+                <span className="text-gray-600">
+                  {expandedItems.createEvent ? "−" : "+"}
+                </span>
+              </button>
+              {expandedItems.createEvent && (
+                <p className="mt-2 text-gray-600 text-sm">
+                  Just sign in as an organizer, go to "Create Event," and fill out your event details including location, time, and ticket types. It only takes a few minutes.
+                </p>
+              )}
+            </div>
+
+            {/* Buy Without Signup */}
+            <div className="border border-gray-300 rounded-lg p-4 bg-white">
+              <button
+                className="w-full flex justify-between items-center text-left"
+                onClick={() => toggleItem("buyWithoutSignup")}
+              >
+                <span className="font-medium text-gray-800">
+                  Can I buy tickets without signing up?
+                </span>
+                <span className="text-gray-600">
+                  {expandedItems.buyWithoutSignup ? "−" : "+"}
+                </span>
+              </button>
+              {expandedItems.buyWithoutSignup && (
+                <p className="mt-2 text-gray-600 text-sm">
+                  No account? No problem. You can purchase tickets using just your phone number through MPESA and receive instant confirmation.
+                </p>
+              )}
+            </div>
+
+            {/* Payment Methods */}
+            <div className="border border-gray-300 rounded-lg p-4 bg-white">
+              <button
+                className="w-full flex justify-between items-center text-left"
+                onClick={() => toggleItem("paymentMethods")}
+              >
+                <span className="font-medium text-gray-800">
+                  What payment methods are supported?
+                </span>
+                <span className="text-gray-600">
+                  {expandedItems.paymentMethods ? "−" : "+"}
+                </span>
+              </button>
+              {expandedItems.paymentMethods && (
+                <p className="mt-2 text-gray-600 text-sm">
+                  Ticksy uses MPESA STK Push, allowing you to pay directly from your phone. You'll receive a prompt to enter your PIN and confirm instantly.
+                </p>
+              )}
+            </div>
+
+            {/* Track Sales */}
+            <div className="border border-gray-300 rounded-lg p-4 bg-white">
+              <button
+                className="w-full flex justify-between items-center text-left"
+                onClick={() => toggleItem("trackSales")}
+              >
+                <span className="font-medium text-gray-800">
+                  How can organizers track sales?
+                </span>
+                <span className="text-gray-600">
+                  {expandedItems.trackSales ? "−" : "+"}
+                </span>
+              </button>
+              {expandedItems.trackSales && (
+                <p className="mt-2 text-gray-600 text-sm">
+                  Organizers can track sales in real-time through the Ticksy dashboard, which provides detailed analytics on ticket purchases, revenue, and attendee information.
+                </p>
+              )}
+            </div>
+
+            {/* Past Tickets */}
+            <div className="border border-gray-300 rounded-lg p-4 bg-white">
+              <button
+                className="w-full flex justify-between items-center text-left"
+                onClick={() => toggleItem("pastTickets")}
+              >
+                <span className="font-medium text-gray-800">
+                  Where do I find my past tickets?
+                </span>
+                <span className="text-gray-600">
+                  {expandedItems.pastTickets ? "−" : "+"}
+                </span>
+              </button>
+              {expandedItems.pastTickets && (
+                <p className="mt-2 text-gray-600 text-sm">
+                  All your past tickets are stored in the "My Tickets" section of your Ticksy account. You can access them anytime by logging in and navigating to this section.
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
     </div>
   );
 };
