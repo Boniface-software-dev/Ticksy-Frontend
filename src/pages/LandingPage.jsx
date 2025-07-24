@@ -24,7 +24,7 @@ const LandingPage = () => {
     axios
       .get("https://ticksy-backend.onrender.com/events")
       .then((res) => {
-        setEvents(res.data.slice(0, 4)); // Limit to 4 events
+        setEvents(res.data.slice(0, 4)); 
         setLoading(false);
       })
       .catch((err) => {
@@ -56,15 +56,9 @@ const LandingPage = () => {
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Link
               to="/events"
-              className="bg-[#9747FF] text-white px-8 py-3 rounded-lg font-medium"
+              className="bg-[#FFFFFF] text-white px-8 py-3 rounded-lg font-medium"
             >
               Explore Events
-            </Link>
-            <Link
-              to="/create-event"
-              className="border-2 border-[#9747FF] text-white px-8 py-3 rounded-lg font-medium"
-            >
-              Create an Event
             </Link>
           </div>
         </div>
