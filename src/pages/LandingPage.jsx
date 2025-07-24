@@ -8,22 +8,23 @@ const LandingPage = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Placeholder for now
+    // Placeholder
   }, []);
 
   return (
-    <div className="font-sans">
+    <div className="font-poppins bg-[#F3F3F5] text-black min-h-screen">
       {/* Hero Section */}
       <section
-        className="relative bg-cover bg-center text-white px-4 flex items-center justify-center"
+        className="relative bg-cover bg-center px-4 flex items-center justify-center"
         style={{
           backgroundImage: "url('/piano.jpg')",
           minHeight: "100vh",
         }}
       >
-        {/* <div className="absolute inset-0 bg-black bg-opacity-50"></div> */}
+        {/* Optional: Add overlay back if needed */}
+        {/* <div className="absolute inset-0 bg-black bg-opacity-40"></div> */}
 
-        <div className="relative text-center z-10 max-w-2xl">
+        <div className="relative text-center z-10 max-w-2xl text-white">
           <h1 className="text-5xl font-bold mb-4">
             Plan it. Book it. Live it
           </h1>
@@ -48,13 +49,12 @@ const LandingPage = () => {
       </section>
 
       {/* Features Section */}
-      <section className="bg-[#1A1A1A] py-16 px-4">
+      <section className="py-16 px-4">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-bold text-center mb-12 text-[#9747FF]">
             Our Core Features
           </h2>
 
-          {/* Feature Grid */}
           <div className="grid md:grid-cols-3 gap-8">
             {[
               {
@@ -90,12 +90,10 @@ const LandingPage = () => {
             ].map((feature, i) => (
               <div
                 key={i}
-                className="bg-[#2A2A2A] p-8 rounded-lg border-l-4 border-[#9747FF]"
+                className="bg-white p-8 rounded-lg border-l-4 border-[#9747FF] shadow"
               >
-                <h3 className="text-2xl font-bold mb-4 text-white">
-                  {feature.title}
-                </h3>
-                <p className="text-[#E0E0E0]">{feature.desc}</p>
+                <h3 className="text-2xl font-bold mb-4">{feature.title}</h3>
+                <p className="text-gray-700">{feature.desc}</p>
               </div>
             ))}
           </div>
