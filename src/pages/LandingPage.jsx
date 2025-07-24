@@ -172,7 +172,7 @@ const LandingPage = () => {
       </section>
 
    {/* How It Works Section */}
-      <section className="bg-[#F3F3F5] py-20 px-5 font-sans">
+      <section className="bg-[#F3F3F5] py-20 px-5 font-Poppins">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-semibold text-gray-800 mb-6">
             Sign up Your Way
@@ -219,7 +219,7 @@ const LandingPage = () => {
       </section>
 
     {/* FAQ Section */}
-      <section className="bg-[#F3F3F5] py-20 px-5 font-sans">
+      <section className="bg-[#F3F3F5] py-20 px-5 font-Poppins">
       <div className="max-w-6xl mx-auto">
         <h2 className="text-3xl font-semibold text-gray-800 mb-10 text-center md:text-left">
           FAQs: What Ticksy Users Ask Most
