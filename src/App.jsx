@@ -8,9 +8,10 @@ import EventsList from "./pages/EventsList";
 import { useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { loadUser } from "./features/authentification/authSlice";
+import AdminDashboard from "./pages/admin/AdminDashboard";
 
 function App() {
-  const dispatch  = useDispatch();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(loadUser());
@@ -24,7 +25,7 @@ function App() {
         <Route path="/admin/:id/profile" element={<OrgProfile />} />
         <Route path="/events/:id" element={<Events />} />
         <Route path="/events" element={<EventsList />} />
-        
+        <Route path="/admin-dashboard" element={<AdminDashboard />} />
       </Routes>
     </Router>
   );
