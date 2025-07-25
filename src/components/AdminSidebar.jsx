@@ -1,11 +1,14 @@
 import { Link, useLocation } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
 
 export default function AdminSidebar() {
   const location = useLocation();
-  const { user } = useAuth();
 
-  // Helper to highlight active nav
+  const user = {
+    first_name: "Grace",
+    last_name: "Zawadi",
+    role: "admin",
+  };
+
   const isActive = (path) => location.pathname === path;
 
   return (
@@ -81,16 +84,14 @@ export default function AdminSidebar() {
       {/* User Info */}
       <div className="mt-auto mb-4 mx-3 flex items-center bg-[#f1eefb] rounded-lg px-4 py-3 gap-3">
         <span className="text-xl font-bold rounded-full bg-[#e4d9fa] text-[#c7bcf4] w-10 h-10 flex items-center justify-center">
-          {user?.first_name ? user.first_name[0] : "U"}
+          {user.first_name[0]}
         </span>
         <div>
           <div className="font-semibold">
-            {user?.first_name} {user?.last_name}
+            {user.first_name} {user.last_name}
           </div>
           <div className="text-xs text-gray-400">
-            {user?.role
-              ? user.role.charAt(0).toUpperCase() + user.role.slice(1)
-              : ""}
+            {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
           </div>
         </div>
       </div>
