@@ -10,7 +10,7 @@ const store = configureStore({
         getDefaultMiddleware({
             thunk: true,
         }),
-    devTools: meta.env.NODE_ENV !== 'production',
+    devTools: import.meta.env.MODE !== 'production',
 })
 
 export default store
