@@ -1,35 +1,16 @@
-import React from "react";
-import {Router, Routes, Route } from "react-router-dom";
-import Login from "../src/pages/Login";
-import Register from "../src/pages/Register";
-import OrgProfile from "./pages/organizer/OrgProfile";
-import Events from "./pages/events";
-import EventsList from "./pages/EventsList";
-import { useDispatch } from "react-redux";
-import { useEffect } from "react";
-import { loadUser } from "./features/authentification/authSlice";
-import EventDetails from "./pages/EventDetails";
-
+import AdminSidebar from "./components/AdminSidebar";
+import { BrowserRouter } from "react-router-dom";
 
 function App() {
-  const dispatch  = useDispatch();
-
-  useEffect(() => {
-    dispatch(loadUser());
-  }, [dispatch]);
-
   return (
-    <Router>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/admin/:id/profile" element={<OrgProfile />} />
-        <Route path="/events/:id" element={<Events />} />
-        <Route path="/events" element={<EventsList />} />
-         <Route path="/events/:id" element={<EventDetails />} />
-        
-      </Routes>
-    </Router>
+    <BrowserRouter>
+      <div className="flex min-h-screen">
+        <AdminSidebar />
+        <div className="flex-1 flex items-center justify-center text-2xl text-gray-400">
+          This is the main content area
+        </div>
+      </div>
+    </BrowserRouter>
   );
 }
 
