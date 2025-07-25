@@ -25,11 +25,9 @@ function App() {
         <Route path="/admin/:id/profile" element={<OrgProfile />} />
         <Route path="/events/:id" element={<Events />} />
         <Route path="/events" element={<EventsList />} />
-        <Route path="/admin-dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
       </Routes>
     </Router>
-
-
   );
 }
 

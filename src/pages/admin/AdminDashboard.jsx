@@ -1,4 +1,3 @@
-import { useAuth } from "../../contexts/AuthContext";
 import AdminSidebar from "../../components/AdminSidebar";
 import { useState, useEffect } from "react";
 import {
@@ -12,8 +11,6 @@ import {
 } from "recharts";
 
 export default function AdminDashboard() {
-  const { user } = useAuth();
-
   // Demo data — replace with real API data!
   const [dashboard, setDashboard] = useState({
     total_users: 210000,
