@@ -12,6 +12,11 @@ import { MdAnalytics } from "react-icons/md";
 import { RiSecurePaymentLine } from "react-icons/ri";
 import { AiOutlineCalendar } from "react-icons/ai";
 import { HiOutlineSearchCircle } from "react-icons/hi";
+import { FiMapPin } from "react-icons/fi";
+import { BsCalendarDate } from "react-icons/bs";
+import { ArrowRight } from "react-feather";
+
+
 
 const LandingPage = () => {
   const [events, setEvents] = useState([]);
@@ -166,53 +171,62 @@ const LandingPage = () => {
     </div>
   </div>
 </section>
-      <section className="py-16 px-4 bg-white">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-12 text-[#9747FF]">
-            Featured Events
-          </h2>
-          {loading ? (
-            <p className="text-center text-gray-600">Loading events...</p>
-          ) : error ? (
-            <p className="text-center text-red-500">{error}</p>
-          ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {events.map((event) => (
-                <div
-                  key={event.id}
-                  className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition duration-300"
-                >
-                  <img
-                    src={event.image_url}
-                    alt={event.title}
-                    className="h-48 w-full object-cover"
-                  />
-                  <div className="p-4">
-                    <h3 className="text-xl font-semibold mb-2 text-gray-900">
-                      {event.title}
-                    </h3>
-                    <p className="text-sm text-gray-600 mb-1">
-                      By {event.organizer?.first_name}{" "}
-                      {event.organizer?.last_name}
-                    </p>
-                    <p className="text-sm text-gray-600 mb-1">
-                      📍 {event.location}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      🗓️{" "}
-                      {new Date(event.start_time).toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                      })}
-                    </p>
-                  </div>
-                </div>
-              ))}
+      
+   <section className="py-20 px-6 bg-white font-poppins">
+  <div className="max-w-7xl mx-auto">
+    <h2 className="text-3xl font-extrabold text-center mb-12 text-[#9747FF]">
+      Featured Events
+    </h2>
+
+    {loading ? (
+      <p className="text-center text-gray-600">Loading events...</p>
+    ) : error ? (
+      <p className="text-center text-red-500">{error}</p>
+    ) : (
+      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        {events.map((event) => (
+          <div
+            key={event.id}
+            className="bg-white rounded-2xl shadow-md hover:shadow-xl transform hover:-translate-y-1 transition duration-300 flex flex-col overflow-hidden"
+          >
+            <img
+              src={event.image_url}
+              alt={event.title}
+              className="h-48 w-full object-cover"
+            />
+            <div className="flex flex-col p-5 h-full">
+              <h3 className="text-xl font-bold text-center text-gray-900 mb-1">
+                {event.title}
+              </h3>
+              <p className="text-sm text-gray-600 text-center mb-3">
+                by {event.organizer?.first_name} {event.organizer?.last_name}
+              </p>
+              <div className="flex items-center text-sm text-gray-600 mb-2">
+                <FiMapPin className="mr-2 text-[#9747FF]" />
+                {event.location}
+              </div>
+              <div className="flex items-center text-sm text-gray-600 mb-6">
+                <BsCalendarDate className="mr-2 text-[#9747FF]" />
+                {new Date(event.start_time).toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                })}
+              </div>
+
+              <Link
+                to={`/events/${event.id}`}
+                className="mt-auto flex items-center justify-center gap-2 w-full bg-[#9747FF] text-white py-2 rounded-lg font-semibold hover:bg-[#7c3aed] transition duration-200 no-underline"
+              >
+                Book Now <ArrowRight size={18} />
+              </Link>
             </div>
-          )}
-        </div>
-      </section>
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
+</section>
 
       <section id="how-it-works" className="bg-[#F3F3F5] py-20 px-6 font-poppins">
         <div className="max-w-6xl mx-auto text-center">
