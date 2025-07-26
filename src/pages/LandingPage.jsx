@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import Navbar from "../components/Navbar";
 
 const LandingPage = () => {
   const [events, setEvents] = useState([]);
@@ -35,6 +36,8 @@ const LandingPage = () => {
 
   return (
     <div className="font-poppins bg-[#F3F3F5] text-black min-h-screen">
+    <Navbar /> 
+
       {/* Hero Section */}
       <section
         className="relative bg-cover bg-center px-4 flex items-center justify-center"
@@ -165,52 +168,61 @@ const LandingPage = () => {
         </div>
       </section>
 
-   {/* How It Works Section */}
-      <section className="bg-[#F3F3F5] py-20 px-5 font-Poppins">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl font-semibold text-gray-800 mb-6">
-            Sign up Your Way
-          </h2>
-          <p className="text-lg text-gray-600 mb-12">
-            Join Ticksy as an event organizer or attendee
-          </p>
+<section className="bg-white py-20 px-6 font-poppins">
+  <div className="max-w-6xl mx-auto text-center">
+    <h2 className="text-4xl font-bold text-gray-800 mb-4">How It Works</h2>
+    <p className="text-lg text-gray-500 mb-16">Get started in just four easy steps</p>
 
-          <div className="flex flex-col md:flex-row justify-between gap-8">
-            {/* Step 1 */}
-            <div className="md:w-1/3 text-left md:text-center">
-              <h3 className="text-xl font-medium text-gray-800 mb-4">
-                Discover or Host Events
-              </h3>
-              <p className="text-gray-600 leading-relaxed text-sm">
-                Find events you love, or set up your
-                own with custom ticket types and details.
-              </p>
-            </div>
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-12 relative">
+      {/* Horizontal Line for Timeline */}
+      <div className="hidden md:block absolute top-12 left-0 w-full h-1 bg-indigo-100 z-0"></div>
 
-            {/* Step 2 */}
-            <div className="md:w-1/3 text-left md:text-center">
-              <h3 className="text-xl font-medium text-gray-800 mb-4">
-                Book or Manage Tickets
-              </h3>
-              <p className="text-gray-600 leading-relaxed text-sm">
-                Buy tickets instantly with MPESA or
-                track ticket sales in real-time as a host.
-              </p>
-            </div>
-
-            {/* Step 3 */}
-            <div className="md:w-1/3 text-left md:text-center">
-              <h3 className="text-xl font-medium text-gray-800 mb-4">
-                Attend and Have Fun!
-              </h3>
-              <p className="text-gray-600 leading-relaxed text-sm">
-                Get event reminders, access your tickets
-                easily, and leave reviews after attending.
-              </p>
-            </div>
-          </div>
+      {/* Step 1 */}
+      <div className="relative z-10 text-center">
+        <div className="w-16 h-16 mx-auto rounded-full bg-indigo-600 text-white flex items-center justify-center text-xl font-bold shadow-lg">
+          1
         </div>
-      </section>
+        <h3 className="text-xl font-semibold text-gray-800 mt-4 mb-2">Sign Up Your Way</h3>
+        <p className="text-gray-600 text-sm">
+          Join Ticksy as an event organizer or attendee — quick, easy and free.
+        </p>
+      </div>
+
+      {/* Step 2 */}
+      <div className="relative z-10 text-center">
+        <div className="w-16 h-16 mx-auto rounded-full bg-indigo-600 text-white flex items-center justify-center text-xl font-bold shadow-lg">
+          2
+        </div>
+        <h3 className="text-xl font-semibold text-gray-800 mt-4 mb-2">Discover or Host</h3>
+        <p className="text-gray-600 text-sm">
+          Find events you love — or host your own with custom ticket options.
+        </p>
+      </div>
+
+      {/* Step 3 */}
+      <div className="relative z-10 text-center">
+        <div className="w-16 h-16 mx-auto rounded-full bg-indigo-600 text-white flex items-center justify-center text-xl font-bold shadow-lg">
+          3
+        </div>
+        <h3 className="text-xl font-semibold text-gray-800 mt-4 mb-2">Book Instantly</h3>
+        <p className="text-gray-600 text-sm">
+          Secure your spot fast with MPESA payments and instant ticket delivery.
+        </p>
+      </div>
+
+      {/* Step 4 */}
+      <div className="relative z-10 text-center">
+        <div className="w-16 h-16 mx-auto rounded-full bg-indigo-600 text-white flex items-center justify-center text-xl font-bold shadow-lg">
+          4
+        </div>
+        <h3 className="text-xl font-semibold text-gray-800 mt-4 mb-2">Attend & Enjoy</h3>
+        <p className="text-gray-600 text-sm">
+          Get reminders, show up, and enjoy your event — then leave a review!
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
 
     {/* FAQ Section */}
       <section className="bg-[#F3F3F5] py-20 px-5 font-Poppins">
