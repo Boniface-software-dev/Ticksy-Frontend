@@ -152,17 +152,20 @@ const LandingPage = () => {
       ].map((feature, i) => (
         <div
           key={i}
-          className="bg-white p-6 rounded-xl border-l-4 border-[#9747FF] shadow hover:shadow-md transition"
+          className="bg-white p-6 rounded-xl border-l-4 border-[#9747FF] shadow hover:shadow-md transition text-center"
         >
-          <div className="text-[#9747FF] text-3xl mb-4">{feature.icon}</div>
-          <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
+          <div className="text-[#9747FF] text-4xl mb-4 flex justify-center">
+            {feature.icon}
+          </div>
+          <h3 className="text-2xl font-extrabold mb-3 text-gray-900">
+            {feature.title}
+          </h3>
           <p className="text-gray-700">{feature.desc}</p>
         </div>
       ))}
     </div>
   </div>
 </section>
-
       <section className="py-16 px-4 bg-white">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-bold text-center mb-12 text-[#9747FF]">
