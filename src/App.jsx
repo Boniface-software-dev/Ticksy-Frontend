@@ -7,16 +7,8 @@ import Register from "../src/pages/Register";
 import OrgProfile from "./pages/organizer/OrgProfile";
 import Events from "./pages/events";
 import EventsList from "./pages/EventsList";
-import { useDispatch } from "react-redux";
-import { useEffect } from "react";
-import { loadUser } from "./features/authentification/authSlice";
 
 function App() {
-  const dispatch  = useDispatch();
-
-  useEffect(() => {
-    dispatch(loadUser());
-  }, [dispatch]);
 
   return (
     <Router>
