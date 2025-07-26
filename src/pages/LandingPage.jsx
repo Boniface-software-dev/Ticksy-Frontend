@@ -1,12 +1,14 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import Navbar from "../components/Navbar";
+import videoSrc from "../assets/4916768-hd_1920_1080_30fps.mp4";
 
 const LandingPage = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const videoRef = useRef(null);
 
   const [expandedItems, setExpandedItems] = useState({
     paymentMethods: false,
@@ -22,6 +24,20 @@ const LandingPage = () => {
   };
 
   useEffect(() => {
+    // Video autoplay workaround
+    const video = videoRef.current;
+    if (video) {
+      const playPromise = video.play();
+      
+      if (playPromise !== undefined) {
+        playPromise.catch(error => {
+          video.muted = true;
+          video.play();
+        });
+      }
+    }
+
+    // Fetch events
     axios
       .get("https://ticksy-backend.onrender.com/events")
       .then((res) => {
@@ -37,52 +53,54 @@ const LandingPage = () => {
   return (
     <div className="font-poppins bg-[#F3F3F5] text-black min-h-screen scroll-smooth">
       <Navbar />
+      
+      <section className="relative h-screen w-full overflow-hidden">
+        {/* Video Background */}
+        <video
+          ref={videoRef}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          className="absolute inset-0 w-full h-full object-cover z-0"
+        >
+          <source src={videoSrc} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
 
-   <section className="relative h-screen w-full overflow-hidden font-Poppins">
-  {/* Video Background */}
-  <video
-    autoPlay
-    muted
-    loop
-    playsInline
-    className="absolute inset-0 w-full h-full object-cover"
-  >
-    <source src="/4916768-hd_1920_1080_30fps.mp4" type="video/mp4" />
-    Your browser does not support the video tag.
-  </video>
+        {/* Purple Overlay (Blur + Tint) */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#9747FF]/10 to-[#9747FF]/5 z-10"></div>
 
-  {/* Overlay */}
-  <div className="absolute inset-0 bg-[#9747FF] bg-opacity-80 z-10"></div>
+        {/* Foreground Content */}
+        <div className="relative z-20 flex flex-col items-center justify-center text-center text-white px-6 h-full max-w-2xl mx-auto">
+          <h1 className="text-5xl sm:text-6xl font-extrabold leading-tight mb-6">
+            Plan It. Book It. Live It.
+          </h1>
+          <p className="text-lg sm:text-xl font-medium mb-10 leading-relaxed">
+            Find your vibe, brought to life by hosts who use Ticksy to make it happen.
+          </p>
 
-  {/* Content */}
-  <div className="relative z-20 flex flex-col items-center justify-center text-center text-white px-6 h-full max-w-2xl mx-auto">
-    <h1 className="text-5xl sm:text-6xl font-extrabold leading-tight mb-6">
-      Plan It. Book It. Live It.
-    </h1>
-    <p className="text-lg sm:text-xl font-medium mb-10 leading-relaxed">
-      Find your vibe, brought to life by hosts who use Ticksy to make it happen.
-    </p>
+          <div className="flex flex-col sm:flex-row justify-center gap-5 mb-8">
+            <Link
+              to="/register"
+              className="bg-white text-[#9747FF] px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition"
+            >
+              Get Started Free
+            </Link>
+            <Link
+              to="/events"
+              className="bg-[#E2CCFF] text-[#5B1FBF] px-8 py-3 rounded-lg font-semibold hover:bg-[#D3B7FF] transition border border-white"
+            >
+              Explore Events
+            </Link>
+          </div>
 
-    <div className="flex flex-col sm:flex-row justify-center gap-5 mb-8">
-      <Link
-        to="/register"
-        className="bg-white text-[#9747FF] px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition"
-      >
-        Get Started Free
-      </Link>
-      <Link
-        to="/events"
-        className="bg-[#E2CCFF] text-[#5B1FBF] px-8 py-3 rounded-lg font-semibold hover:bg-[#D3B7FF] transition border border-white"
-      >
-        Explore Events
-      </Link>
-    </div>
-
-    <p className="text-sm text-white/80">
-      Trusted by 1,000+ event organizers and 10K+ attendees across Kenya
-    </p>
-  </div>
-</section>
+          <p className="text-sm text-white/80">
+            Trusted by 1,000+ event organizers and 10K+ attendees across Kenya
+          </p>
+        </div>
+      </section>
 
       <section id="features" className="py-16 px-4 bg-[#F3F3F5]">
         <div className="max-w-6xl mx-auto">
