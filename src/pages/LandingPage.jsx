@@ -53,10 +53,10 @@ const LandingPage = () => {
   {/* Content */}
   <div className="relative z-10 text-center text-white max-w-2xl font-Poppins">
     <h1 className="text-5xl sm:text-6xl font-extrabold leading-tight mb-6">
-      Your Event Starts Here
+      Plan It. Book It. Live It.
     </h1>
     <p className="text-lg sm:text-xl font-medium mb-10 leading-relaxed">
-      Your all-in-one platform for discovering, hosting, and managing events.
+      Find your vibe, brought to life by hosts who use Ticksy to make it happen.
     </p>
 
     <div className="flex flex-col sm:flex-row justify-center gap-5 mb-8">
