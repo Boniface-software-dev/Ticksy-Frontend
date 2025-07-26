@@ -38,28 +38,48 @@ const LandingPage = () => {
     <div className="font-poppins bg-[#F3F3F5] text-black min-h-screen scroll-smooth">
       <Navbar />
 
-      <section
-        className="relative bg-cover bg-center px-4 flex items-center justify-center"
-        style={{
-          backgroundImage: "url('/piano.jpg')",
-          minHeight: "100vh",
-        }}
+    {/* Hero Section */}
+<section
+  className="relative bg-cover bg-center px-6 flex items-center justify-center"
+  style={{
+    backgroundImage: "url('/piano.jpg')",
+    minHeight: "100vh",
+    backgroundColor: "#F3F3F5",
+  }}
+>
+  {/* Overlay */}
+  <div className="absolute inset-0 bg-[#9747FF] bg-opacity-80"></div>
+
+  {/* Content */}
+  <div className="relative z-10 text-center text-white max-w-2xl font-Poppins">
+    <h1 className="text-5xl sm:text-6xl font-extrabold leading-tight mb-6">
+      Your Event Starts Here
+    </h1>
+    <p className="text-lg sm:text-xl font-medium mb-10 leading-relaxed">
+      Your all-in-one platform for discovering, hosting, and managing events.
+    </p>
+
+    <div className="flex flex-col sm:flex-row justify-center gap-5 mb-8">
+      <Link
+        to="/register"
+        className="bg-white text-[#9747FF] px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition"
       >
-        <div className="relative text-center z-10 max-w-2xl text-white">
-          <h1 className="text-5xl font-bold mb-4">Plan it. Book it. Live it</h1>
-          <p className="text-xl mb-8">
-            Your all-in-one platform to discover and host events
-          </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Link
-              to="/events"
-              className="bg-[#9747FF] text-white px-8 py-3 rounded-lg font-medium"
-            >
-              Explore Events
-            </Link>
-          </div>
-        </div>
-      </section>
+        Get Started Free
+      </Link>
+      <Link
+        to="/events"
+        className="bg-[#9747FF] text-white px-8 py-3 rounded-lg font-semibold hover:bg-[#8438e6] transition border border-white"
+      >
+        Explore Events
+      </Link>
+    </div>
+
+    <p className="text-sm text-white/80">
+      Trusted by 1,000+ event organizers and 10K+ attendees across Kenya
+    </p>
+  </div>
+</section>
+
 
       <section id="features" className="py-16 px-4 bg-[#F3F3F5]">
         <div className="max-w-6xl mx-auto">
