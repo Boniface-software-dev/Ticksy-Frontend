@@ -4,6 +4,14 @@ import axios from "axios";
 import Navbar from "../components/Navbar";
 import videoSrc from "../assets/4916768-hd_1920_1080_30fps.mp4";
 import Footer from "../components/Footer";
+import {
+  FaTicketAlt,
+  FaMobileAlt,
+} from "react-icons/fa";
+import { MdAnalytics } from "react-icons/md";
+import { RiSecurePaymentLine } from "react-icons/ri";
+import { AiOutlineCalendar } from "react-icons/ai";
+import { HiOutlineSearchCircle } from "react-icons/hi";
 
 const LandingPage = () => {
   const [events, setEvents] = useState([]);
@@ -103,55 +111,57 @@ const LandingPage = () => {
         </div>
       </section>
 
-      <section id="features" className="py-16 px-4 bg-[#F3F3F5]">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-12 text-[#9747FF]">
-            Our Core Features
-          </h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                title: "Easy Ticketing",
-                desc:
-                  "Browse, select, and purchase event tickets with just a few clicks.",
-              },
-              {
-                title: "Real-time Insights",
-                desc:
-                  "Organizers can view live ticket sales, revenue data, and event analytics.",
-              },
-              {
-                title: "Secure Auth",
-                desc:
-                  "Users enjoy secure sign-up/login, and role based access with full control.",
-              },
-              {
-                title: "Calendar Integration",
-                desc:
-                  "Save events directly to your Google Calendar and never miss a moment.",
-              },
-              {
-                title: "Lipa na MPESA",
-                desc:
-                  "Enjoy smooth and instant MPESA STK Push payments for all your bookings.",
-              },
-              {
-                title: "Event Discovery",
-                desc:
-                  "Find events effortlessly by category, location, or tags; tailored to your interests.",
-              },
-            ].map((feature, i) => (
-              <div
-                key={i}
-                className="bg-white p-8 rounded-lg border-l-4 border-[#9747FF] shadow"
-              >
-                <h3 className="text-2xl font-bold mb-4">{feature.title}</h3>
-                <p className="text-gray-700">{feature.desc}</p>
-              </div>
-            ))}
-          </div>
+ <section id="features" className="py-20 px-6 bg-[#F3F3F5] font-poppins">
+  <div className="max-w-7xl mx-auto">
+    <h2 className="text-3xl font-extrabold text-center text-[#9747FF] mb-12">
+      Our Core Features
+    </h2>
+
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      {[
+        {
+          icon: <FaTicketAlt />,
+          title: "Easy Ticketing",
+          desc: "Browse, select, and purchase event tickets with just a few clicks.",
+        },
+        {
+          icon: <MdAnalytics />,
+          title: "Real-time Insights",
+          desc: "Organizers can view live ticket sales, revenue data, and event analytics.",
+        },
+        {
+          icon: <RiSecurePaymentLine />,
+          title: "Secure Auth",
+          desc: "Users enjoy secure sign-up/login, and role-based access with full control.",
+        },
+        {
+          icon: <AiOutlineCalendar />,
+          title: "Calendar Integration",
+          desc: "Save events directly to your Google Calendar and never miss a moment.",
+        },
+        {
+          icon: <FaMobileAlt />,
+          title: "Lipa na MPESA",
+          desc: "Enjoy smooth and instant MPESA STK Push payments for all your bookings.",
+        },
+        {
+          icon: <HiOutlineSearchCircle />,
+          title: "Event Discovery",
+          desc: "Find events effortlessly by category, location, or tags; tailored to your interests.",
+        },
+      ].map((feature, i) => (
+        <div
+          key={i}
+          className="bg-white p-6 rounded-xl border-l-4 border-[#9747FF] shadow hover:shadow-md transition"
+        >
+          <div className="text-[#9747FF] text-3xl mb-4">{feature.icon}</div>
+          <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
+          <p className="text-gray-700">{feature.desc}</p>
         </div>
-      </section>
+      ))}
+    </div>
+  </div>
+</section>
 
       <section className="py-16 px-4 bg-white">
         <div className="max-w-6xl mx-auto">
