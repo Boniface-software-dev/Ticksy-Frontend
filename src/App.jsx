@@ -1,14 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import LandingPage from "./pages/LandingPage";
 import Login from "../src/pages/Login";
 import Register from "../src/pages/Register";
 import OrgProfile from "./pages/organizer/OrgProfile";
 import Events from "./pages/events";
 import EventsList from "./pages/EventsList";
-import { useDispatch } from "react-redux";
-import { useEffect } from "react";
-import { loadUser } from "./features/authentification/authSlice";
-import AdminDashboard from "./pages/admin/AdminDashboard";
 
 function App() {
   const dispatch = useDispatch();
@@ -19,7 +17,9 @@ function App() {
 
   return (
     <Router>
+      <Navbar />
       <Routes>
+        <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/admin/:id/profile" element={<OrgProfile />} />
@@ -32,3 +32,5 @@ function App() {
 }
 
 export default App;
+
+
