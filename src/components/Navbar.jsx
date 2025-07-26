@@ -26,15 +26,15 @@ const Navbar = () => {
         </div>
 
         <div className="hidden md:flex items-center space-x-8">
-          <Link to="/features" className="text-gray-600 hover:text-[#9747FF] font-medium">
+          <a href="#features" className="text-gray-600 hover:text-[#9747FF] font-medium">
             Features
-          </Link>
-          <Link to="/how-it-works" className="text-gray-600 hover:text-[#9747FF] font-medium">
+          </a>
+          <a href="#how-it-works" className="text-gray-600 hover:text-[#9747FF] font-medium">
             How It Works
-          </Link>
-          <Link to="/faqs" className="text-gray-600 hover:text-[#9747FF] font-medium">
+          </a>
+          <a href="#faqs" className="text-gray-600 hover:text-[#9747FF] font-medium">
             FAQs
-          </Link>
+          </a>
           <Link to="/login" className="text-[#9747FF] hover:text-[#8038D0] font-medium">
             Login
           </Link>
