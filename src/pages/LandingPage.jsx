@@ -4,10 +4,7 @@ import axios from "axios";
 import Navbar from "../components/Navbar";
 import videoSrc from "../assets/4916768-hd_1920_1080_30fps.mp4";
 import Footer from "../components/Footer";
-import {
-  FaTicketAlt,
-  FaMobileAlt,
-} from "react-icons/fa";
+import { FaTicketAlt, FaMobileAlt } from "react-icons/fa";
 import { MdAnalytics } from "react-icons/md";
 import { RiSecurePaymentLine } from "react-icons/ri";
 import { AiOutlineCalendar } from "react-icons/ai";
@@ -16,8 +13,6 @@ import { FiMapPin } from "react-icons/fi";
 import { BsCalendarDate } from "react-icons/bs";
 import { ArrowRight } from "react-feather";
 
-
-
 const LandingPage = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -25,6 +20,8 @@ const LandingPage = () => {
   const videoRef = useRef(null);
 
   const [expandedItems, setExpandedItems] = useState({
+    createEvent: false,
+    buyWithoutSignup: false,
     paymentMethods: false,
     trackSales: false,
     pastTickets: false,
@@ -38,20 +35,17 @@ const LandingPage = () => {
   };
 
   useEffect(() => {
-    // Video autoplay workaround
     const video = videoRef.current;
     if (video) {
       const playPromise = video.play();
-      
       if (playPromise !== undefined) {
-        playPromise.catch(error => {
+        playPromise.catch(() => {
           video.muted = true;
           video.play();
         });
       }
     }
 
-    // Fetch events
     axios
       .get("https://ticksy-backend.onrender.com/events")
       .then((res) => {
@@ -67,9 +61,8 @@ const LandingPage = () => {
   return (
     <div className="font-poppins bg-[#F3F3F5] text-black min-h-screen scroll-smooth">
       <Navbar />
-      
+
       <section className="relative h-screen w-full overflow-hidden">
-        {/* Video Background */}
         <video
           ref={videoRef}
           autoPlay
@@ -80,13 +73,9 @@ const LandingPage = () => {
           className="absolute inset-0 w-full h-full object-cover z-0"
         >
           <source src={videoSrc} type="video/mp4" />
-          Your browser does not support the video tag.
         </video>
+        <div className="absolute inset-0 bg-gradient-to-b from-[#9747FF]/10 to-[#9747FF]/5 z-10" />
 
-        {/* Purple Overlay (Blur + Tint) */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#9747FF]/10 to-[#9747FF]/5 z-10"></div>
-
-        {/* Foreground Content */}
         <div className="relative z-20 flex flex-col items-center justify-center text-center text-white px-6 h-full max-w-2xl mx-auto">
           <h1 className="text-5xl sm:text-6xl font-extrabold leading-tight mb-6">
             Plan It. Book It. Live It.
@@ -95,20 +84,20 @@ const LandingPage = () => {
             Find your vibe, brought to life by hosts who use Ticksy to make it happen.
           </p>
 
-     <div className="flex flex-col sm:flex-row justify-center gap-5 mb-8">
-  <Link
-    to="/register"
-    className="bg-black text-[#9747FF] px-8 py-3 rounded-lg font-semibold border border-[#9747FF] hover:bg-[#9747FF] hover:text-white transition"
-  >
-    Get Started Free
-  </Link>
-  <Link
-    to="/events"
-    className="bg-[#9747FF] text-white px-8 py-3 rounded-lg font-semibold hover:bg-[#7c3aed] transition"
-  >
-    Explore Events
-  </Link>
-</div>
+          <div className="flex flex-col sm:flex-row justify-center gap-5 mb-8">
+            <Link
+              to="/register"
+              className="bg-black text-[#9747FF] px-8 py-3 rounded-lg font-semibold border border-[#9747FF] hover:bg-[#9747FF] hover:text-white transition"
+            >
+              Get Started Free
+            </Link>
+            <Link
+              to="/events"
+              className="bg-[#9747FF] text-white px-8 py-3 rounded-lg font-semibold hover:bg-[#7c3aed] transition"
+            >
+              Explore Events
+            </Link>
+          </div>
 
           <p className="text-sm text-white/80">
             Trusted by 1,000+ event organizers and 10K+ attendees across Kenya
@@ -116,8 +105,8 @@ const LandingPage = () => {
         </div>
       </section>
 
- <section id="features" className="py-20 px-6 bg-[#F3F3F5] font-poppins">
-  <div className="max-w-7xl mx-auto">
+    <section id="features" className="py-20 px-6 bg-[#F3F3F5] font-poppins">
+  <div className="max-w-6xl mx-auto">
     <h2 className="text-3xl font-extrabold text-center text-[#9747FF] mb-12">
       Our Core Features
     </h2>
@@ -171,8 +160,8 @@ const LandingPage = () => {
     </div>
   </div>
 </section>
-      
-   <section className="py-20 px-6 bg-white font-poppins">
+
+      <section className="py-20 px-6 bg-white font-poppins">
   <div className="max-w-7xl mx-auto">
     <h2 className="text-3xl font-extrabold text-center mb-12 text-[#9747FF]">
       Featured Events
@@ -228,7 +217,7 @@ const LandingPage = () => {
   </div>
 </section>
 
-      <section id="how-it-works" className="bg-[#F3F3F5] py-20 px-6 font-poppins">
+        <section id="how-it-works" className="bg-[#F3F3F5] py-20 px-6 font-poppins">
         <div className="max-w-6xl mx-auto text-center">
           <h2 className="text-4xl font-bold text-[#9747FF] mb-4">
             How It Works
@@ -264,83 +253,78 @@ const LandingPage = () => {
         </div>
       </section>
 
- <section id="faqs" className="bg-white py-20 px-5 font-poppins">
-  <div className="max-w-6xl mx-auto">
-    <h2 className="text-3xl font-semibold text-[#9747FF] mb-10 text-center md:text-left">
-      FAQs: What Ticksy Users Ask Most
-    </h2>
-    <div className="flex flex-col md:flex-row gap-10 items-start md:items-stretch">
-      {/* Image column */}
-      <div className="md:w-1/2 flex justify-center md:justify-start">
-        <img
-          src="/undraw_faq_h01d.svg"
-          alt="FAQ illustration"
-          className="w-full h-auto max-w-md rounded-xl shadow-md md:sticky md:top-24"
-        />
-      </div>
+      {/* FAQ Section */}
+      <section id="faqs" className="bg-white py-20 px-5">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl font-semibold text-[#9747FF] mb-10 text-center md:text-left">
+            FAQs: What Ticksy Users Ask Most
+          </h2>
 
-      {/* FAQ column */}
-      <div className="md:w-1/2 space-y-4">
-        {[
-          {
-            id: "createEvent",
-            question: "How do I create an event on Ticksy?",
-            answer:
-              'Just sign in as an organizer, go to "Create Event," and fill out your event details including location, time, and ticket types. It only takes a few minutes.',
-          },
-          {
-  id: "buyWithoutSignup",
-  question: "Can I buy tickets without signing up?",
-  answer:
-    "No — to book a ticket, you must first sign in to your Ticksy account. This helps us securely manage your bookings and ensure instant confirmation.",
-},
+          <div className="flex flex-col md:flex-row gap-10 items-start md:items-stretch">
+            <div className="md:w-1/2 flex justify-center md:justify-start">
+              <img 
+                src="/undraw_faq_h01d.svg" 
+                alt="FAQ illustration"
+                className="w-full h-auto max-w-md rounded-2xl shadow-lg md:sticky md:top-24"
+              />
+            </div>
 
-          {
-            id: "paymentMethods",
-            question: "What payment methods are supported?",
-            answer:
-              "Ticksy uses MPESA STK Push, allowing you to pay directly from your phone. You'll receive a prompt to enter your PIN and confirm instantly.",
-          },
-          {
-            id: "trackSales",
-            question: "How can organizers track sales?",
-            answer:
-              "Organizers can track sales in real-time through the Ticksy dashboard, which provides detailed analytics on ticket purchases, revenue, and attendee information.",
-          },
-          {
-            id: "pastTickets",
-            question: "Where do I find my past tickets?",
-            answer:
-              'All your past tickets are stored in the "My Tickets" section of your Ticksy account. You can access them anytime by logging in and navigating to this section.',
-          },
-        ].map((item) => (
-          <div
-            key={item.id}
-            className="border border-gray-300 rounded-lg p-4 bg-white transition-all duration-300"
-          >
-            <button
-              className="w-full flex justify-between items-center text-left"
-              onClick={() => toggleItem(item.id)}
-            >
-              <span className="font-medium text-gray-800">
-                {item.question}
-              </span>
-              <span className="text-gray-600 text-xl">
-                {expandedItems[item.id] ? "−" : "+"}
-              </span>
-            </button>
-            {expandedItems[item.id] && (
-              <p className="mt-2 text-gray-600 text-sm">{item.answer}</p>
-            )}
+            <div className="md:w-1/2 space-y-4">
+              {[
+                {
+                  id: "createEvent",
+                  question: "How do I create an event on Ticksy?",
+                  answer: 'Just sign in as an organizer, go to "Create Event," and fill out your event details including location, time, and ticket types. It only takes a few minutes.',
+                },
+                {
+                  id: "buyWithoutSignup",
+                  question: "Can I buy tickets without signing up?",
+                  answer: "No — to book a ticket, you must first sign in to your Ticksy account. This helps us securely manage your bookings and ensure instant confirmation.",
+                },
+                {
+                  id: "paymentMethods",
+                  question: "What payment methods are supported?",
+                  answer: "Ticksy uses MPESA STK Push, allowing you to pay directly from your phone. You'll receive a prompt to enter your PIN and confirm instantly.",
+                },
+                {
+                  id: "trackSales",
+                  question: "How can organizers track sales?",
+                  answer: "Organizers can track sales in real-time through the Ticksy dashboard, which provides detailed analytics on ticket purchases, revenue, and attendee information.",
+                },
+                {
+                  id: "pastTickets",
+                  question: "Where do I find my past tickets?",
+                  answer: 'All your past tickets are stored in the "My Tickets" section of your Ticksy account. You can access them anytime by logging in and navigating to this section.',
+                },
+              ].map((item) => (
+                <div
+                  key={item.id}
+                  className="border border-gray-300 rounded-xl p-5 bg-white shadow-sm hover:shadow-md transition-all duration-300"
+                >
+                  <button
+                    className="w-full flex justify-between items-center text-left"
+                    onClick={() => toggleItem(item.id)}
+                  >
+                    <span className="font-medium text-gray-800 text-base">
+                      {item.question}
+                    </span>
+                    <span className="text-[#9747FF] text-xl font-bold">
+                      {expandedItems[item.id] ? "−" : "+"}
+                    </span>
+                  </button>
+                  {expandedItems[item.id] && (
+                    <p className="mt-3 text-gray-600 text-sm leading-relaxed">
+                      {item.answer}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
-        ))}
-      </div>
-    </div>
-  </div>
-</section>
+        </div>
+      </section>
 
-        <Footer />
-    
+      <Footer />
     </div>
   );
 };
