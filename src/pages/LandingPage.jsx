@@ -1,13 +1,27 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import Navbar from "../components/Navbar";
+import videoSrc from "../assets/4916768-hd_1920_1080_30fps.mp4";
+import Footer from "../components/Footer";
+import { FaTicketAlt, FaMobileAlt } from "react-icons/fa";
+import { MdAnalytics } from "react-icons/md";
+import { RiSecurePaymentLine } from "react-icons/ri";
+import { AiOutlineCalendar } from "react-icons/ai";
+import { HiOutlineSearchCircle } from "react-icons/hi";
+import { FiMapPin } from "react-icons/fi";
+import { BsCalendarDate } from "react-icons/bs";
+import { ArrowRight } from "react-feather";
 
 const LandingPage = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const videoRef = useRef(null);
 
   const [expandedItems, setExpandedItems] = useState({
+    createEvent: false,
+    buyWithoutSignup: false,
     paymentMethods: false,
     trackSales: false,
     pastTickets: false,
@@ -21,320 +35,298 @@ const LandingPage = () => {
   };
 
   useEffect(() => {
+    const video = videoRef.current;
+    if (video) {
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          video.muted = true;
+          video.play();
+        });
+      }
+    }
+
     axios
       .get("https://ticksy-backend.onrender.com/events")
       .then((res) => {
-        setEvents(res.data.slice(0, 4)); 
+        setEvents(res.data.slice(0, 4));
         setLoading(false);
       })
-      .catch((err) => {
+      .catch(() => {
         setError("Failed to load events.");
         setLoading(false);
       });
   }, []);
 
   return (
-    <div className="font-poppins bg-[#F3F3F5] text-black min-h-screen">
-      {/* Hero Section */}
-      <section
-        className="relative bg-cover bg-center px-4 flex items-center justify-center"
-        style={{
-          backgroundImage: "url('/piano.jpg')",
-          minHeight: "100vh",
-        }}
-      >
-        {/* Optional: Add overlay back if needed */}
-        {/* <div className="absolute inset-0 bg-black bg-opacity-40"></div> */}
+    <div className="font-poppins bg-[#F3F3F5] text-black min-h-screen scroll-smooth">
+      <Navbar />
 
-        <div className="relative text-center z-10 max-w-2xl text-white">
-          <h1 className="text-5xl font-bold mb-4">
-            Plan it. Book it. Live it
+      <section className="relative h-screen w-full overflow-hidden">
+        <video
+          ref={videoRef}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          className="absolute inset-0 w-full h-full object-cover z-0"
+        >
+          <source src={videoSrc} type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 bg-gradient-to-b from-[#9747FF]/10 to-[#9747FF]/5 z-10" />
+
+        <div className="relative z-20 flex flex-col items-center justify-center text-center text-white px-6 h-full max-w-2xl mx-auto">
+          <h1 className="text-5xl sm:text-6xl font-extrabold leading-tight mb-6">
+            Plan It. Book It. Live It.
           </h1>
-          <p className="text-xl mb-8">
-            Your all-in-one platform to discover and host events
+          <p className="text-lg sm:text-xl font-medium mb-10 leading-relaxed">
+            Find your vibe, brought to life by hosts who use Ticksy to make it happen.
           </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
+
+          <div className="flex flex-col sm:flex-row justify-center gap-5 mb-8">
+            <Link
+              to="/register"
+              className="bg-black text-[#9747FF] px-8 py-3 rounded-lg font-semibold border border-[#9747FF] hover:bg-[#9747FF] hover:text-white transition"
+            >
+              Get Started Free
+            </Link>
             <Link
               to="/events"
-              className="bg-[#FFFFFF] text-white px-8 py-3 rounded-lg font-medium"
+              className="bg-[#9747FF] text-white px-8 py-3 rounded-lg font-semibold hover:bg-[#7c3aed] transition"
             >
               Explore Events
             </Link>
           </div>
+
+          <p className="text-sm text-white/80">
+            Trusted by 1,000+ event organizers and 10K+ attendees across Kenya
+          </p>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-16 px-4">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-12 text-[#9747FF]">
-            Our Core Features
-          </h2>
+    <section id="features" className="py-20 px-6 bg-[#F3F3F5] font-poppins">
+  <div className="max-w-6xl mx-auto">
+    <h2 className="text-3xl font-extrabold text-center text-[#9747FF] mb-12">
+      Our Core Features
+    </h2>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                title: "Easy Ticketing",
-                desc:
-                  "Browse, select, and purchase event tickets with just a few clicks.",
-              },
-              {
-                title: "Real-time Insights",
-                desc:
-                  "Organizers can view live ticket sales, revenue data, and event analytics.",
-              },
-              {
-                title: "Secure Auth",
-                desc:
-                  "Users enjoy secure sign-up/login, and role based access with full control.",
-              },
-              {
-                title: "Calendar Integration",
-                desc:
-                  "Save events directly to your Google Calendar and never miss a moment.",
-              },
-              {
-                title: "Lipa na MPESA",
-                desc:
-                  "Enjoy smooth and instant MPESA STK Push payments for all your bookings.",
-              },
-              {
-                title: "Event Discovery",
-                desc:
-                  "Find events effortlessly by category, location, or tags; tailored to your interests.",
-              },
-            ].map((feature, i) => (
-              <div
-                key={i}
-                className="bg-white p-8 rounded-lg border-l-4 border-[#9747FF] shadow"
-              >
-                <h3 className="text-2xl font-bold mb-4">{feature.title}</h3>
-                <p className="text-gray-700">{feature.desc}</p>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      {[
+        {
+          icon: <FaTicketAlt />,
+          title: "Easy Ticketing",
+          desc: "Browse, select, and purchase event tickets with just a few clicks.",
+        },
+        {
+          icon: <MdAnalytics />,
+          title: "Real-time Insights",
+          desc: "Organizers can view live ticket sales, revenue data, and event analytics.",
+        },
+        {
+          icon: <RiSecurePaymentLine />,
+          title: "Secure Auth",
+          desc: "Users enjoy secure sign-up/login, and role-based access with full control.",
+        },
+        {
+          icon: <AiOutlineCalendar />,
+          title: "Calendar Integration",
+          desc: "Save events directly to your Google Calendar and never miss a moment.",
+        },
+        {
+          icon: <FaMobileAlt />,
+          title: "Lipa na MPESA",
+          desc: "Enjoy smooth and instant MPESA STK Push payments for all your bookings.",
+        },
+        {
+          icon: <HiOutlineSearchCircle />,
+          title: "Event Discovery",
+          desc: "Find events effortlessly by category, location, or tags; tailored to your interests.",
+        },
+      ].map((feature, i) => (
+        <div
+          key={i}
+          className="bg-white p-6 rounded-xl border-l-4 border-[#9747FF] shadow hover:shadow-md transition text-center"
+        >
+          <div className="text-[#9747FF] text-4xl mb-4 flex justify-center">
+            {feature.icon}
+          </div>
+          <h3 className="text-2xl font-extrabold mb-3 text-gray-900">
+            {feature.title}
+          </h3>
+          <p className="text-gray-700">{feature.desc}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+      <section className="py-20 px-6 bg-white font-poppins">
+  <div className="max-w-7xl mx-auto">
+    <h2 className="text-3xl font-extrabold text-center mb-12 text-[#9747FF]">
+      Featured Events
+    </h2>
+
+    {loading ? (
+      <p className="text-center text-gray-600">Loading events...</p>
+    ) : error ? (
+      <p className="text-center text-red-500">{error}</p>
+    ) : (
+      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        {events.map((event) => (
+          <div
+            key={event.id}
+            className="bg-white rounded-2xl shadow-md hover:shadow-xl transform hover:-translate-y-1 transition duration-300 flex flex-col overflow-hidden"
+          >
+            <img
+              src={event.image_url}
+              alt={event.title}
+              className="h-48 w-full object-cover"
+            />
+            <div className="flex flex-col p-5 h-full">
+              <h3 className="text-xl font-bold text-center text-gray-900 mb-1">
+                {event.title}
+              </h3>
+              <p className="text-sm text-gray-600 text-center mb-3">
+                by {event.organizer?.first_name} {event.organizer?.last_name}
+              </p>
+              <div className="flex items-center text-sm text-gray-600 mb-2">
+                <FiMapPin className="mr-2 text-[#9747FF]" />
+                {event.location}
               </div>
-            ))}
+              <div className="flex items-center text-sm text-gray-600 mb-6">
+                <BsCalendarDate className="mr-2 text-[#9747FF]" />
+                {new Date(event.start_time).toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                })}
+              </div>
+
+              <Link
+                to={`/events/${event.id}`}
+                className="mt-auto flex items-center justify-center gap-2 w-full bg-[#9747FF] text-white py-2 rounded-lg font-semibold hover:bg-[#7c3aed] transition duration-200 no-underline"
+              >
+                Book Now <ArrowRight size={18} />
+              </Link>
+            </div>
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
+</section>
+
+        <section id="how-it-works" className="bg-[#F3F3F5] py-20 px-6 font-poppins">
+        <div className="max-w-6xl mx-auto text-center">
+          <h2 className="text-4xl font-bold text-[#9747FF] mb-4">
+            How It Works
+          </h2>
+          <p className="text-lg text-gray-500 mb-16">
+            Get started in just four easy steps
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 relative">
+            <div className="hidden md:block absolute top-12 left-0 w-full h-1 bg-indigo-100 z-0"></div>
+            {["Sign Up Your Way", "Discover or Host", "Book Instantly", "Attend & Enjoy"].map(
+              (title, index) => (
+                <div key={index} className="relative z-10 text-center">
+                  <div className="w-16 h-16 mx-auto rounded-full bg-[#9747FF] text-white flex items-center justify-center text-xl font-bold shadow-lg">
+                    {index + 1}
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-800 mt-4 mb-2">
+                    {title}
+                  </h3>
+                  <p className="text-gray-600 text-sm">
+                    {
+                      [
+                        "Join Ticksy as an event organizer or attendee — quick, easy and free.",
+                        "Find events you love — or host your own with custom ticket options.",
+                        "Secure your spot fast with MPESA payments and instant ticket delivery.",
+                        "Get reminders, show up, and enjoy your event — then leave a review!",
+                      ][index]
+                    }
+                  </p>
+                </div>
+              )
+            )}
           </div>
         </div>
       </section>
-     {/* Events Section */}
-      <section className="py-16 px-4">
+
+      {/* FAQ Section */}
+      <section id="faqs" className="bg-white py-20 px-5">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-12 text-[#9747FF]">
-            Featured Events
+          <h2 className="text-3xl font-semibold text-[#9747FF] mb-10 text-center md:text-left">
+            FAQs: What Ticksy Users Ask Most
           </h2>
 
-          {loading ? (
-            <p className="text-center text-gray-600">Loading events...</p>
-          ) : error ? (
-            <p className="text-center text-red-500">{error}</p>
-          ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {events.map((event) => (
+          <div className="flex flex-col md:flex-row gap-10 items-start md:items-stretch">
+            <div className="md:w-1/2 flex justify-center md:justify-start">
+              <img 
+                src="/undraw_faq_h01d.svg" 
+                alt="FAQ illustration"
+                className="w-full h-auto max-w-md rounded-2xl shadow-lg md:sticky md:top-24"
+              />
+            </div>
+
+            <div className="md:w-1/2 space-y-4">
+              {[
+                {
+                  id: "createEvent",
+                  question: "How do I create an event on Ticksy?",
+                  answer: 'Just sign in as an organizer, go to "Create Event," and fill out your event details including location, time, and ticket types. It only takes a few minutes.',
+                },
+                {
+                  id: "buyWithoutSignup",
+                  question: "Can I buy tickets without signing up?",
+                  answer: "No — to book a ticket, you must first sign in to your Ticksy account. This helps us securely manage your bookings and ensure instant confirmation.",
+                },
+                {
+                  id: "paymentMethods",
+                  question: "What payment methods are supported?",
+                  answer: "Ticksy uses MPESA STK Push, allowing you to pay directly from your phone. You'll receive a prompt to enter your PIN and confirm instantly.",
+                },
+                {
+                  id: "trackSales",
+                  question: "How can organizers track sales?",
+                  answer: "Organizers can track sales in real-time through the Ticksy dashboard, which provides detailed analytics on ticket purchases, revenue, and attendee information.",
+                },
+                {
+                  id: "pastTickets",
+                  question: "Where do I find my past tickets?",
+                  answer: 'All your past tickets are stored in the "My Tickets" section of your Ticksy account. You can access them anytime by logging in and navigating to this section.',
+                },
+              ].map((item) => (
                 <div
-                  key={event.id}
-                  className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition duration-300"
+                  key={item.id}
+                  className="border border-gray-300 rounded-xl p-5 bg-white shadow-sm hover:shadow-md transition-all duration-300"
                 >
-                  <img
-                    src={event.image_url}
-                    alt={event.title}
-                    className="h-48 w-full object-cover"
-                  />
-                  <div className="p-4">
-                    <h3 className="text-xl font-semibold mb-2 text-gray-900">
-                      {event.title}
-                    </h3>
-                    <p className="text-sm text-gray-600 mb-1">
-                      By {event.organizer?.first_name}{" "}
-                      {event.organizer?.last_name}
+                  <button
+                    className="w-full flex justify-between items-center text-left"
+                    onClick={() => toggleItem(item.id)}
+                  >
+                    <span className="font-medium text-gray-800 text-base">
+                      {item.question}
+                    </span>
+                    <span className="text-[#9747FF] text-xl font-bold">
+                      {expandedItems[item.id] ? "−" : "+"}
+                    </span>
+                  </button>
+                  {expandedItems[item.id] && (
+                    <p className="mt-3 text-gray-600 text-sm leading-relaxed">
+                      {item.answer}
                     </p>
-                    <p className="text-sm text-gray-600 mb-1">
-                      📍 {event.location}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      🗓️{" "}
-                      {new Date(event.start_time).toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                      })}
-                    </p>
-                  </div>
+                  )}
                 </div>
               ))}
             </div>
-          )}
-        </div>
-      </section>
-
-   {/* How It Works Section */}
-      <section className="bg-[#F3F3F5] py-20 px-5 font-Poppins">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl font-semibold text-gray-800 mb-6">
-            Sign up Your Way
-          </h2>
-          <p className="text-lg text-gray-600 mb-12">
-            Join Ticksy as an event organizer or attendee
-          </p>
-
-          <div className="flex flex-col md:flex-row justify-between gap-8">
-            {/* Step 1 */}
-            <div className="md:w-1/3 text-left md:text-center">
-              <h3 className="text-xl font-medium text-gray-800 mb-4">
-                Discover or Host Events
-              </h3>
-              <p className="text-gray-600 leading-relaxed text-sm">
-                Find events you love, or set up your
-                own with custom ticket types and details.
-              </p>
-            </div>
-
-            {/* Step 2 */}
-            <div className="md:w-1/3 text-left md:text-center">
-              <h3 className="text-xl font-medium text-gray-800 mb-4">
-                Book or Manage Tickets
-              </h3>
-              <p className="text-gray-600 leading-relaxed text-sm">
-                Buy tickets instantly with MPESA or
-                track ticket sales in real-time as a host.
-              </p>
-            </div>
-
-            {/* Step 3 */}
-            <div className="md:w-1/3 text-left md:text-center">
-              <h3 className="text-xl font-medium text-gray-800 mb-4">
-                Attend and Have Fun!
-              </h3>
-              <p className="text-gray-600 leading-relaxed text-sm">
-                Get event reminders, access your tickets
-                easily, and leave reviews after attending.
-              </p>
-            </div>
           </div>
         </div>
       </section>
 
-    {/* FAQ Section */}
-      <section className="bg-[#F3F3F5] py-20 px-5 font-Poppins">
-      <div className="max-w-6xl mx-auto">
-        <h2 className="text-3xl font-semibold text-gray-800 mb-10 text-center md:text-left">
-          FAQs: What Ticksy Users Ask Most
-        </h2>
-        
-        <div className="flex flex-col md:flex-row gap-10">
-          {/* Image on the left */}
-          <div className="md:w-1/2">
-            <img
-              src="/Question.svg" 
-              alt="FAQ illustration"
-              className="w-full h-auto rounded-xl shadow-md"
-            />
-          </div>
-
-          {/* FAQ Content on the right */}
-          <div className="md:w-1/2 space-y-4">
-            {/* Create Event */}
-            <div className="border border-gray-300 rounded-lg p-4 bg-white">
-              <button
-                className="w-full flex justify-between items-center text-left"
-                onClick={() => toggleItem("createEvent")}
-              >
-                <span className="font-medium text-gray-800">
-                  How do I create an event on Ticksy?
-                </span>
-                <span className="text-gray-600">
-                  {expandedItems.createEvent ? "−" : "+"}
-                </span>
-              </button>
-              {expandedItems.createEvent && (
-                <p className="mt-2 text-gray-600 text-sm">
-                  Just sign in as an organizer, go to "Create Event," and fill out your event details including location, time, and ticket types. It only takes a few minutes.
-                </p>
-              )}
-            </div>
-
-            {/* Buy Without Signup */}
-            <div className="border border-gray-300 rounded-lg p-4 bg-white">
-              <button
-                className="w-full flex justify-between items-center text-left"
-                onClick={() => toggleItem("buyWithoutSignup")}
-              >
-                <span className="font-medium text-gray-800">
-                  Can I buy tickets without signing up?
-                </span>
-                <span className="text-gray-600">
-                  {expandedItems.buyWithoutSignup ? "−" : "+"}
-                </span>
-              </button>
-              {expandedItems.buyWithoutSignup && (
-                <p className="mt-2 text-gray-600 text-sm">
-                  No account? No problem. You can purchase tickets using just your phone number through MPESA and receive instant confirmation.
-                </p>
-              )}
-            </div>
-
-            {/* Payment Methods */}
-            <div className="border border-gray-300 rounded-lg p-4 bg-white">
-              <button
-                className="w-full flex justify-between items-center text-left"
-                onClick={() => toggleItem("paymentMethods")}
-              >
-                <span className="font-medium text-gray-800">
-                  What payment methods are supported?
-                </span>
-                <span className="text-gray-600">
-                  {expandedItems.paymentMethods ? "−" : "+"}
-                </span>
-              </button>
-              {expandedItems.paymentMethods && (
-                <p className="mt-2 text-gray-600 text-sm">
-                  Ticksy uses MPESA STK Push, allowing you to pay directly from your phone. You'll receive a prompt to enter your PIN and confirm instantly.
-                </p>
-              )}
-            </div>
-
-            {/* Track Sales */}
-            <div className="border border-gray-300 rounded-lg p-4 bg-white">
-              <button
-                className="w-full flex justify-between items-center text-left"
-                onClick={() => toggleItem("trackSales")}
-              >
-                <span className="font-medium text-gray-800">
-                  How can organizers track sales?
-                </span>
-                <span className="text-gray-600">
-                  {expandedItems.trackSales ? "−" : "+"}
-                </span>
-              </button>
-              {expandedItems.trackSales && (
-                <p className="mt-2 text-gray-600 text-sm">
-                  Organizers can track sales in real-time through the Ticksy dashboard, which provides detailed analytics on ticket purchases, revenue, and attendee information.
-                </p>
-              )}
-            </div>
-
-            {/* Past Tickets */}
-            <div className="border border-gray-300 rounded-lg p-4 bg-white">
-              <button
-                className="w-full flex justify-between items-center text-left"
-                onClick={() => toggleItem("pastTickets")}
-              >
-                <span className="font-medium text-gray-800">
-                  Where do I find my past tickets?
-                </span>
-                <span className="text-gray-600">
-                  {expandedItems.pastTickets ? "−" : "+"}
-                </span>
-              </button>
-              {expandedItems.pastTickets && (
-                <p className="mt-2 text-gray-600 text-sm">
-                  All your past tickets are stored in the "My Tickets" section of your Ticksy account. You can access them anytime by logging in and navigating to this section.
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+      <Footer />
     </div>
   );
 };
+
 export default LandingPage;
