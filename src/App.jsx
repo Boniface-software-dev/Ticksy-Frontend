@@ -8,6 +8,7 @@ import EventsList from "./pages/EventsList";
 import OrganizerDashboard from "./pages/organizer/OrgDashboard"; // ✅ fixed import path
 import { useDispatch } from "react-redux";
 import { loadUser } from "./features/authentification/authSlice";
+import AdminDashboard from "./pages/admin/AdminDashboard";
 
 function App() {
   const dispatch = useDispatch();
@@ -24,7 +25,11 @@ function App() {
         <Route path="/admin/:id/profile" element={<OrgProfile />} />
         <Route path="/events/:id" element={<Events />} />
         <Route path="/events" element={<EventsList />} />
+
         <Route path="/organizer/events" element={<OrganizerDashboard />} /> {/* ✅ fixed route */}
+
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+
       </Routes>
     </Router>
   );
