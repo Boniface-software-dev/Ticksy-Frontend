@@ -38,20 +38,24 @@ const LandingPage = () => {
     <div className="font-poppins bg-[#F3F3F5] text-black min-h-screen scroll-smooth">
       <Navbar />
 
-    {/* Hero Section */}
-<section
-  className="relative bg-cover bg-center px-6 flex items-center justify-center"
-  style={{
-    backgroundImage: "url('/piano.jpg')",
-    minHeight: "100vh",
-    backgroundColor: "#F3F3F5",
-  }}
->
+   <section className="relative h-screen w-full overflow-hidden font-Poppins">
+  {/* Video Background */}
+  <video
+    autoPlay
+    muted
+    loop
+    playsInline
+    className="absolute inset-0 w-full h-full object-cover"
+  >
+    <source src="/4916768-hd_1920_1080_30fps.mp4" type="video/mp4" />
+    Your browser does not support the video tag.
+  </video>
+
   {/* Overlay */}
-  <div className="absolute inset-0 bg-[#9747FF] bg-opacity-80"></div>
+  <div className="absolute inset-0 bg-[#9747FF] bg-opacity-80 z-10"></div>
 
   {/* Content */}
-  <div className="relative z-10 text-center text-white max-w-2xl font-Poppins">
+  <div className="relative z-20 flex flex-col items-center justify-center text-center text-white px-6 h-full max-w-2xl mx-auto">
     <h1 className="text-5xl sm:text-6xl font-extrabold leading-tight mb-6">
       Plan It. Book It. Live It.
     </h1>
@@ -68,7 +72,7 @@ const LandingPage = () => {
       </Link>
       <Link
         to="/events"
-        className="bg-[#9747FF] text-white px-8 py-3 rounded-lg font-semibold hover:bg-[#8438e6] transition border border-white"
+        className="bg-[#E2CCFF] text-[#5B1FBF] px-8 py-3 rounded-lg font-semibold hover:bg-[#D3B7FF] transition border border-white"
       >
         Explore Events
       </Link>
@@ -79,7 +83,6 @@ const LandingPage = () => {
     </p>
   </div>
 </section>
-
 
       <section id="features" className="py-16 px-4 bg-[#F3F3F5]">
         <div className="max-w-6xl mx-auto">
