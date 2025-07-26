@@ -95,20 +95,20 @@ const LandingPage = () => {
             Find your vibe, brought to life by hosts who use Ticksy to make it happen.
           </p>
 
-          <div className="flex flex-col sm:flex-row justify-center gap-5 mb-8">
-            <Link
-              to="/register"
-              className="bg-white text-[#9747FF] px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition"
-            >
-              Get Started Free
-            </Link>
-            <Link
-              to="/events"
-              className="bg-[#E2CCFF] text-[#5B1FBF] px-8 py-3 rounded-lg font-semibold hover:bg-[#D3B7FF] transition border border-white"
-            >
-              Explore Events
-            </Link>
-          </div>
+     <div className="flex flex-col sm:flex-row justify-center gap-5 mb-8">
+  <Link
+    to="/register"
+    className="bg-black text-[#9747FF] px-8 py-3 rounded-lg font-semibold border border-[#9747FF] hover:bg-[#9747FF] hover:text-white transition"
+  >
+    Get Started Free
+  </Link>
+  <Link
+    to="/events"
+    className="bg-[#9747FF] text-white px-8 py-3 rounded-lg font-semibold hover:bg-[#7c3aed] transition"
+  >
+    Explore Events
+  </Link>
+</div>
 
           <p className="text-sm text-white/80">
             Trusted by 1,000+ event organizers and 10K+ attendees across Kenya
