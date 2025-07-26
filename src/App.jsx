@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import LandingPage from "./pages/LandingPage";
@@ -9,9 +9,15 @@ import Events from "./pages/events";
 import EventsList from "./pages/EventsList";
 
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(loadUser());
+  }, [dispatch]);
 
   return (
     <Router>
+      <Navbar />
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
@@ -19,11 +25,12 @@ function App() {
         <Route path="/admin/:id/profile" element={<OrgProfile />} />
         <Route path="/events/:id" element={<Events />} />
         <Route path="/events" element={<EventsList />} />
-        
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
       </Routes>
     </Router>
   );
 }
 
 export default App;
+
 
