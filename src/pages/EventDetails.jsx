@@ -2,8 +2,8 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { fetchEventById } from "./eventSlice";
-import { decreaseTicket, increaseTicket } from "./eventSlice";
+import { fetchEventById, increaseTicket, decreaseTicket } from "../features/events/eventSlice";
+import Footer from "../components/Footer";
 
 const EventDetails = () => {
   const { id } = useParams();
@@ -26,7 +26,7 @@ const EventDetails = () => {
   return (
     <div className="bg-[#f3f3f5] min-h-screen font-poppins text-black">
       <div className="max-w-7xl mx-auto py-10 px-5 md:px-10 grid md:grid-cols-2 gap-10">
-        {/* Left Section - Image and Description */}
+        {/* Left Section */}
         <div>
           <img
             src={event.image_url}
@@ -45,25 +45,44 @@ const EventDetails = () => {
           <div className="mt-6">
             <h2 className="text-xl font-semibold mb-2">Tags</h2>
             <div className="flex gap-3 flex-wrap">
-              {event.tags?.map((tag, i) => (
-                <span
-                  key={i}
-                  className="px-3 py-1 border border-[#9747FF] rounded-full text-sm text-[#9747FF]"
-                >
-                  {tag}
-                </span>
-              ))}
+              {Array.isArray(event.tags) ? (
+                event.tags.map((tag, i) => (
+                  <span
+                    key={i}
+                    className="px-3 py-1 border border-[#9747FF] rounded-full text-sm text-[#9747FF]"
+                  >
+                    {tag}
+                  </span>
+                ))
+              ) : (
+                <span className="text-sm text-gray-500">No tags available</span>
+              )}
             </div>
           </div>
         </div>
 
-        {/* Right Section - Title and Tickets */}
+        {/* Right Section */}
         <div>
           <h1 className="text-4xl font-bold mb-4">{event.title}</h1>
           <div className="text-sm text-gray-600 space-y-2 mb-6">
             <p>📅 {new Date(event.start_time).toLocaleDateString()}</p>
-            <p>🕒 {new Date(event.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {new Date(event.end_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
-            <p>📍 {event.location}</p>
+            <p>
+              🕒{" "}
+              {new Date(event.start_time).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}{" "}
+              -{" "}
+              {new Date(event.end_time).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </p>
+            <div className="flex ">
+             
+              <img width="20" height="20" src="https://img.icons8.com/ios/30/marker--v1.png" alt="marker--v1"/>
+              <p>{event.location}</p>
+              </div>
           </div>
 
           <h2 className="text-2xl font-bold mb-4">Tickets</h2>
@@ -75,7 +94,9 @@ const EventDetails = () => {
               <p>Date: {new Date(event.start_time).toLocaleDateString()}</p>
               <div className="flex items-center justify-between mt-4">
                 <button
-                  onClick={() => setIndividualCount(Math.max(0, individualCount - 1))}
+                  onClick={() =>
+                    setIndividualCount(Math.max(0, individualCount - 1))
+                  }
                   className="px-2 py-1 border rounded"
                 >
                   -
@@ -123,10 +144,8 @@ const EventDetails = () => {
           </div>
         </div>
       </div>
-
-      {/* Footer */}
-      <footer className="bg-white mt-12 py-6 text-xs text-gray-600 border-t text-center">
-        Copyright © Ticksy 2025
+      <footer>
+        <Footer />
       </footer>
     </div>
   );
