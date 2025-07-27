@@ -61,26 +61,26 @@ export default function Register() {
           {error && <p className="text-red-500 text-sm">{error}</p>}
 
           <form onSubmit={onSubmit} className="space-y-4 text-gray-800">
-            <input type="text" name="first_name" placeholder="First Name" onChange={(e) => setFirstName(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-purple-600 focus:border-purple-600" required />
-            <input type="text" name="last_name" placeholder="Last Name" onChange={(e) => setLastName(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-purple-600 focus:border-purple-600" required />
-            <select name="role" onChange={(e) => setRole(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-400 focus:outline-none focus:ring-purple-600 focus:border-purple-600" required>
+            <input type="text" name="first_name" placeholder="First Name" onChange={(e) => setFirstName(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-md" required />
+            <input type="text" name="last_name" placeholder="Last Name" onChange={(e) => setLastName(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-md" required />
+            <select name="role" onChange={(e) => setRole(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-400" required>
               <option value="">Select Role</option>
               <option value="attendee">Attendee</option>
               <option value="organizer">Organizer</option>
             </select>
-            <input type="email" name="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-purple-600 focus:border-purple-600" required />
-            <input type="phone_number" name="phone_number" placeholder="07..." onChange={(e) => setPhone(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-purple-600 focus:border-purple-600" required />
-            <input type="password" name="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-purple-600 focus:border-purple-600" required />
-            <input type="password" name="confirmPassword" placeholder="Confirm Password" onChange={(e) => setConfirmPassword(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-purple-600 focus:border-purple-600" required />
+            <input type="email" name="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-md" required />
+            <input type="phone_number" name="phone_number" placeholder="07..." onChange={(e) => setPhone(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-md" required />
+            <input type="password" name="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-md" required />
+            <input type="password" name="confirmPassword" placeholder="Confirm Password" onChange={(e) => setConfirmPassword(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-md" required />
 
-            <button type="submit" className="w-full bg-purple-400 text-white py-2 rounded-md hover:bg-purple-600 transition">
+            <button type="submit" className="w-full bg-green-700 text-white py-2 rounded-md hover:bg-green-800 transition">
               Register
             </button>
           </form>
 
           <p className="text-sm text-center text-gray-500">
             Already have an account?{' '}
-            <Link to="/login" className="text-purple-600 font-medium hover:underline">
+            <Link to="/login" className="text-green-700 font-medium hover:underline">
               Log in here
             </Link>
           </p>
