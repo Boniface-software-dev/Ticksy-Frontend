@@ -1,16 +1,17 @@
 import { configureStore } from "@reduxjs/toolkit";
-import authReducer from '../features/authentification/authSlice'
-import { meta } from "@eslint/js";
+// import authReducer from '../features/authentification/authSlice' ❌ Comment this for now
+import eventReducer from '../features/events/eventSlice';
 
 const store = configureStore({
-    reducer:{
-        auth: authReducer
-    },
-    middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware({
-            thunk: true,
-        }),
-    devTools: import.meta.env.MODE !== 'production',
-})
+  reducer: {
+    // auth: authReducer,
+    events: eventReducer,
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      thunk: true,
+    }),
+  devTools: import.meta.env.MODE !== "production",
+});
 
-export default store
+export default store;
