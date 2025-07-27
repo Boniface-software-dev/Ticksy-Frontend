@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
-import Events from './pages/Events';
+import Events from './pages/events';
 import EventsList from './pages/EventsList';
 
 import AttendeeProfile from './pages/attendees/AttendeeProfile';
