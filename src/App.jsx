@@ -11,8 +11,6 @@ import Unauthorized from './pages/Unauthorized';
 import Login from './pages/Login';
 import Register from "./pages/Register";
 
-
-
 import AdminProfile from './pages/admin/AdminProfile';
 import OrgDashboard from './pages/organizer/OrgDashboard';
 
