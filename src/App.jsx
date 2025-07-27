@@ -1,8 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-
-import Events from './pages/events';
 import EventsList from './pages/EventsList';
 
 import AttendeeProfile from './pages/attendees/AttendeeProfile';
@@ -12,10 +10,12 @@ import Login from './pages/Login';
 import Register from "./pages/Register";
 
 import AdminProfile from './pages/admin/AdminProfile';
-import OrgDashboard from './pages/organizer/OrgDashboard';
+// import OrgDashboard from './pages/organizer/OrgDashboard';
 
 import AttendeeUpcoming from './pages/attendees/AttUpcoming'
 import LandingPage from './pages/LandingPage';
+import EventDetails from './pages/EventDetails';
+
 
 
 function ProtectedRoute({ children, roles }) {
@@ -28,14 +28,17 @@ function ProtectedRoute({ children, roles }) {
 }
 
 function App() {
+
   return (
     <Router>
       <Routes>
         <Route path="/" element={<LandingPage/>} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/events/:id" element={<Events />} />
+        <Route path="/events/:id" element={<EventDetails />} />
         <Route path="/events" element={<EventsList />} />
+        
+
 
         {/* Attendee Protected Routes */}
         <Route path="/attendee/:id/profile" element={
@@ -51,13 +54,13 @@ function App() {
           }
         />
 
-        {/* Organizer Protected Routes */}
+        {/* Organizer Protected Routes
         <Route path="/organizer/:id/dashboard" element={
             <ProtectedRoute roles={['organizer']}>
               <OrgDashboard />
-            </ProtectedRoute>
-          }
-        />
+            </ProtectedRoute> */}
+          {/* } */}
+        {/* /> */}
         <Route path="/organizer/:id/profile" element={
             <ProtectedRoute roles={['organizer']}>
               <OrgProfile />
@@ -82,8 +85,10 @@ function App() {
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
     </Router>
+    
   );
 }
+
 
 export default App;
 
