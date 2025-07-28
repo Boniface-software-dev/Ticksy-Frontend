@@ -2,23 +2,30 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import { fetchEventById } from "../features/events/eventSlice";
+import { 
+  fetchEventById,
+  fetchTicketsByEvent,
+  updateTicketQuantity,
+  checkoutTickets,
+} from "../features/events/eventSlice";
+
 import Footer from "../components/Footer";
 
 const EventDetails = () => {
-  const { id } = useParams();
+  const { id : eventId } = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const event = useSelector((state) => state.events.selectedEvent);
-  const status = useSelector((state) => state.events.status);
-
-  const [tickets, setTickets] = useState([]);
-  const [selectedQuantities, setSelectedQuantities] = useState({});
+  const { selectedEvent: event, tickets, selectedTickets, status } = useSelector(
+    (state) => state.events
+  );
+  const { token } = useSelector((state) => state.auth);
 
   // Fetch event details
   useEffect(() => {
     dispatch(fetchEventById(id));
-  }, [dispatch, id]);
+    dispatch(fetchTicketsByEvent(eventId));
+  }, [dispatch, eventId]);
 
   // Fetch ticket types for the event
   useEffect(() => {
