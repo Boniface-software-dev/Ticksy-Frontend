@@ -35,16 +35,18 @@ export default function AdminUsers() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg text-gray-500">Loading users...</div>
+      <div className="min-h-screen flex items-center justify-center bg-[#faf8ff]">
+        <div className="text-lg text-[#9747ff] animate-pulse font-medium">
+          Loading users...
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg text-red-500">{error}</div>
+      <div className="min-h-screen flex items-center justify-center bg-[#faf8ff]">
+        <div className="text-lg text-red-500 font-semibold">{error}</div>
       </div>
     );
   }
@@ -52,14 +54,15 @@ export default function AdminUsers() {
   return (
     <div className="flex min-h-screen bg-[#faf8ff]">
       <AdminSidebar />
-      <main className="flex-1 p-6 sm:p-8">
-        <div className="max-w-6xl mx-auto bg-white dark:bg-[#1a1240] rounded-2xl shadow-xl p-6 sm:p-8">
-          <h1 className="text-2xl font-bold text-[#1a1240] dark:text-white mb-6">
-            All Users
+      <main className="flex-1 p-6 sm:p-10">
+        <div className="max-w-6xl mx-auto bg-[#f8f4ff] border border-[#e3d7fb] rounded-2xl shadow-sm p-6 sm:p-8">
+          <h1 className="text-2xl font-extrabold text-[#1a1240] mb-6">
+            👥 All Users
           </h1>
-          <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
+
+          <div className="overflow-x-auto rounded-xl border border-[#e5dbf9]">
             <table className="min-w-full text-sm text-left">
-              <thead className="bg-[#c792df] text-[#1a1240] dark:text-white uppercase text-xs font-semibold tracking-wider">
+              <thead className="bg-[#e0c8f9] text-[#1a1240] uppercase text-xs font-semibold tracking-wider">
                 <tr>
                   <th className="px-4 py-3">ID</th>
                   <th className="px-4 py-3">Name</th>
@@ -70,12 +73,12 @@ export default function AdminUsers() {
                   <th className="px-4 py-3">Created</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+              <tbody className="divide-y divide-[#f0eafd]">
                 {users.map((u) => (
                   <tr
                     key={u.id}
                     onClick={() => navigate(`/admin/${id}/users/${u.id}`)}
-                    className="hover:bg-gray-50 dark:hover:bg-[#2e2366] transition cursor-pointer"
+                    className="hover:bg-[#fdfbff] transition cursor-pointer"
                   >
                     <td className="px-4 py-3">{u.id}</td>
                     <td className="px-4 py-3">
