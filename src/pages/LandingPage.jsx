@@ -246,76 +246,78 @@ const LandingPage = () => {
         </div>
       </section>
 
-      <section id="faqs" className="bg-white py-20 px-5 text-black">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-semibold text-[#9747FF] mb-10 text-center md:text-left">
-            FAQs: What Ticksy Users Ask Most
-          </h2>
+ <section id="faqs" className="bg-white py-20 px-5 text-black">
+  <div className="max-w-6xl mx-auto">
+    <h2 className="text-3xl font-semibold text-[#9747FF] mb-10 text-center md:text-left">
+      FAQs: What Ticksy Users Ask Most
+    </h2>
 
-          <div className="flex flex-col md:flex-row gap-10 items-start md:items-stretch">
-            <div className="md:w-1/2 flex justify-center md:justify-start">
-              <img
-                src="/undraw_faq_h01d.svg"
-                alt="FAQ illustration"
-                className="w-full h-auto max-w-md rounded-2xl shadow-lg md:sticky md:top-24"
-              />
-            </div>
+    <div className="flex flex-col md:flex-row gap-10 items-start md:items-stretch">
+      <div className="md:w-1/2 flex justify-center md:justify-start">
+        <img
+          src="/undraw_faq_h01d.svg"
+          alt="FAQ illustration"
+          className="w-full h-auto max-w-md rounded-2xl shadow-lg md:sticky md:top-24"
+        />
+      </div>
 
-            <div className="md:w-1/2 space-y-4 text-black">
-              {[
-                {
-                  id: "createEvent",
-                  question: "How do I create an event on Ticksy?",
-                  answer:
-                    'Just sign in as an organizer, go to "Create Event," and fill out your event details including location, time, and ticket types. It only takes a few minutes.',
-                },
-                {
-                  id: "buyWithoutSignup",
-                  question: "Can I buy tickets without signing up?",
-                  answer:
-                    "No — to book a ticket, you must first sign in to your Ticksy account. This helps us securely manage your bookings and ensure instant confirmation.",
-                },
-                {
-                  id: "paymentMethods",
-                  question: "What payment methods are supported?",
-                  answer:
-                    "Ticksy uses MPESA STK Push, allowing you to pay directly from your phone. You'll receive a prompt to enter your PIN and confirm instantly.",
-                },
-                {
-                  id: "trackSales",
-                  question: "How can organizers track sales?",
-                  answer:
-                    "Organizers can track sales in real-time through the Ticksy dashboard, which provides detailed analytics on ticket purchases, revenue, and attendee information.",
-                },
-                {
-                  id: "pastTickets",
-                  question: "Where do I find my past tickets?",
-                  answer:
-                    'All your past tickets are stored in the "My Tickets" section of your Ticksy account. You can access them anytime by logging in and navigating to this section.',
-                },
-              ].map((item) => (
-                <div
-                  key={item.id}
-                  className="border border-gray-300 rounded-xl p-5 bg-white shadow-sm hover:shadow-md transition-all duration-300"
-                >
-                  <button
-                    className="w-full flex justify-between items-center text-left"
-                    onClick={() => toggleItem(item.id)}
-                  >
-                    <span className="font-medium text-gray-800 text-base">{item.question}</span>
-                    <span className="text-[#9747FF] text-xl font-bold">
-                      {expandedItems[item.id] ? "−" : "+"}
-                    </span>
-                  </button>
-                  {expandedItems[item.id] && (
-                    <p className="mt-3 text-gray-600 text-sm leading-relaxed">{item.answer}</p>
-                  )}
-                </div>
-              ))}
-            </div>
+      <div className="md:w-1/2 space-y-4 text-black">
+        {[
+          {
+            id: "createEvent",
+            question: "How do I create an event on Ticksy?",
+            answer:
+              'Just sign in as an organizer, go to "Create Event," and fill out your event details including location, time, and ticket types. It only takes a few minutes.',
+          },
+          {
+            id: "buyWithoutSignup",
+            question: "Can I buy tickets without signing up?",
+            answer:
+              "No — to book a ticket, you must first sign in to your Ticksy account. This helps us securely manage your bookings and ensure instant confirmation.",
+          },
+          {
+            id: "paymentMethods",
+            question: "What payment methods are supported?",
+            answer:
+              "Ticksy uses MPESA STK Push, allowing you to pay directly from your phone. You'll receive a prompt to enter your PIN and confirm instantly.",
+          },
+          {
+            id: "trackSales",
+            question: "How can organizers track sales?",
+            answer:
+              "Organizers can track sales in real-time through the Ticksy dashboard, which provides detailed analytics on ticket purchases, revenue, and attendee information.",
+          },
+          {
+            id: "pastTickets",
+            question: "Where do I find my past tickets?",
+            answer:
+              'All your past tickets are stored in the "My Tickets" section of your Ticksy account. You can access them anytime by logging in and navigating to this section.',
+          },
+        ].map((item) => (
+          <div
+            key={item.id}
+            className="border border-[#E5D9FB] rounded-xl p-5 bg-[#FCFAFF] shadow-sm hover:shadow-[0_2px_8px_rgba(151,71,255,0.15)] transition-all duration-300"
+          >
+            <button
+              className="w-full flex justify-between items-center text-left group"
+              onClick={() => toggleItem(item.id)}
+            >
+              <span className="font-medium text-neutral-900 text-base group-hover:text-[#9747FF] transition-colors">
+                {item.question}
+              </span>
+              <span className="text-[#9747FF] text-xl font-bold">
+                {expandedItems[item.id] ? "−" : "+"}
+              </span>
+            </button>
+            {expandedItems[item.id] && (
+              <p className="mt-3 text-neutral-600 text-sm leading-relaxed">{item.answer}</p>
+            )}
           </div>
-        </div>
-      </section>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
 
       <Footer />
     </div>
