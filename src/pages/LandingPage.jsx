@@ -90,7 +90,7 @@ const LandingPage = () => {
               to="/register"
               className="bg-black text-[#9747FF] px-8 py-3 rounded-lg font-semibold border border-[#9747FF] hover:bg-[#9747FF] hover:text-white transition"
             >
-              Get Started Free
+              Get Started
             </Link>
             <Link
               to="/events"
@@ -233,10 +233,10 @@ const LandingPage = () => {
                   <h3 className="text-xl font-semibold text-gray-800 mt-4 mb-2">{title}</h3>
                   <p className="text-gray-600 text-sm">
                     {[
-                      "Join Ticksy as an event organizer or attendee — quick, easy and free.",
-                      "Find events you love — or host your own with custom ticket options.",
+                      "Join Ticksy as an event organizer or attendee.",
+                      "Find events you love or host your own with custom ticket options.",
                       "Secure your spot fast with MPESA payments and instant ticket delivery.",
-                      "Get reminders, show up, and enjoy your event — then leave a review!",
+                      "Get reminders, show up, and enjoy your event then leave a review!",
                     ][index]}
                   </p>
                 </div>
