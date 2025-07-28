@@ -24,6 +24,7 @@ import AttendeeUpcoming from "./pages/attendees/AttUpcoming";
 import LandingPage from "./pages/LandingPage";
 import EventDetails from "./pages/EventDetails";
 import AttendeePastEvents from "./pages/attendees/AttendeePastEvents";
+import AttendeePastEventDetail from "./pages/attendees/AttendeePastEventDetail";
 
 function ProtectedRoute({ children, roles }) {
   const user = useSelector((state) => state.auth.currentUser);
@@ -64,6 +65,14 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/attendee/:id/past-events/:eventId"
+        element={
+    <ProtectedRoute roles={["attendee"]}>
+      <AttendeePastEventDetail />
+    </ProtectedRoute>
+  }
+/>
+
 
         <Route
           path="/organizer/:id/profile"
