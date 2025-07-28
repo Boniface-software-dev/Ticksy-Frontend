@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import AdminSidebar from "../../components/AdminSidebar";
-import API from "../../utils/axios";
+import API from "../../utils/axiosInstance";
 import {
   AreaChart,
   Area,
@@ -17,6 +17,7 @@ export default function AdminDashboard() {
   const { id } = useParams();
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.currentUser);
+  const basePath = `/admin/${user?.id}`; // ✅ Fixed: define basePath here
 
   const [summary, setSummary] = useState({});
   const [ticketSalesData, setTicketSalesData] = useState([]);
@@ -165,6 +166,7 @@ export default function AdminDashboard() {
           </div>
         </div>
 
+        {/* Floating Profile Link */}
         <Link
           to={`${basePath}/profile`}
           className="fixed bottom-8 left-8 bg-purple-700 text-white rounded-full shadow-lg px-5 py-2 text-lg font-semibold hover:bg-purple-800 transition duration-200 z-50"

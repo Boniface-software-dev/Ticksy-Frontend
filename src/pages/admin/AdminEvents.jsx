@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import API from "../../utils/axios";
+import API from "../../utils/axiosInstance";
 import AdminSidebar from "../../components/AdminSidebar";
 import { toast } from "react-toastify";
 

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import API from "../../utils/axios";
+import API from "../../utils/axiosInstance";
 import { logout } from "../../features/authentification/authSlice";
 
 export default function AdminProfile() {
@@ -14,7 +14,6 @@ export default function AdminProfile() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // 🚫 Redirect if not same user or not admin
   useEffect(() => {
     if (!user || user.role !== "admin" || user.id.toString() !== id) {
       navigate("/unauthorized");
@@ -62,21 +61,21 @@ export default function AdminProfile() {
   return (
     <div className="min-h-screen bg-[#f4f3fb] py-10 px-4 flex flex-col items-center">
       <div className="w-full max-w-3xl space-y-6">
-        {/* Header Section */}
+        {/* Header */}
         <div className="text-2xl font-semibold text-[#1a1240] underline">
           My Profile
         </div>
 
         {/* Profile Card */}
         <div className="bg-white shadow-md rounded-xl p-6 flex items-center gap-6">
-          <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 text-3xl font-bold">
+          <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 text-3xl font-bold">
             {admin?.first_name?.charAt(0)}
           </div>
           <div>
             <div className="font-semibold text-[#1a1240] text-lg">
               {admin.first_name} {admin.last_name}
             </div>
-            <div className="text-sm text-gray-500">{admin.email}</div>
+            <div className="text-sm text-gray-700">{admin.email}</div>
           </div>
         </div>
 
@@ -103,7 +102,7 @@ export default function AdminProfile() {
               </svg>
             </button>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-y-3 text-sm">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-y-3 text-sm text-gray-700">
             <div>
               <span className="font-medium text-[#1a1240]">First Name</span>
               <div>{admin.first_name}</div>
@@ -127,7 +126,7 @@ export default function AdminProfile() {
           </div>
         </div>
 
-        {/* Action Buttons */}
+        {/* Buttons */}
         <div className="flex flex-col md:flex-row gap-3 mt-4">
           <button
             onClick={handleBack}

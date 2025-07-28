@@ -1,22 +1,31 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import EventsList from './pages/EventsList';
+import React from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { useSelector } from "react-redux";
+import EventsList from "./pages/EventsList";
 
-import AttendeeProfile from './pages/attendees/AttendeeProfile';
-import OrgProfile from './pages/organizer/OrgProfile';
-import Unauthorized from './pages/Unauthorized';
-import Login from './pages/Login';
+import AttendeeProfile from "./pages/attendees/AttendeeProfile";
+import OrgProfile from "./pages/organizer/OrgProfile";
+import Unauthorized from "./pages/Unauthorized";
+import Login from "./pages/Login";
 import Register from "./pages/Register";
 
-import AdminProfile from './pages/admin/AdminProfile';
+import AdminProfile from "./pages/admin/AdminProfile";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminEvents from "./pages/admin/AdminEvents";
+import AdminAnalytics from "./pages/admin/AdminAnalytics";
 // import OrgDashboard from './pages/organizer/OrgDashboard';
 
-import AttendeeUpcoming from './pages/attendees/AttUpcoming'
-import LandingPage from './pages/LandingPage';
-import EventDetails from './pages/EventDetails';
+import AttendeeUpcoming from "./pages/attendees/AttUpcoming";
+import LandingPage from "./pages/LandingPage";
+import EventDetails from "./pages/EventDetails";
 
-
+// ...imports
 
 function ProtectedRoute({ children, roles }) {
   const user = useSelector((state) => state.auth.currentUser);
@@ -28,30 +37,28 @@ function ProtectedRoute({ children, roles }) {
 }
 
 function App() {
-
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<LandingPage/>} />
+        <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/events/:id" element={<EventDetails />} />
         <Route path="/events" element={<EventsList />} />
 
-        <Route path="/admin/:id/dashboard" element={<AdminDashboard />} />
-
-        
-
-
         {/* Attendee Protected Routes */}
-        <Route path="/attendee/:id/profile" element={
-            <ProtectedRoute roles={['attendee']}>
+        <Route
+          path="/attendee/:id/profile"
+          element={
+            <ProtectedRoute roles={["attendee"]}>
               <AttendeeProfile />
             </ProtectedRoute>
           }
         />
-        <Route path="/attendee/:id/upcoming-events" element={
-            <ProtectedRoute roles={['attendee']}>
+        <Route
+          path="/attendee/:id/upcoming-events"
+          element={
+            <ProtectedRoute roles={["attendee"]}>
               <AttendeeUpcoming />
             </ProtectedRoute>
           }
@@ -62,10 +69,12 @@ function App() {
             <ProtectedRoute roles={['organizer']}>
               <OrgDashboard />
             </ProtectedRoute> */}
-          {/* } */}
+        {/* } */}
         {/* /> */}
-        <Route path="/organizer/:id/profile" element={
-            <ProtectedRoute roles={['organizer']}>
+        <Route
+          path="/organizer/:id/profile"
+          element={
+            <ProtectedRoute roles={["organizer"]}>
               <OrgProfile />
             </ProtectedRoute>
           }
@@ -73,9 +82,41 @@ function App() {
 
         {/* Admin Protected Routes */}
         <Route
+          path="/admin/:id/dashboard"
+          element={
+            <ProtectedRoute roles={["admin"]}>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/:id/users"
+          element={
+            <ProtectedRoute roles={["admin"]}>
+              <AdminUsers />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/:id/events"
+          element={
+            <ProtectedRoute roles={["admin"]}>
+              <AdminEvents />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/:id/analytics"
+          element={
+            <ProtectedRoute roles={["admin"]}>
+              <AdminAnalytics />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/admin/:id/profile"
           element={
-            <ProtectedRoute roles={['admin']}>
+            <ProtectedRoute roles={["admin"]}>
               <AdminProfile />
             </ProtectedRoute>
           }
@@ -86,12 +127,9 @@ function App() {
 
         {/* Catch-all: Redirect unknown routes */}
         <Route path="*" element={<Navigate to="/login" />} />
-
       </Routes>
     </Router>
-    
   );
 }
-
 
 export default App;
