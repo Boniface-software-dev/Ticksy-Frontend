@@ -62,7 +62,7 @@ const LandingPage = () => {
     <div className="font-poppins bg-[#F3F3F5] text-black min-h-screen scroll-smooth">
       <Navbar />
 
-      <section className="relative h-screen w-full overflow-hidden">
+      <section id="hero" className="relative h-screen w-full overflow-hidden">
         <video
           ref={videoRef}
           autoPlay
@@ -106,7 +106,7 @@ const LandingPage = () => {
         </div>
       </section>
 
-      <section id="features" className="py-20 px-6 bg-[#F3F3F5] text-black font-poppins">
+      <section id="features" className="bg-white py-20 px-5">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-extrabold text-center text-[#9747FF] mb-12">
             Our Core Features
@@ -218,7 +218,7 @@ const LandingPage = () => {
         </div>
       </section>
 
-      <section id="how-it-works" className="bg-[#F3F3F5] py-20 px-6 text-black font-poppins">
+      <section id="how-it-works" className="bg-gray-50 py-20 px-5">
         <div className="max-w-6xl mx-auto text-center">
           <h2 className="text-4xl font-bold text-[#9747FF] mb-4">How It Works</h2>
           <p className="text-lg text-gray-500 mb-16">Get started in just four easy steps</p>
@@ -246,7 +246,7 @@ const LandingPage = () => {
         </div>
       </section>
 
- <section id="faqs" className="bg-white py-20 px-5 text-black">
+ <section id="faqs" className="bg-white py-20 px-5">
   <div className="max-w-6xl mx-auto">
     <h2 className="text-3xl font-semibold text-[#9747FF] mb-10 text-center md:text-left">
       FAQs: What Ticksy Users Ask Most
