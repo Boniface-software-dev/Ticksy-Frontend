@@ -87,6 +87,16 @@ const EventDetails = () => {
 
           <h2 className="text-2xl font-bold mb-4">Tickets</h2>
           <div className="grid grid-cols-2 gap-4 mb-6">
+            {tickets.map((ticket) => {
+              const remaining = ticket.quantity - ticket.sold;
+              return (
+                <div
+                  key={ticket.id}
+                  className="border border-[#9747FF] rounded-lg p-4"
+                >
+                  
+            }}
+
             {/* Individual Ticket */}
             <div className="border border-[#9747FF] rounded-lg p-4">
               <h3 className="text-center font-semibold mb-2">Individual</h3>
