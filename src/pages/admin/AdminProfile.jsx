@@ -1,85 +1,148 @@
-import React from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import API from "../../utils/axios";
 import { logout } from "../../features/authentification/authSlice";
-import { useNavigate, Link } from "react-router-dom";
-
-import Logo from "../../components/Logo";
-import Avatar from "../../components/Avatar";
 
 export default function AdminProfile() {
+  const { id } = useParams();
+  const user = useSelector((state) => state.auth.currentUser);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const user = useSelector((state) => state.auth.currentUser);
+
+  const [admin, setAdmin] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  // 🚫 Redirect if not same user or not admin
+  useEffect(() => {
+    if (!user || user.role !== "admin" || user.id.toString() !== id) {
+      navigate("/unauthorized");
+    }
+  }, [user, id, navigate]);
+
+  useEffect(() => {
+    setLoading(true);
+    API.get("/profile/me")
+      .then((res) => {
+        setAdmin(res.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.response?.data?.message || "Failed to load profile.");
+        setLoading(false);
+      });
+  }, []);
 
   const handleLogout = () => {
     dispatch(logout());
     navigate("/login");
   };
 
+  const handleBack = () => {
+    navigate(`/admin/${id}/dashboard`);
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-lg text-gray-500">Loading profile...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-lg text-red-500">{error}</div>
+      </div>
+    );
+  }
+
   return (
-    <>
-      <Logo />
-      <div className="max-w-4xl mx-auto p-4">
-        <Link
-          to={`/admin/${user?.id}/dashboard`}
-          className="text-blue-500 mb-4 inline-block"
-        >
-          Back to Dashboard
-        </Link>
+    <div className="min-h-screen bg-[#f4f3fb] py-10 px-4 flex flex-col items-center">
+      <div className="w-full max-w-3xl space-y-6">
+        {/* Header Section */}
+        <div className="text-2xl font-semibold text-[#1a1240] underline">
+          My Profile
+        </div>
 
-        <h2 className="text-3xl font-semibold mb-4 text-black">My Profile</h2>
-
-        <div className="bg-white rounded shadow text-black p-6 mb-6 flex gap-6 items-center">
-          <Avatar size={100} />
-          <div className="break-words">
-            <h3 className="text-xl font-medium mb-1">
-              {user?.first_name} {user?.last_name}
-            </h3>
-            <p className="text-gray-600 break-all">{user?.email}</p>
+        {/* Profile Card */}
+        <div className="bg-white shadow-md rounded-xl p-6 flex items-center gap-6">
+          <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 text-3xl font-bold">
+            {admin?.first_name?.charAt(0)}
+          </div>
+          <div>
+            <div className="font-semibold text-[#1a1240] text-lg">
+              {admin.first_name} {admin.last_name}
+            </div>
+            <div className="text-sm text-gray-500">{admin.email}</div>
           </div>
         </div>
 
-        <div className="bg-white rounded shadow text-black p-6 mb-6">
-          <h3 className="text-xl font-semibold mb-4 border-b-1 pb-2">Personal Information</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {/* Personal Info */}
+        <div className="bg-white shadow-md rounded-xl p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-[#1a1240]">
+              Personal Information
+            </h2>
+            <button className="text-sm bg-purple-500 hover:bg-purple-600 text-white px-4 py-1 rounded-md flex items-center gap-1">
+              <span>Edit</span>
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M18.5 2.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z"
+                />
+              </svg>
+            </button>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-y-3 text-sm">
             <div>
-              <p className="text-gray-600 text-sm">First Name</p>
-              <p className="break-words">{user?.first_name}</p>
+              <span className="font-medium text-[#1a1240]">First Name</span>
+              <div>{admin.first_name}</div>
             </div>
             <div>
-              <p className="text-gray-600 text-sm">Last Name</p>
-              <p className="break-words">{user?.last_name}</p>
+              <span className="font-medium text-[#1a1240]">Last Name</span>
+              <div>{admin.last_name}</div>
             </div>
             <div>
-              <p className="text-gray-600 text-sm">Role</p>
-              <p className="capitalize">{user?.role}</p>
+              <span className="font-medium text-[#1a1240]">Date of Birth</span>
+              <div>{admin.dob || "Not provided"}</div>
             </div>
             <div>
-              <p className="text-gray-600 text-sm">Email</p>
-              <p className="break-all">{user?.email}</p>
+              <span className="font-medium text-[#1a1240]">Email Address</span>
+              <div>{admin.email}</div>
             </div>
             <div>
-              <p className="text-gray-600 text-sm">Phone Number</p>
-              <p className="break-words">{user?.phone}</p>
+              <span className="font-medium text-[#1a1240]">Phone Number</span>
+              <div>{admin.phone}</div>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded shadow text-black p-6 flex flex-wrap gap-4 justify-between">
+        {/* Action Buttons */}
+        <div className="flex flex-col md:flex-row gap-3 mt-4">
+          <button
+            onClick={handleBack}
+            className="w-full md:w-auto bg-purple-700 hover:bg-purple-800 text-white px-6 py-2 rounded-lg font-semibold"
+          >
+            Back to Dashboard
+          </button>
           <button
             onClick={handleLogout}
-            className="text-amber-500 border border-amber-500 px-4 py-2 rounded hover:bg-amber-500 hover:text-white transition"
+            className="w-full md:w-auto bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg font-semibold"
           >
-            Logout
-          </button>
-          <button className="px-4 py-2 rounded text-red-400 border border-red-400 hover:bg-red-400 hover:text-white transition">
-            Deactivate Account
-          </button>
-          <button className="px-4 py-2 rounded text-red-600 border border-red-600 hover:bg-red-600 hover:text-white transition">
-            Delete Account
+            Log Out
           </button>
         </div>
       </div>
-    </>
+    </div>
   );
 }

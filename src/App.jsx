@@ -37,6 +37,9 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/events/:id" element={<EventDetails />} />
         <Route path="/events" element={<EventsList />} />
+
+        <Route path="/admin/:id/dashboard" element={<AdminDashboard />} />
+
         
 
 
@@ -83,6 +86,7 @@ function App() {
 
         {/* Catch-all: Redirect unknown routes */}
         <Route path="*" element={<Navigate to="/login" />} />
+
       </Routes>
     </Router>
     
@@ -91,5 +95,3 @@ function App() {
 
 
 export default App;
-
-
