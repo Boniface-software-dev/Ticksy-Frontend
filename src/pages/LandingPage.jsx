@@ -74,7 +74,8 @@ const LandingPage = () => {
         >
           <source src={videoSrc} type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-gradient-to-b from-[#9747FF]/10 to-[#9747FF]/5 z-10" />
+        <div className="absolute inset-0 bg-black/20 z-10"></div>
+<div className="absolute inset-0 bg-gradient-to-b from-[#9747FF]/10 to-transparent z-20"></div>
 
         <div className="relative z-20 flex flex-col items-center justify-center text-center text-white px-6 h-full max-w-2xl mx-auto">
           <h1 className="text-5xl sm:text-6xl font-extrabold leading-tight mb-6">
@@ -328,5 +329,6 @@ const LandingPage = () => {
     </div>
   );
 };
+
 
 export default LandingPage;
