@@ -94,8 +94,23 @@ const EventDetails = () => {
                   key={ticket.id}
                   className="border border-[#9747FF] rounded-lg p-4"
                 >
-                  
-            }}
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-lg font-semibold">{ticket.type}</h3>
+                    <span className="text-sm text-gray-500">
+                      {remaining} remaining
+                    </span>
+                  </div>
+                  <p>price:{ticket.price.toLocaleString()}</p>
+                  <div className="flex items-center justify-between mt-4">
+                    <button
+                      onClick={() => handleDecrement(ticket.id)}
+                      className="px-2 py-1 border rounded"
+                    >
+                      -
+                    
+
+
+            
 
             {/* Individual Ticket */}
             <div className="border border-[#9747FF] rounded-lg p-4">
