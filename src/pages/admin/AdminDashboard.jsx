@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useNavigate, useParams, Link } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import AdminSidebar from "../../components/AdminSidebar";
 import API from "../../utils/axiosInstance";
 import {
@@ -17,13 +17,11 @@ export default function AdminDashboard() {
   const { id } = useParams();
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.currentUser);
-  const basePath = `/admin/${user?.id}`; // ✅ Fixed: define basePath here
+  const basePath = `/admin/${user?.id}`;
 
   const [summary, setSummary] = useState({});
   const [ticketSalesData, setTicketSalesData] = useState([]);
   const [recentActivity, setRecentActivity] = useState([]);
-  const [pendingEvents, setPendingEvents] = useState([]);
-  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -54,15 +52,7 @@ export default function AdminDashboard() {
           }))
         );
       })
-      .catch(() => setRecentActivity([]));
-
-    API.get("/admin/pending")
-      .then((res) => setPendingEvents(res.data || []))
-      .catch(() => setPendingEvents([]));
-
-    API.get("/admin/users")
-      .then((res) => setUsers(res.data || []))
-      .catch(() => setUsers([]))
+      .catch(() => setRecentActivity([]))
       .finally(() => setLoading(false));
   }, []);
 
@@ -165,14 +155,6 @@ export default function AdminDashboard() {
             </ul>
           </div>
         </div>
-
-        {/* Floating Profile Link */}
-        <Link
-          to={`${basePath}/profile`}
-          className="fixed bottom-8 left-8 bg-purple-700 text-white rounded-full shadow-lg px-5 py-2 text-lg font-semibold hover:bg-purple-800 transition duration-200 z-50"
-        >
-          Profile
-        </Link>
       </main>
     </div>
   );

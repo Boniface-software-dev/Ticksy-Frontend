@@ -25,6 +25,7 @@ import LandingPage from "./pages/LandingPage";
 import EventDetails from "./pages/EventDetails";
 import AttendeePastEvents from "./pages/attendees/AttendeePastEvents";
 import AttendeePastEventDetail from "./pages/attendees/AttendeePastEventDetail";
+import AdminUserProfile from "./pages/admin/AdminUserProfile";
 
 function ProtectedRoute({ children, roles }) {
   const user = useSelector((state) => state.auth.currentUser);
@@ -53,26 +54,30 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/attendee/:id/upcoming-events" element={
-            <ProtectedRoute roles={['attendee']}>
+        <Route
+          path="/attendee/:id/upcoming-events"
+          element={
+            <ProtectedRoute roles={["attendee"]}>
               <AttendeeUpcoming />
             </ProtectedRoute>
           }
         />
-        <Route path="/attendee/:id/past-events" element={
-            <ProtectedRoute roles={['attendee']}>
+        <Route
+          path="/attendee/:id/past-events"
+          element={
+            <ProtectedRoute roles={["attendee"]}>
               <AttendeePastEvents />
             </ProtectedRoute>
           }
         />
-        <Route path="/attendee/:id/past-events/:eventId"
-        element={
-    <ProtectedRoute roles={["attendee"]}>
-      <AttendeePastEventDetail />
-    </ProtectedRoute>
-  }
-/>
-
+        <Route
+          path="/attendee/:id/past-events/:eventId"
+          element={
+            <ProtectedRoute roles={["attendee"]}>
+              <AttendeePastEventDetail />
+            </ProtectedRoute>
+          }
+        />
 
         <Route
           path="/organizer/:id/profile"
@@ -83,6 +88,7 @@ function App() {
           }
         />
 
+        {/* Admin Protected Routes */}
         <Route
           path="/admin/:id/dashboard"
           element={
@@ -120,6 +126,14 @@ function App() {
           element={
             <ProtectedRoute roles={["admin"]}>
               <AdminProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/:adminId/users/:userId"
+          element={
+            <ProtectedRoute roles={["admin"]}>
+              <AdminUserProfile />
             </ProtectedRoute>
           }
         />

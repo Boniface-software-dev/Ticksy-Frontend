@@ -11,6 +11,13 @@ export default function AdminProfile() {
   const navigate = useNavigate();
 
   const [admin, setAdmin] = useState(null);
+  const [editing, setEditing] = useState(false);
+  const [form, setForm] = useState({
+    first_name: "",
+    last_name: "",
+    email: "",
+    phone: "",
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -25,6 +32,12 @@ export default function AdminProfile() {
     API.get("/profile/me")
       .then((res) => {
         setAdmin(res.data);
+        setForm({
+          first_name: res.data.first_name,
+          last_name: res.data.last_name,
+          email: res.data.email,
+          phone: res.data.phone,
+        });
         setLoading(false);
       })
       .catch((err) => {
@@ -40,6 +53,21 @@ export default function AdminProfile() {
 
   const handleBack = () => {
     navigate(`/admin/${id}/dashboard`);
+  };
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSave = () => {
+    API.put("/profile/me", form)
+      .then((res) => {
+        setAdmin({ ...admin, ...form });
+        setEditing(false);
+      })
+      .catch((err) => {
+        alert(err.response?.data?.message || "Failed to update profile.");
+      });
   };
 
   if (loading) {
@@ -85,44 +113,45 @@ export default function AdminProfile() {
             <h2 className="text-lg font-semibold text-[#1a1240]">
               Personal Information
             </h2>
-            <button className="text-sm bg-purple-500 hover:bg-purple-600 text-white px-4 py-1 rounded-md flex items-center gap-1">
-              <span>Edit</span>
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
+            {!editing ? (
+              <button
+                onClick={() => setEditing(true)}
+                className="text-sm bg-purple-500 hover:bg-purple-600 text-white px-4 py-1 rounded-md flex items-center gap-1"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M18.5 2.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z"
-                />
-              </svg>
-            </button>
+                <span>Edit</span>
+              </button>
+            ) : (
+              <button
+                onClick={handleSave}
+                className="text-sm bg-green-600 hover:bg-green-700 text-white px-4 py-1 rounded-md flex items-center gap-1"
+              >
+                <span>Save</span>
+              </button>
+            )}
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-y-3 text-sm text-gray-700">
-            <div>
-              <span className="font-medium text-[#1a1240]">First Name</span>
-              <div>{admin.first_name}</div>
-            </div>
-            <div>
-              <span className="font-medium text-[#1a1240]">Last Name</span>
-              <div>{admin.last_name}</div>
-            </div>
-            <div>
-              <span className="font-medium text-[#1a1240]">Date of Birth</span>
-              <div>{admin.dob || "Not provided"}</div>
-            </div>
-            <div>
-              <span className="font-medium text-[#1a1240]">Email Address</span>
-              <div>{admin.email}</div>
-            </div>
-            <div>
-              <span className="font-medium text-[#1a1240]">Phone Number</span>
-              <div>{admin.phone}</div>
-            </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 text-sm text-gray-700">
+            {["first_name", "last_name", "email", "phone"].map((field) => (
+              <div key={field}>
+                <span className="font-medium text-[#1a1240] capitalize">
+                  {field.replace("_", " ")}
+                </span>
+                {editing ? (
+                  <input
+                    name={field}
+                    value={form[field]}
+                    onChange={handleChange}
+                    className="w-full mt-1 border border-gray-300 rounded-md px-3 py-2 text-sm"
+                  />
+                ) : (
+                  <div className="mt-1">
+                    {admin[field] || (
+                      <span className="italic text-gray-400">Not provided</span>
+                    )}
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         </div>
 
