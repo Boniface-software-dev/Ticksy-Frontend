@@ -83,7 +83,7 @@ const LandingPage = () => {
             Plan It. Book It. Live It.
           </h1>
           <p className="text-lg sm:text-xl font-medium mb-10 leading-relaxed">
-            Find your vibe, brought to life by hosts who use Ticksy to make it happen.
+            Your all in one platform to discover and host events
           </p>
 
           <div className="flex flex-col sm:flex-row justify-center gap-5 mb-8">
