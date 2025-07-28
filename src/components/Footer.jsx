@@ -3,8 +3,10 @@ import { FaInstagram, FaFacebookF, FaTwitter, FaTiktok, FaArrowUp } from "react-
 
 const Footer = () => {
   const [showScroll, setShowScroll] = useState(false);
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
-  
   const checkScrollTop = () => {
     if (window.scrollY > 300) {
       setShowScroll(true);
@@ -22,6 +24,23 @@ const Footer = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const isValidEmail = (value) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+
+  const handleSubscribe = () => {
+    setMessage("");
+    setError("");
+
+    if (!email.trim()) {
+      setError("Please enter your email.");
+    } else if (!isValidEmail(email)) {
+      setError("Please enter a valid email address.");
+    } else {
+      setMessage("Thanks for subscribing!");
+      setEmail("");
+    }
+  };
+
   return (
     <>
       <footer className="bg-[#F9F8FF] text-gray-800 font-poppins border-t border-gray-300 shadow-inner relative">
@@ -36,7 +55,7 @@ const Footer = () => {
                 and festivals.
               </p>
               
-              {/* Newsletter (Placeholder) */}
+              {/* Newsletter */}
               <div className="mt-4">
                 <p className="text-sm font-medium text-[#5B1FBF] mb-2">
                   Stay updated with our newsletter
@@ -44,15 +63,22 @@ const Footer = () => {
                 <div className="flex">
                   <input
                     type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     placeholder="Your email"
                     className="px-3 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-1 focus:ring-[#9747FF] text-sm w-full"
                   />
-                  <button className="bg-[#9747FF] text-white px-4 py-2 rounded-r-md hover:bg-[#7c3aed] transition text-sm">
+                  <button
+                    onClick={handleSubscribe}
+                    className="bg-[#9747FF] text-white px-4 py-2 rounded-r-md hover:bg-[#7c3aed] transition text-sm"
+                  >
                     Subscribe
                   </button>
                 </div>
+                {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+                {message && <p className="text-green-600 text-sm mt-2">{message}</p>}
               </div>
-            </div>
+            </div> {/* This closing div was missing */}
 
             {/* Company */}
             <div>
@@ -90,24 +116,22 @@ const Footer = () => {
               <h4 className="text-lg font-semibold text-[#5B1FBF] mb-4">Follow Us</h4>
               <div className="flex space-x-4 text-xl">
                 {[
-  { icon: <FaInstagram />, label: "Instagram", link: "https://instagram.com/ticksy" },
-  { icon: <FaFacebookF />, label: "Facebook", link: "https://facebook.com/ticksy" },
-  { icon: <FaTwitter />, label: "Twitter", link: "https://twitter.com/ticksy" },
-  { icon: <FaTiktok />, label: "TikTok", link: "https://tiktok.com/@ticksy" },
-].map((social, index) => (
-  <a
-    key={index}
-    href={social.link}
-    target="_blank"
-    rel="noopener noreferrer"
-    aria-label={social.label}
-    className="text-gray-600 hover:text-[#9747FF] transform hover:-translate-y-1 transition duration-200"
-  >
-    {social.icon}
-  </a>
-))}
-
-          
+                  { icon: <FaInstagram />, label: "Instagram", link: "https://instagram.com/ticksy" },
+                  { icon: <FaFacebookF />, label: "Facebook", link: "https://facebook.com/ticksy" },
+                  { icon: <FaTwitter />, label: "Twitter", link: "https://twitter.com/ticksy" },
+                  { icon: <FaTiktok />, label: "TikTok", link: "https://tiktok.com/@ticksy" },
+                ].map((social, index) => (
+                  <a
+                    key={index}
+                    href={social.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={social.label}
+                    className="text-gray-600 hover:text-[#9747FF] transform hover:-translate-y-1 transition duration-200"
+                  >
+                    {social.icon}
+                  </a>
+                ))}
               </div>
             </div>
           </div>
