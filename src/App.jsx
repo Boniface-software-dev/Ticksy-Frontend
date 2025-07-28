@@ -19,13 +19,11 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminEvents from "./pages/admin/AdminEvents";
 import AdminAnalytics from "./pages/admin/AdminAnalytics";
-// import OrgDashboard from './pages/organizer/OrgDashboard';
 
 import AttendeeUpcoming from "./pages/attendees/AttUpcoming";
 import LandingPage from "./pages/LandingPage";
 import EventDetails from "./pages/EventDetails";
-
-// ...imports
+import AttendeePastEvents from "./pages/attendees/AttendeePastEvents";
 
 function ProtectedRoute({ children, roles }) {
   const user = useSelector((state) => state.auth.currentUser);
@@ -46,7 +44,6 @@ function App() {
         <Route path="/events/:id" element={<EventDetails />} />
         <Route path="/events" element={<EventsList />} />
 
-        {/* Attendee Protected Routes */}
         <Route
           path="/attendee/:id/profile"
           element={
@@ -63,14 +60,15 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/attendee/:id/past-events"
+          element={
+            <ProtectedRoute roles={["attendee"]}>
+              <AttendeePastEvents />
+            </ProtectedRoute>
+          }
+        />
 
-        {/* Organizer Protected Routes
-        <Route path="/organizer/:id/dashboard" element={
-            <ProtectedRoute roles={['organizer']}>
-              <OrgDashboard />
-            </ProtectedRoute> */}
-        {/* } */}
-        {/* /> */}
         <Route
           path="/organizer/:id/profile"
           element={
@@ -80,7 +78,6 @@ function App() {
           }
         />
 
-        {/* Admin Protected Routes */}
         <Route
           path="/admin/:id/dashboard"
           element={
@@ -122,10 +119,7 @@ function App() {
           }
         />
 
-        {/* Unauthorized */}
         <Route path="/unauthorized" element={<Unauthorized />} />
-
-        {/* Catch-all: Redirect unknown routes */}
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
     </Router>
