@@ -62,7 +62,8 @@ const LandingPage = () => {
     <div className="font-poppins bg-[#F3F3F5] text-black min-h-screen scroll-smooth">
       <Navbar />
 
-      <section id="hero" className="relative h-screen w-full overflow-hidden">
+      <section id="home" className="relative h-screen w-full overflow-hidden">
+
         <video
           ref={videoRef}
           autoPlay
