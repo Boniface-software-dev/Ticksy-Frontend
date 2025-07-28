@@ -16,6 +16,48 @@ const EventDetails = () => {
   const [tickets, setTickets] = useState([]);
   const [selectedQuantities, setSelectedQuantities] = useState({});
 
+//Fetch event data
+  useEffect(() => {
+    dispatch(fetchEventById(id));
+  }, [dispatch, id]);
+
+  //Fetch tickets for this event
+
+  useEffect(() => {
+    const fetchTickets = async () => {
+      try {
+        const res = await axios.get(`http://localhost:5000/events/${id}/tickets`);
+        setTickets(res.data);
+      } catch (err) {
+        console.error("Failed to fetch tickets:", err);
+      }
+    };
+    fetchTickets();
+  }, [id]);
+
+  const handleIncrement = (ticketId) => {
+    const current = selectedQuantities[ticketId] || 0;
+    const ticket = tickets.find((t) => t.id === ticketId);
+    const remaining = ticket.quantity - ticket.sold;
+
+    if (current < remaining) {
+      setSelectedQuantities((prev) => ({
+        ...prev,
+        [ticketId]: current + 1,
+      }));
+    }
+  };
+
+  const handleDecrement = (ticketId) => {
+    const current = selectedQuantities[ticketId] || 0;
+    if (current > 0) {
+      setSelectedQuantities((prev) => ({
+        ...prev,
+        [ticketId]: current - 1,
+      }));
+    }
+  };
+
   const calculateTotal = () => {
     return tickets.reduce((total, ticket) => {
       const quantity = selectedQuantities[ticket.id] || 0;
@@ -23,14 +65,8 @@ const EventDetails = () => {
     }, 0);
   };
 
-  useEffect(() => {
-    dispatch(fetchEventById(id));
-  }, [dispatch, id]);
-
   if (status === "loading") return <p>Loading...</p>;
   if (!event) return <p>No event found.</p>;
-
-  const total = individualCount * 3000 + tableCount * 60000;
 
   return (
     <div className="bg-[#f3f3f5] min-h-screen font-poppins text-black">
@@ -96,6 +132,7 @@ const EventDetails = () => {
 {/*
           Tickets Section
 */}
+
           <h2 className="text-2xl font-bold mb-4">Tickets</h2>
           <div className="grid grid-cols-2 gap-4 mb-6">
             {tickets.map((ticket) => {
