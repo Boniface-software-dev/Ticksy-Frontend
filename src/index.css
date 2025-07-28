@@ -15,6 +15,9 @@ body {
   color: #1f2937;
   background-color: #f3f3f5;
 }
+html {
+  scroll-behavior: smooth;
+}
 
 .logo {
   height: 6em;
@@ -60,3 +63,4 @@ a:hover {
 .read-the-docs {
   color: #888;
 }
+
