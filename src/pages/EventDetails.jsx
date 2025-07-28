@@ -11,8 +11,17 @@ const EventDetails = () => {
 
   const event = useSelector((state) => state.events.selectedEvent);
   const status = useSelector((state) => state.events.status);
-  const [individualCount, setIndividualCount] = useState(0);
-  const [tableCount, setTableCount] = useState(0);
+
+
+  const [tickets, setTickets] = useState([]);
+  const [selectedQuantities, setSelectedQuantities] = useState({});
+
+  const calculateTotal = () => {
+    return tickets.reduce((total, ticket) => {
+      const quantity = selectedQuantities[ticket.id] || 0;
+      return total + ticket.price * quantity;
+    }, 0);
+  };
 
   useEffect(() => {
     dispatch(fetchEventById(id));
@@ -84,7 +93,9 @@ const EventDetails = () => {
               <p>{event.location}</p>
               </div>
           </div>
-
+{/*
+          Tickets Section
+*/}
           <h2 className="text-2xl font-bold mb-4">Tickets</h2>
           <div className="grid grid-cols-2 gap-4 mb-6">
             {tickets.map((ticket) => {
@@ -105,59 +116,23 @@ const EventDetails = () => {
                     <button
                       onClick={() => handleDecrement(ticket.id)}
                       className="px-2 py-1 border rounded"
-                    >
+                    >                      
                       -
-                    
-
-
-            
-
-            {/* Individual Ticket */}
-            <div className="border border-[#9747FF] rounded-lg p-4">
-              <h3 className="text-center font-semibold mb-2">Individual</h3>
-              <p>Price: 3000</p>
-              <p>Date: {new Date(event.start_time).toLocaleDateString()}</p>
-              <div className="flex items-center justify-between mt-4">
-                <button
-                  onClick={() =>
-                    setIndividualCount(Math.max(0, individualCount - 1))
-                  }
-                  className="px-2 py-1 border rounded"
-                >
-                  -
-                </button>
-                <span>{individualCount}</span>
-                <button
-                  onClick={() => setIndividualCount(individualCount + 1)}
-                  className="px-2 py-1 border rounded"
-                >
-                  +
-                </button>
-              </div>
-            </div>
-
-            {/* Table Ticket */}
-            <div className="border border-[#9747FF] rounded-lg p-4">
-              <h3 className="text-center font-semibold mb-2">Table</h3>
-              <p>Price: 60,000</p>
-              <p>Date: {new Date(event.start_time).toLocaleDateString()}</p>
-              <div className="flex items-center justify-between mt-4">
-                <button
-                  onClick={() => setTableCount(Math.max(0, tableCount - 1))}
-                  className="px-2 py-1 border rounded"
-                >
-                  -
-                </button>
-                <span>{tableCount}</span>
-                <button
-                  onClick={() => setTableCount(tableCount + 1)}
-                  className="px-2 py-1 border rounded"
-                >
-                  +
-                </button>
-              </div>
-            </div>
+                    </button>
+                    <span>{selectedQuantities[ticket.id] || 0}</span>
+                    <button
+                      onClick={() => handleIncrement(ticket.id)}
+                      className="px-2 py-1 border rounded"
+                      disabled={selectedQuantities[ticket.id] >= remaining}
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
           </div>
+
 
           <div className="flex items-center gap-4">
             <div className="flex-1 border rounded-lg px-4 py-3 text-lg font-semibold">
