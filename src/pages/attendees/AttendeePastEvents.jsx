@@ -11,7 +11,7 @@ export default function AttendeePastEvents() {
 
   useEffect(() => {
     axiosInstance
-      .get("/past-attendee-events")
+      .get("/profile/my-past-events")
       .then((res) => {
         setPastEvents(res.data);
         setLoading(false);

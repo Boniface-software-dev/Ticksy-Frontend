@@ -9,7 +9,6 @@ import { useSelector } from "react-redux";
 import EventsList from "./pages/EventsList";
 
 import AttendeeProfile from "./pages/attendees/AttendeeProfile";
-import AttendeeDashboardLayout from "./pages/attendees/AttendeeDashboardLayout";
 import OrgProfile from "./pages/organizer/OrgProfile";
 import Unauthorized from "./pages/Unauthorized";
 import Login from "./pages/Login";
@@ -45,18 +44,26 @@ function App() {
         <Route path="/events/:id" element={<EventDetails />} />
         <Route path="/events" element={<EventsList />} />
 
-        <Route
-          path="/attendee/:id"
-          element={
-            <ProtectedRoute roles={["attendee"]}>
-              <AttendeeDashboardLayout />
+
+        {/* Attendee Protected Routes */}
+        <Route path="/attendee/:id/profile" element={
+            <ProtectedRoute roles={['attendee']}>
+              <AttendeeProfile />
             </ProtectedRoute>
           }
-        >
-          <Route path="profile" element={<AttendeeProfile />} />
-          <Route path="upcoming-events" element={<AttendeeUpcoming />} />
-          <Route path="past-events" element={<AttendeePastEvents />} />
-        </Route>
+        />
+        <Route path="/attendee/:id/upcoming-events" element={
+            <ProtectedRoute roles={['attendee']}>
+              <AttendeeUpcoming />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/attendee/:id/past-events" element={
+            <ProtectedRoute roles={['attendee']}>
+              <AttendeePastEvents />
+            </ProtectedRoute>
+          }
+        />
 
         <Route
           path="/organizer/:id/profile"
