@@ -90,19 +90,24 @@ const Footer = () => {
               <h4 className="text-lg font-semibold text-[#5B1FBF] mb-4">Follow Us</h4>
               <div className="flex space-x-4 text-xl">
                 {[
-                  { icon: <FaInstagram />, label: "Instagram" },
-                  { icon: <FaFacebookF />, label: "Facebook" },
-                  { icon: <FaTwitter />, label: "Twitter" },
-                  { icon: <FaTiktok />, label: "TikTok" },
-                ].map((social, index) => (
-                  <button
-                    key={index}
-                    aria-label={social.label}
-                    className="text-gray-600 hover:text-[#9747FF] transform hover:-translate-y-1 transition duration-200"
-                  >
-                    {social.icon}
-                  </button>
-                ))}
+  { icon: <FaInstagram />, label: "Instagram", link: "https://instagram.com/ticksy" },
+  { icon: <FaFacebookF />, label: "Facebook", link: "https://facebook.com/ticksy" },
+  { icon: <FaTwitter />, label: "Twitter", link: "https://twitter.com/ticksy" },
+  { icon: <FaTiktok />, label: "TikTok", link: "https://tiktok.com/@ticksy" },
+].map((social, index) => (
+  <a
+    key={index}
+    href={social.link}
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label={social.label}
+    className="text-gray-600 hover:text-[#9747FF] transform hover:-translate-y-1 transition duration-200"
+  >
+    {social.icon}
+  </a>
+))}
+
+          
               </div>
             </div>
           </div>
