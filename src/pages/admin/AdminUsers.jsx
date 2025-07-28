@@ -5,7 +5,7 @@ import API from "../../utils/axiosInstance";
 import AdminSidebar from "../../components/AdminSidebar";
 
 export default function AdminUsers() {
-  const { id } = useParams();
+  const { id } = useParams(); // admin id
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.currentUser);
 
@@ -13,7 +13,6 @@ export default function AdminUsers() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // ✅ Redirect unauthorized access
   useEffect(() => {
     if (!user || user.role !== "admin" || user.id.toString() !== id) {
       navigate("/unauthorized");
@@ -75,7 +74,8 @@ export default function AdminUsers() {
                 {users.map((u) => (
                   <tr
                     key={u.id}
-                    className="hover:bg-gray-50 dark:hover:bg-[#2e2366] transition"
+                    onClick={() => navigate(`/admin/${id}/users/${u.id}`)}
+                    className="hover:bg-gray-50 dark:hover:bg-[#2e2366] transition cursor-pointer"
                   >
                     <td className="px-4 py-3">{u.id}</td>
                     <td className="px-4 py-3">

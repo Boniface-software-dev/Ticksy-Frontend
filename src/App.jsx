@@ -25,6 +25,8 @@ import AttendeeUpcoming from "./pages/attendees/AttUpcoming";
 import LandingPage from "./pages/LandingPage";
 import EventDetails from "./pages/EventDetails";
 
+import AdminUserProfile from "./pages/admin/AdminUserProfile";
+
 // ...imports
 
 function ProtectedRoute({ children, roles }) {
@@ -118,6 +120,14 @@ function App() {
           element={
             <ProtectedRoute roles={["admin"]}>
               <AdminProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/:adminId/users/:userId"
+          element={
+            <ProtectedRoute roles={["admin"]}>
+              <AdminUserProfile />
             </ProtectedRoute>
           }
         />
