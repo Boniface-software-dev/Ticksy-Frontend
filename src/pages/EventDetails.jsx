@@ -1,8 +1,8 @@
-// src/features/events/EventDetails.jsx
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { fetchEventById, increaseTicket, decreaseTicket } from "../features/events/eventSlice";
+import axios from "axios";
+import { fetchEventById } from "../features/events/eventSlice";
 import Footer from "../components/Footer";
 
 const EventDetails = () => {
@@ -12,24 +12,22 @@ const EventDetails = () => {
   const event = useSelector((state) => state.events.selectedEvent);
   const status = useSelector((state) => state.events.status);
 
-
   const [tickets, setTickets] = useState([]);
   const [selectedQuantities, setSelectedQuantities] = useState({});
 
-//Fetch event data
+  // Fetch event details
   useEffect(() => {
     dispatch(fetchEventById(id));
   }, [dispatch, id]);
 
-  //Fetch tickets for this event
-
+  // Fetch ticket types for the event
   useEffect(() => {
     const fetchTickets = async () => {
       try {
         const res = await axios.get(`http://localhost:5000/events/${id}/tickets`);
         setTickets(res.data);
       } catch (err) {
-        console.error("Failed to fetch tickets:", err);
+        console.error("Error fetching tickets:", err);
       }
     };
     fetchTickets();
@@ -71,22 +69,20 @@ const EventDetails = () => {
   return (
     <div className="bg-[#f3f3f5] min-h-screen font-poppins text-black">
       <div className="max-w-7xl mx-auto py-10 px-5 md:px-10 grid md:grid-cols-2 gap-10">
-        {/* Left Section */}
+        {/* LEFT SECTION */}
         <div>
           <img
             src={event.image_url}
             alt={event.title}
             className="rounded-lg w-full object-cover"
           />
-
           <div className="mt-6">
             <h2 className="text-xl font-semibold mb-2">Description</h2>
             <p className="text-gray-700 text-sm leading-relaxed">
               {event.description ||
-                "Join us for an unforgettable dinner experience featuring global cuisine, music, and networking opportunities."}
+                "Join us for a wonderful experience filled with music, food, and fun!"}
             </p>
           </div>
-
           <div className="mt-6">
             <h2 className="text-xl font-semibold mb-2">Tags</h2>
             <div className="flex gap-3 flex-wrap">
@@ -100,13 +96,13 @@ const EventDetails = () => {
                   </span>
                 ))
               ) : (
-                <span className="text-sm text-gray-500">No tags available</span>
+                <span className="text-sm text-gray-500">No tags</span>
               )}
             </div>
           </div>
         </div>
 
-        {/* Right Section */}
+        {/* RIGHT SECTION */}
         <div>
           <h1 className="text-4xl font-bold mb-4">{event.title}</h1>
           <div className="text-sm text-gray-600 space-y-2 mb-6">
@@ -123,44 +119,35 @@ const EventDetails = () => {
                 minute: "2-digit",
               })}
             </p>
-            <div className="flex ">
-             
-              <img width="20" height="20" src="https://img.icons8.com/ios/30/marker--v1.png" alt="marker--v1"/>
-              <p>{event.location}</p>
-              </div>
+            <p>📍 {event.location}</p>
           </div>
-{/*
-          Tickets Section
-*/}
 
+          {/* Tickets */}
           <h2 className="text-2xl font-bold mb-4">Tickets</h2>
           <div className="grid grid-cols-2 gap-4 mb-6">
             {tickets.map((ticket) => {
               const remaining = ticket.quantity - ticket.sold;
+              const selected = selectedQuantities[ticket.id] || 0;
+
               return (
-                <div
-                  key={ticket.id}
-                  className="border border-[#9747FF] rounded-lg p-4"
-                >
+                <div key={ticket.id} className="border border-[#9747FF] rounded-lg p-4">
                   <div className="flex justify-between items-center">
                     <h3 className="text-lg font-semibold">{ticket.type}</h3>
-                    <span className="text-sm text-gray-500">
-                      {remaining} remaining
-                    </span>
+                    <span className="text-sm text-gray-500">{remaining} left</span>
                   </div>
-                  <p>price:{ticket.price.toLocaleString()}</p>
+                  <p>Price: {ticket.price.toLocaleString()}</p>
                   <div className="flex items-center justify-between mt-4">
                     <button
                       onClick={() => handleDecrement(ticket.id)}
                       className="px-2 py-1 border rounded"
-                    >                      
+                    >
                       -
                     </button>
-                    <span>{selectedQuantities[ticket.id] || 0}</span>
+                    <span>{selected}</span>
                     <button
                       onClick={() => handleIncrement(ticket.id)}
                       className="px-2 py-1 border rounded"
-                      disabled={selectedQuantities[ticket.id] >= remaining}
+                      disabled={selected >= remaining}
                     >
                       +
                     </button>
@@ -170,10 +157,9 @@ const EventDetails = () => {
             })}
           </div>
 
-
           <div className="flex items-center gap-4">
             <div className="flex-1 border rounded-lg px-4 py-3 text-lg font-semibold">
-              Total <span className="float-right">{total}</span>
+              Total <span className="float-right">{calculateTotal().toLocaleString()}</span>
             </div>
             <button className="bg-[#9747FF] text-white px-6 py-3 rounded-lg font-medium">
               Checkout
@@ -181,9 +167,7 @@ const EventDetails = () => {
           </div>
         </div>
       </div>
-      <footer>
-        <Footer />
-      </footer>
+      <Footer />
     </div>
   );
 };
