@@ -6,6 +6,9 @@ import {
   Navigate,
 } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import EventsList from "./pages/EventsList";
 
 import AttendeeProfile from "./pages/attendees/AttendeeProfile";
@@ -46,10 +49,11 @@ function App() {
         <Route path="/events/:id" element={<EventDetails />} />
         <Route path="/events" element={<EventsList />} />
 
-
         {/* Attendee Protected Routes */}
-        <Route path="/attendee/:id/profile" element={
-            <ProtectedRoute roles={['attendee']}>
+        <Route
+          path="/attendee/:id/profile"
+          element={
+            <ProtectedRoute roles={["attendee"]}>
               <AttendeeProfile />
             </ProtectedRoute>
           }
@@ -141,6 +145,9 @@ function App() {
         <Route path="/unauthorized" element={<Unauthorized />} />
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
+
+      
+      <ToastContainer position="top-center" autoClose={3000} />
     </Router>
   );
 }
