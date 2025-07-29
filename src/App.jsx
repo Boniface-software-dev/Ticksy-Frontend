@@ -6,6 +6,9 @@ import {
   Navigate,
 } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import EventsList from "./pages/EventsList";
 
 import AttendeeProfile from "./pages/attendees/AttendeeProfile";
@@ -19,15 +22,13 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminEvents from "./pages/admin/AdminEvents";
 import AdminAnalytics from "./pages/admin/AdminAnalytics";
-// import OrgDashboard from './pages/organizer/OrgDashboard';
 
 import AttendeeUpcoming from "./pages/attendees/AttUpcoming";
 import LandingPage from "./pages/LandingPage";
 import EventDetails from "./pages/EventDetails";
-
+import AttendeePastEvents from "./pages/attendees/AttendeePastEvents";
+import AttendeePastEventDetail from "./pages/attendees/AttendeePastEventDetail";
 import AdminUserProfile from "./pages/admin/AdminUserProfile";
-
-// ...imports
 
 function ProtectedRoute({ children, roles }) {
   const user = useSelector((state) => state.auth.currentUser);
@@ -65,14 +66,23 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/attendee/:id/past-events"
+          element={
+            <ProtectedRoute roles={["attendee"]}>
+              <AttendeePastEvents />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/attendee/:id/past-events/:eventId"
+          element={
+            <ProtectedRoute roles={["attendee"]}>
+              <AttendeePastEventDetail />
+            </ProtectedRoute>
+          }
+        />
 
-        {/* Organizer Protected Routes
-        <Route path="/organizer/:id/dashboard" element={
-            <ProtectedRoute roles={['organizer']}>
-              <OrgDashboard />
-            </ProtectedRoute> */}
-        {/* } */}
-        {/* /> */}
         <Route
           path="/organizer/:id/profile"
           element={
@@ -132,12 +142,12 @@ function App() {
           }
         />
 
-        {/* Unauthorized */}
         <Route path="/unauthorized" element={<Unauthorized />} />
-
-        {/* Catch-all: Redirect unknown routes */}
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
+
+      
+      <ToastContainer position="top-center" autoClose={3000} />
     </Router>
   );
 }
