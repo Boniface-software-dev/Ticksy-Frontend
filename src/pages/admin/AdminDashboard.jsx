@@ -1,5 +1,8 @@
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 import AdminSidebar from "../../components/AdminSidebar";
-import { useState, useEffect } from "react";
+import API from "../../utils/axiosInstance";
 import {
   AreaChart,
   Area,
@@ -11,117 +14,102 @@ import {
 } from "recharts";
 
 export default function AdminDashboard() {
-  // Demo data — replace with real API data!
-  const [dashboard, setDashboard] = useState({
-    total_users: 210000,
-    ticket_sales: 12350,
-    approved_events: 78,
-    pending_approvals: 15,
-    ticket_sales_over_time: [
-      { month: "Jan", sales: 1200 },
-      { month: "Feb", sales: 2200 },
-      { month: "Mar", sales: 1800 },
-      { month: "Apr", sales: 2600 },
-      { month: "May", sales: 2400 },
-      { month: "Jun", sales: 4100 },
-    ],
-    recent_activity: [
-      { message: "Anthony Brown registered", status: "Success" },
-      { message: "Event 'Charity Gala' created", status: "Success" },
-      { message: "Event 'Music Festival' Created", status: "Failed" },
-    ],
-    pending_events: [
-      {
-        title: "Midnight Vibes",
-        organizer: "L. Chebet",
-        date: "24th June, 2025",
-        status: "Pending",
-      },
-      {
-        title: "Just Incase",
-        organizer: "G. Zawadi",
-        date: "28th June, 2025",
-        status: "Pending",
-      },
-      {
-        title: "Midnight Vibes",
-        organizer: "C. Mecheo",
-        date: "28th June, 2025",
-        status: "Pending",
-      },
-      {
-        title: "Drillwood Streams",
-        organizer: "J. Malinda",
-        date: "30th June, 2025",
-        status: "Pending",
-      },
-    ],
-    users: [
-      { id: 1, name: "B. Mugura", role: "Organizer", status: "Reactive" },
-      { id: 2, name: "J. Aquila", role: "Admin", status: "Pending" },
-      { id: 3, name: "E. Kipyego", role: "Attendee", status: "Ban" },
-    ],
-  });
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const user = useSelector((state) => state.auth.currentUser);
+  const basePath = `/admin/${user?.id}`;
 
-  // TODO: Replace with real API call
-  // useEffect(() => { fetch dashboard data and setDashboard(...) }, []);
+  const [summary, setSummary] = useState({});
+  const [ticketSalesData, setTicketSalesData] = useState([]);
+  const [recentActivity, setRecentActivity] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (!user || user.role !== "admin" || user.id.toString() !== id) {
+      navigate("/unauthorized");
+    }
+  }, [user, id, navigate]);
+
+  useEffect(() => {
+    setLoading(true);
+    API.get("/admin/dashboard")
+      .then((res) => {
+        setSummary(res.data.summary || {});
+        setTicketSalesData(res.data.ticket_sales_over_time || []);
+      })
+      .catch(() => setError("Could not load summary"));
+
+    API.get("/admin/logs")
+      .then((res) => {
+        setRecentActivity(
+          res.data.slice(0, 8).map((log) => ({
+            message:
+              log.action +
+              (log.extra_data ? ` (${JSON.stringify(log.extra_data)})` : ""),
+            status: log.status,
+            time: log.timestamp,
+          }))
+        );
+      })
+      .catch(() => setRecentActivity([]))
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading)
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-xl text-gray-500">Loading dashboard...</div>
+      </div>
+    );
+
+  if (error)
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-xl text-red-500">{error}</div>
+      </div>
+    );
 
   return (
     <div className="flex min-h-screen bg-[#faf8ff]">
       <AdminSidebar />
 
-      <main className="flex-1 p-8">
-        <h1 className="text-2xl font-bold mb-5 text-[#1a1240]">Dashboard</h1>
+      <main className="flex-1 p-8 relative">
+        <h1 className="text-2xl font-bold mb-5 text-[#1a1240]">
+          Admin Dashboard
+        </h1>
 
         {/* Stat Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-7">
-          <div className="bg-white rounded-xl shadow p-5 flex flex-col items-start">
-            <div className="text-gray-500 text-sm mb-1">Total Users</div>
-            <div className="text-3xl font-extrabold tracking-tight text-[#1a1240]">
-              {dashboard.total_users.toLocaleString()}
-              <span className="text-lg font-normal text-[#1a1240]">K</span>
+          {[
+            { label: "Total Users", value: summary.total_users },
+            { label: "Total Tickets Sold", value: summary.total_tickets_sold },
+            { label: "Approved Events", value: summary.active_events },
+            {
+              label: "Pending Event Approvals",
+              value: summary.pending_events,
+            },
+          ].map((stat, i) => (
+            <div
+              key={i}
+              className="bg-white rounded-xl shadow p-5 flex flex-col items-start"
+            >
+              <div className="text-gray-500 text-sm mb-1">{stat.label}</div>
+              <div className="text-3xl font-extrabold tracking-tight text-[#1a1240]">
+                {stat.value?.toLocaleString() || 0}
+              </div>
             </div>
-          </div>
-          <div className="bg-white rounded-xl shadow p-5 flex flex-col items-start">
-            <div className="text-gray-500 text-sm mb-1">Total Ticket Sales</div>
-            <div className="text-3xl font-extrabold tracking-tight text-[#1a1240]">
-              {dashboard.ticket_sales.toLocaleString()}
-            </div>
-          </div>
-          <div className="bg-white rounded-xl shadow p-5 flex flex-col items-start">
-            <div className="text-gray-500 text-sm mb-1">Approved Event</div>
-            <div className="text-3xl font-extrabold tracking-tight text-[#1a1240]">
-              {dashboard.approved_events}
-            </div>
-          </div>
-          <div className="bg-white rounded-xl shadow p-5 flex flex-col items-start">
-            <div className="text-gray-500 text-sm mb-1">
-              Pending Event Approvals
-            </div>
-            <div className="text-3xl font-extrabold tracking-tight text-[#1a1240]">
-              {dashboard.pending_approvals}
-            </div>
-          </div>
+          ))}
         </div>
 
+        {/* Graph and Recent Activity */}
         <div className="flex flex-col md:flex-row gap-6 mb-7">
-          {/* Ticket Sales Graph */}
           <div className="bg-white rounded-xl shadow p-6 flex-1 min-w-[320px]">
-            <div className="flex justify-between items-center mb-3">
-              <div className="font-semibold text-[#1a1240]">
-                Ticket Sales Over Time
-              </div>
-              <div className="flex gap-2 text-xs text-gray-400 font-medium">
-                <span className="cursor-pointer hover:text-[#9747ff]">
-                  Analytics
-                </span>
-                <span className="cursor-pointer hover:text-[#9747ff]">
-                  Reports
-                </span>
-              </div>
+            <div className="font-semibold text-[#1a1240] mb-2">
+              Ticket Sales Over Time
             </div>
             <ResponsiveContainer width="100%" height={180}>
-              <AreaChart data={dashboard.ticket_sales_over_time}>
+              <AreaChart data={ticketSalesData}>
                 <defs>
                   <linearGradient id="colorSales" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#9747ff" stopOpacity={0.8} />
@@ -143,23 +131,21 @@ export default function AdminDashboard() {
             </ResponsiveContainer>
           </div>
 
-          {/* Recent Activity */}
           <div className="bg-white rounded-xl shadow p-6 flex-1 min-w-[250px]">
             <div className="font-semibold text-[#1a1240] mb-3">
               Recent Activity
             </div>
             <ul className="space-y-3">
-              {dashboard.recent_activity.map((item, idx) => (
+              {recentActivity.map((item, idx) => (
                 <li key={idx} className="flex justify-between items-center">
                   <span className="text-sm text-[#1a1240]">{item.message}</span>
                   <span
-                    className={`px-2 py-1 rounded text-xs font-bold
-                    ${
+                    className={`px-2 py-1 rounded text-xs font-bold ${
                       item.status === "Success"
-                        ? "bg-green-100 text-green-600"
+                        ? "bg-green-100 text-green-700"
                         : item.status === "Failed"
-                        ? "bg-red-100 text-red-600"
-                        : "bg-gray-100 text-gray-500"
+                        ? "bg-red-100 text-red-700"
+                        : "bg-gray-100 text-gray-700"
                     }`}
                   >
                     {item.status}
@@ -167,80 +153,6 @@ export default function AdminDashboard() {
                 </li>
               ))}
             </ul>
-          </div>
-        </div>
-
-        {/* Bottom Tables */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Pending Events Table */}
-          <div className="bg-white rounded-xl shadow p-6">
-            <div className="font-semibold text-[#1a1240] mb-3">
-              Pending Events
-            </div>
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="bg-[#f8f4ff]">
-                  <th className="text-left py-2 px-2">Title</th>
-                  <th className="text-left py-2 px-2">Organizer</th>
-                  <th className="text-left py-2 px-2">Date Created</th>
-                  <th className="text-left py-2 px-2">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {dashboard.pending_events.map((event, idx) => (
-                  <tr key={idx}>
-                    <td className="py-2 px-2">{event.title}</td>
-                    <td className="py-2 px-2">{event.organizer}</td>
-                    <td className="py-2 px-2">{event.date}</td>
-                    <td className="py-2 px-2">
-                      <span className="bg-yellow-100 text-yellow-600 px-2 py-1 rounded text-xs font-semibold">
-                        {event.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Users Table */}
-          <div className="bg-white rounded-xl shadow p-6">
-            <div className="font-semibold text-[#1a1240] mb-3">Users</div>
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="bg-[#f8f4ff]">
-                  <th className="text-left py-2 px-2">ID</th>
-                  <th className="text-left py-2 px-2">Name</th>
-                  <th className="text-left py-2 px-2">Role</th>
-                  <th className="text-left py-2 px-2">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {dashboard.users.map((u, idx) => (
-                  <tr key={u.id}>
-                    <td className="py-2 px-2">{u.id}</td>
-                    <td className="py-2 px-2">{u.name}</td>
-                    <td className="py-2 px-2">{u.role}</td>
-                    <td className="py-2 px-2">
-                      <span
-                        className={`px-2 py-1 rounded text-xs font-semibold
-                        ${
-                          u.status === "Ban"
-                            ? "bg-red-100 text-red-600"
-                            : u.status === "Reactive"
-                            ? "bg-purple-100 text-purple-600"
-                            : u.status === "Pending"
-                            ? "bg-yellow-100 text-yellow-600"
-                            : "bg-gray-100 text-gray-500"
-                        }`}
-                      >
-                        {u.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
           </div>
         </div>
       </main>
