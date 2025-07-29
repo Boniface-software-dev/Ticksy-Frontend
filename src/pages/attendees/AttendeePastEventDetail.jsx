@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import axiosInstance from "../../utils/axiosInstance";
 import AttendeeNavBar from "../../components/AttendeeNavBar";
@@ -9,6 +9,8 @@ export default function AttendeePastEventDetail() {
   const [eventDetails, setEventDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const pdfRef = useRef();
+
 
   useEffect(() => {
     axiosInstance
@@ -41,7 +43,8 @@ export default function AttendeePastEventDetail() {
       <AttendeeNavBar />
       <div className="max-w-7xl mx-auto p-4 flex gap-6">
         <AttendeeSideBar />
-        <div className="flex-1 text-black">
+        <div className="flex-1 text-black" ref={pdfRef}>
+
           <h2 className="text-2xl font-bold mb-4">{eventDetails.title}</h2>
 
           {/* Your Tickets */}
