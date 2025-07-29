@@ -18,7 +18,7 @@ export default function AttendeePastEventDetail() {
         console.log("Fetched event details:", res.data);
         setLoading(false);
       })
-      .catch((err) => {
+      .catch(() => {
         setError("Failed to fetch event details.");
         setLoading(false);
       });
@@ -44,16 +44,24 @@ export default function AttendeePastEventDetail() {
         <div className="flex-1 text-black">
           <h2 className="text-2xl font-bold mb-4">{eventDetails.title}</h2>
 
+          {/* Your Tickets */}
           <div className="mb-6">
             <h3 className="text-lg font-semibold mb-2">Your Tickets</h3>
-            {eventDetails.tickets?.map((ticket) => (
-              <div key={ticket.id} className="mb-2">
-                <p className="text-sm">ID: {ticket.id}</p>
-                <p className="text-sm">Type: {ticket.ticket_type}</p>
-              </div>
-            ))}
+            {eventDetails.tickets?.map((ticket) => {
+              console.log("Ticket item:", ticket);
+              return (
+                <div
+                  key={ticket.id || `${ticket.ticket_type}-${Math.random()}`}
+                  className="mb-2"
+                >
+                  <p className="text-sm">ID: {ticket.id}</p>
+                  <p className="text-sm">Type: {ticket.ticket_type}</p>
+                </div>
+              );
+            })}
           </div>
 
+          {/* Purchase Summary */}
           <div className="mb-6">
             <h3 className="text-lg font-semibold mb-2">Purchase Details</h3>
             <table className="w-full text-left border">
@@ -65,13 +73,18 @@ export default function AttendeePastEventDetail() {
                 </tr>
               </thead>
               <tbody>
-                {eventDetails.ticket_summary?.map((item, index) => (
-                  <tr key={index}>
-                    <td className="p-2">{item.ticket_type}</td>
-                    <td className="p-2">Ksh.{item.price}</td>
-                    <td className="p-2">{item.quantity}</td>
-                  </tr>
-                ))}
+                {eventDetails.ticket_summary?.map((item) => {
+                  console.log("Summary item:", item);
+                  return (
+                    <tr
+                      key={`${item.ticket_type}-${item.price}-${item.quantity}`}
+                    >
+                      <td className="p-2">{item.ticket_type}</td>
+                      <td className="p-2">Ksh.{item.price}</td>
+                      <td className="p-2">{item.quantity}</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
             <p className="mt-2 font-semibold">
@@ -79,6 +92,7 @@ export default function AttendeePastEventDetail() {
             </p>
           </div>
 
+          {/* Action Buttons */}
           <div className="flex gap-4 mb-6">
             <button
               onClick={handleDownloadPDF}
@@ -94,15 +108,24 @@ export default function AttendeePastEventDetail() {
             </button>
           </div>
 
+          {/* Reviews */}
           <div>
             <h3 className="text-lg font-semibold mb-2">Event Reviews</h3>
-            {eventDetails.reviews?.length > 0 ? (
-              eventDetails.reviews.map((review, index) => (
-                <div key={index} className="mb-4 border-b pb-2">
-                  <p className="text-yellow-500">{"★".repeat(review.rating)}</p>
-                  <p>{review.comment}</p>
-                </div>
-              ))
+            {eventDetails.reviews && eventDetails.reviews.length > 0 ? (
+              eventDetails.reviews.map((review, index) => {
+                console.log("Review item:", review);
+                return (
+                  <div
+                    key={review.id || `${review.comment}-${review.rating}-${index}`}
+                    className="mb-4 border-b pb-2"
+                  >
+                    <p className="text-yellow-500">
+                      {"★".repeat(review.rating)}
+                    </p>
+                    <p>{review.comment}</p>
+                  </div>
+                );
+              })
             ) : (
               <p>No reviews yet.</p>
             )}
