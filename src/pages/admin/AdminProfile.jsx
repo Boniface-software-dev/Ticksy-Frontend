@@ -1,85 +1,176 @@
-import React from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import API from "../../utils/axiosInstance";
 import { logout } from "../../features/authentification/authSlice";
-import { useNavigate, Link } from "react-router-dom";
-
-import Logo from "../../components/Logo";
-import Avatar from "../../components/Avatar";
 
 export default function AdminProfile() {
+  const { id } = useParams();
+  const user = useSelector((state) => state.auth.currentUser);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const user = useSelector((state) => state.auth.currentUser);
+
+  const [admin, setAdmin] = useState(null);
+  const [editing, setEditing] = useState(false);
+  const [form, setForm] = useState({
+    first_name: "",
+    last_name: "",
+    email: "",
+    phone: "",
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (!user || user.role !== "admin" || user.id.toString() !== id) {
+      navigate("/unauthorized");
+    }
+  }, [user, id, navigate]);
+
+  useEffect(() => {
+    setLoading(true);
+    API.get("/profile/me")
+      .then((res) => {
+        setAdmin(res.data);
+        setForm({
+          first_name: res.data.first_name,
+          last_name: res.data.last_name,
+          email: res.data.email,
+          phone: res.data.phone,
+        });
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.response?.data?.message || "Failed to load profile.");
+        setLoading(false);
+      });
+  }, []);
 
   const handleLogout = () => {
     dispatch(logout());
     navigate("/login");
   };
 
+  const handleBack = () => {
+    navigate(`/admin/${id}/dashboard`);
+  };
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSave = () => {
+    API.put("/profile/me", form)
+      .then((res) => {
+        setAdmin({ ...admin, ...form });
+        setEditing(false);
+      })
+      .catch((err) => {
+        alert(err.response?.data?.message || "Failed to update profile.");
+      });
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-lg text-gray-500">Loading profile...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-lg text-red-500">{error}</div>
+      </div>
+    );
+  }
+
   return (
-    <>
-      <Logo />
-      <div className="max-w-4xl mx-auto p-4">
-        <Link
-          to={`/admin/${user?.id}/dashboard`}
-          className="text-blue-500 mb-4 inline-block"
-        >
-          Back to Dashboard
-        </Link>
+    <div className="min-h-screen bg-[#f4f3fb] py-10 px-4 flex flex-col items-center">
+      <div className="w-full max-w-3xl space-y-6">
+        {/* Header */}
+        <div className="text-2xl font-semibold text-[#1a1240] underline">
+          My Profile
+        </div>
 
-        <h2 className="text-3xl font-semibold mb-4 text-black">My Profile</h2>
-
-        <div className="bg-white rounded shadow text-black p-6 mb-6 flex gap-6 items-center">
-          <Avatar size={100} />
-          <div className="break-words">
-            <h3 className="text-xl font-medium mb-1">
-              {user?.first_name} {user?.last_name}
-            </h3>
-            <p className="text-gray-600 break-all">{user?.email}</p>
+        {/* Profile Card */}
+        <div className="bg-white shadow-md rounded-xl p-6 flex items-center gap-6">
+          <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 text-3xl font-bold">
+            {admin?.first_name?.charAt(0)}
+          </div>
+          <div>
+            <div className="font-semibold text-[#1a1240] text-lg">
+              {admin.first_name} {admin.last_name}
+            </div>
+            <div className="text-sm text-gray-700">{admin.email}</div>
           </div>
         </div>
 
-        <div className="bg-white rounded shadow text-black p-6 mb-6">
-          <h3 className="text-xl font-semibold mb-4 border-b-1 pb-2">Personal Information</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div>
-              <p className="text-gray-600 text-sm">First Name</p>
-              <p className="break-words">{user?.first_name}</p>
-            </div>
-            <div>
-              <p className="text-gray-600 text-sm">Last Name</p>
-              <p className="break-words">{user?.last_name}</p>
-            </div>
-            <div>
-              <p className="text-gray-600 text-sm">Role</p>
-              <p className="capitalize">{user?.role}</p>
-            </div>
-            <div>
-              <p className="text-gray-600 text-sm">Email</p>
-              <p className="break-all">{user?.email}</p>
-            </div>
-            <div>
-              <p className="text-gray-600 text-sm">Phone Number</p>
-              <p className="break-words">{user?.phone}</p>
-            </div>
+        {/* Personal Info */}
+        <div className="bg-white shadow-md rounded-xl p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-[#1a1240]">
+              Personal Information
+            </h2>
+            {!editing ? (
+              <button
+                onClick={() => setEditing(true)}
+                className="text-sm bg-purple-500 hover:bg-purple-600 text-white px-4 py-1 rounded-md flex items-center gap-1"
+              >
+                <span>Edit</span>
+              </button>
+            ) : (
+              <button
+                onClick={handleSave}
+                className="text-sm bg-green-600 hover:bg-green-700 text-white px-4 py-1 rounded-md flex items-center gap-1"
+              >
+                <span>Save</span>
+              </button>
+            )}
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 text-sm text-gray-700">
+            {["first_name", "last_name", "email", "phone"].map((field) => (
+              <div key={field}>
+                <span className="font-medium text-[#1a1240] capitalize">
+                  {field.replace("_", " ")}
+                </span>
+                {editing ? (
+                  <input
+                    name={field}
+                    value={form[field]}
+                    onChange={handleChange}
+                    className="w-full mt-1 border border-gray-300 rounded-md px-3 py-2 text-sm"
+                  />
+                ) : (
+                  <div className="mt-1">
+                    {admin[field] || (
+                      <span className="italic text-gray-400">Not provided</span>
+                    )}
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         </div>
 
-        <div className="bg-white rounded shadow text-black p-6 flex flex-wrap gap-4 justify-between">
+        {/* Buttons */}
+        <div className="flex flex-col md:flex-row gap-3 mt-4">
+          <button
+            onClick={handleBack}
+            className="w-full md:w-auto bg-purple-700 hover:bg-purple-800 text-white px-6 py-2 rounded-lg font-semibold"
+          >
+            Back to Dashboard
+          </button>
           <button
             onClick={handleLogout}
-            className="text-amber-500 border border-amber-500 px-4 py-2 rounded hover:bg-amber-500 hover:text-white transition"
+            className="w-full md:w-auto bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg font-semibold"
           >
-            Logout
-          </button>
-          <button className="px-4 py-2 rounded text-red-400 border border-red-400 hover:bg-red-400 hover:text-white transition">
-            Deactivate Account
-          </button>
-          <button className="px-4 py-2 rounded text-red-600 border border-red-600 hover:bg-red-600 hover:text-white transition">
-            Delete Account
+            Log Out
           </button>
         </div>
       </div>
-    </>
+    </div>
   );
 }

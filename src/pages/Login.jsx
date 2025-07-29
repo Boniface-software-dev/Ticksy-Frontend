@@ -1,43 +1,39 @@
-import React, { useState } from 'react';
-import { LogIn } from 'lucide-react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { login } from '../features/authentification/authSlice';
+import React, { useState } from "react";
+import { LogIn } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { login } from "../features/authentification/authSlice";
 
 export default function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { isLoading } = useSelector((state) => state.auth);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const onSubmit = (e) => {
     e.preventDefault();
-    setError('');
-    dispatch(login({ email, password }))
-      .then((action) => {
-        if (action.meta.requestStatus === 'fulfilled') {
-          const user = action.payload;
-
-          if (user.access_token) {
-            localStorage.setItem('user', JSON.stringify(user)); // Save full user object
-          }
-
-          if (!user.role || !user.id) {
-            console.error('User data incomplete:', user);
-            return;
-          }
-
-          if (user.role === 'attendee') {
-            navigate('/events');
-          } else {
-            navigate(`/${user.role}/${user.id}/dashboard`);
-          }
-        } else {
-          setError('Invalid email or password.');
+    setError("");
+    dispatch(login({ email, password })).then((action) => {
+      if (action.meta.requestStatus === "fulfilled") {
+        const user = action.payload;
+        if (user.token) {
+          localStorage.setItem("accessToken", user.token);
         }
-      });
+        if (!user.role || !user.id) {
+          console.error("User data incomplete:", user);
+          return;
+        }
+        if (user.role === "attendee") {
+          navigate("/events");
+        } else {
+          navigate(`/${user.role}/${user.id}/dashboard`);
+        }
+      } else {
+        setError("Invalid email or password.");
+      }
+    });
   };
 
   return (
@@ -45,13 +41,18 @@ export default function Login() {
       <div className="max-w-md w-full bg-white border border-gray-300 rounded-lg p-8 space-y-6 relative">
         <div className="text-center">
           <LogIn className="mx-auto h-10 w-10 text-purple-500" />
-          <h2 className="mt-4 text-2xl font-bold text-purple-500">Welcome Back</h2>
+          <h2 className="mt-4 text-2xl font-bold text-purple-500">
+            Welcome Back
+          </h2>
           <p className="mt-1 text-sm text-gray-500">Login</p>
         </div>
 
         <form onSubmit={onSubmit} className="space-y-5 text-black">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700"
+            >
               Email Address
             </label>
             <input
@@ -66,7 +67,10 @@ export default function Login() {
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700"
+            >
               Password
             </label>
             <input
@@ -85,15 +89,18 @@ export default function Login() {
             className="w-full bg-purple-400 text-white py-2 px-4 rounded-md text-sm font-semibold hover:bg-purple-600 transition duration-300 shadow disabled:bg-purple-400"
             disabled={isLoading}
           >
-            {isLoading ? 'Logging in...' : 'Log In'}
+            {isLoading ? "Logging in..." : "Log In"}
           </button>
         </form>
 
         {error && <p className="text-red-500 text-sm">{error}</p>}
 
         <p className="text-sm text-center text-gray-500">
-          Don't have an account?{' '}
-          <a href="/register" className="text-purple-600 font-medium hover:underline">
+          Don't have an account?{" "}
+          <a
+            href="/register"
+            className="text-purple-600 font-medium hover:underline"
+          >
             Register here
           </a>
         </p>
