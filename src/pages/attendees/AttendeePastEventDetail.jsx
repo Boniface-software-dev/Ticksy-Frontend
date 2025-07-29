@@ -5,6 +5,7 @@ import AttendeeNavBar from "../../components/AttendeeNavBar";
 import AttendeeSideBar from "../../components/AttendeeSideBar";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import RateEventModal from "../../components/RateEventModal";
 
 export default function AttendeePastEventDetail() {
   const { eventId } = useParams();
@@ -12,6 +13,7 @@ export default function AttendeePastEventDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const pdfRef = useRef();
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     axiosInstance
@@ -46,8 +48,25 @@ export default function AttendeePastEventDetail() {
     }
   };
 
-  const handleRateEvent = () => {
-    alert("Rate Event clicked!");
+  const handleSubmitReview = async ({ rating, comment }) => {
+    try {
+      const res = await axiosInstance.post(`/reviews/${eventId}`, {
+        rating,
+        comment,
+      });
+
+      alert("Review submitted!");
+      setShowModal(false);
+
+      // Refresh reviews
+      const refreshed = await axiosInstance.get(`/reviews/${eventId}`);
+      setEventDetails((prev) => ({
+        ...prev,
+        reviews: refreshed.data,
+      }));
+    } catch (err) {
+      alert(err.response?.data?.message || "Failed to submit review.");
+    }
   };
 
   if (loading) return <p>Loading...</p>;
@@ -61,7 +80,7 @@ export default function AttendeePastEventDetail() {
         <AttendeeSideBar />
 
         <div className="flex-1 text-black">
-          {/* PDF Content Only */}
+          {/* PDF Content */}
           <div ref={pdfRef} className="bg-white p-4 rounded shadow mb-6">
             <h2 className="text-2xl font-bold mb-4">{eventDetails.title}</h2>
 
@@ -128,7 +147,7 @@ export default function AttendeePastEventDetail() {
             </div>
           </div>
 
-          {/* PDF Download & Rate Event Buttons */}
+          {/* Buttons */}
           <div className="flex gap-4">
             <button
               onClick={handleDownloadPDF}
@@ -137,12 +156,19 @@ export default function AttendeePastEventDetail() {
               Download PDF
             </button>
             <button
-              onClick={handleRateEvent}
+              onClick={() => setShowModal(true)}
               className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
             >
               Rate Event
             </button>
           </div>
+
+          {/* Modal */}
+          <RateEventModal
+            visible={showModal}
+            onClose={() => setShowModal(false)}
+            onSubmit={handleSubmitReview}
+          />
         </div>
       </div>
     </>
