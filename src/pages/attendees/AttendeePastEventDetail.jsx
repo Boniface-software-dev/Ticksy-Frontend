@@ -15,6 +15,7 @@ export default function AttendeePastEventDetail() {
       .get(`/profile/my-past-events/${eventId}`)
       .then((res) => {
         setEventDetails(res.data);
+        console.log("Fetched event details:", res.data);
         setLoading(false);
       })
       .catch((err) => {
@@ -24,12 +25,10 @@ export default function AttendeePastEventDetail() {
   }, [eventId]);
 
   const handleDownloadPDF = () => {
-    // Replace this with actual PDF download logic
     alert("Download PDF clicked!");
   };
 
   const handleRateEvent = () => {
-    // Replace this with rating modal / navigation
     alert("Rate Event clicked!");
   };
 
@@ -47,7 +46,7 @@ export default function AttendeePastEventDetail() {
 
           <div className="mb-6">
             <h3 className="text-lg font-semibold mb-2">Your Tickets</h3>
-            {eventDetails.tickets.map((ticket) => (
+            {eventDetails.tickets?.map((ticket) => (
               <div key={ticket.id} className="mb-2">
                 <p className="text-sm">ID: {ticket.id}</p>
                 <p className="text-sm">Type: {ticket.ticket_type}</p>
@@ -66,7 +65,7 @@ export default function AttendeePastEventDetail() {
                 </tr>
               </thead>
               <tbody>
-                {eventDetails.ticket_summary.map((item, index) => (
+                {eventDetails.ticket_summary?.map((item, index) => (
                   <tr key={index}>
                     <td className="p-2">{item.ticket_type}</td>
                     <td className="p-2">Ksh.{item.price}</td>
@@ -97,7 +96,7 @@ export default function AttendeePastEventDetail() {
 
           <div>
             <h3 className="text-lg font-semibold mb-2">Event Reviews</h3>
-            {eventDetails.reviews.length > 0 ? (
+            {eventDetails.reviews?.length > 0 ? (
               eventDetails.reviews.map((review, index) => (
                 <div key={index} className="mb-4 border-b pb-2">
                   <p className="text-yellow-500">{"★".repeat(review.rating)}</p>
