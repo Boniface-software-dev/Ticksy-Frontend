@@ -1,29 +1,25 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { UserPlus } from 'lucide-react';
-import { useState } from "react";
 import { useDispatch } from 'react-redux';
 import { register } from '../features/authentification/authSlice';
-import { useNavigate } from 'react-router-dom'
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 export default function Register() {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [first_name, setFirstName] = useState('')
-  const [last_name, setLastName] = useState('')
-  const [role, setRole] = useState('')
-  const [phone, setPhone] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [error, setError] = useState('')
+  const [first_name, setFirstName] = useState('');
+  const [last_name, setLastName] = useState('');
+  const [role, setRole] = useState('');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
 
-  //const onSubmit = (e) => {
-  //  e.preventDefault();
-  //  console.log("register", first_name, last_name, role, email, phone, password)
-  //  dispatch(register({first_name, last_name, role, email, phone, password}))
-  //}
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -39,10 +35,10 @@ export default function Register() {
       return;
     }
 
-    const result = await dispatch(register({ first_name, last_name, role, email, phone, password }))
+    const result = await dispatch(register({ first_name, last_name, role, email, phone, password }));
 
     if (register.fulfilled.match(result)) {
-      navigate('/login'); 
+      navigate('/login');
     } else {
       setError(result.payload || 'Registration failed.');
     }
@@ -50,7 +46,6 @@ export default function Register() {
 
   return (
     <>
-      {/* Registration Form */}
       <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-8">
         <div className="max-w-md w-full bg-white shadow-xl rounded-lg p-8 space-y-6">
           <div className="text-center">
@@ -61,19 +56,89 @@ export default function Register() {
           {error && <p className="text-red-500 text-sm">{error}</p>}
 
           <form onSubmit={onSubmit} className="space-y-4 text-gray-800">
-            <input type="text" name="first_name" placeholder="First Name" onChange={(e) => setFirstName(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-purple-600 focus:border-purple-600" required />
-            <input type="text" name="last_name" placeholder="Last Name" onChange={(e) => setLastName(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-purple-600 focus:border-purple-600" required />
-            <select name="role" onChange={(e) => setRole(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-400 focus:outline-none focus:ring-purple-600 focus:border-purple-600" required>
+            <input
+              type="text"
+              name="first_name"
+              placeholder="First Name"
+              onChange={(e) => setFirstName(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-purple-600 focus:border-purple-600"
+              required
+            />
+            <input
+              type="text"
+              name="last_name"
+              placeholder="Last Name"
+              onChange={(e) => setLastName(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-purple-600 focus:border-purple-600"
+              required
+            />
+            <select
+              name="role"
+              onChange={(e) => setRole(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-400 focus:outline-none focus:ring-purple-600 focus:border-purple-600"
+              required
+            >
               <option value="">Select Role</option>
               <option value="attendee">Attendee</option>
               <option value="organizer">Organizer</option>
             </select>
-            <input type="email" name="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-purple-600 focus:border-purple-600" required />
-            <input type="phone_number" name="phone_number" placeholder="07..." onChange={(e) => setPhone(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-purple-600 focus:border-purple-600" required />
-            <input type="password" name="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-purple-600 focus:border-purple-600" required />
-            <input type="password" name="confirmPassword" placeholder="Confirm Password" onChange={(e) => setConfirmPassword(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-purple-600 focus:border-purple-600" required />
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-purple-600 focus:border-purple-600"
+              required
+            />
+            <input
+              type="tel"
+              name="phone_number"
+              placeholder="07..."
+              onChange={(e) => setPhone(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-purple-600 focus:border-purple-600"
+              required
+            />
 
-            <button type="submit" className="w-full bg-purple-400 text-white py-2 rounded-md hover:bg-purple-600 transition">
+            {/* Password Field */}
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                name="password"
+                placeholder="Password"
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-purple-600 focus:border-purple-600"
+                required
+              />
+              <span
+                className="absolute right-3 top-3 cursor-pointer text-gray-600"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </span>
+            </div>
+
+            {/* Confirm Password Field */}
+            <div className="relative">
+              <input
+                type={showConfirmPassword ? 'text' : 'password'}
+                name="confirmPassword"
+                placeholder="Confirm Password"
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-purple-600 focus:border-purple-600"
+                required
+              />
+              <span
+                className="absolute right-3 top-3 cursor-pointer text-gray-600"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+              </span>
+            </div>
+
+            <button
+              type="submit"
+              className="w-full bg-purple-400 text-white py-2 rounded-md hover:bg-purple-600 transition"
+            >
               Register
             </button>
           </form>
