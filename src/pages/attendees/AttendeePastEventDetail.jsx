@@ -104,7 +104,7 @@ export default function AttendeePastEventDetail() {
         line-height: 1.4;
       ">
         <div style="text-align: center; margin-bottom: 10px;">
-          <div style="font-size: 16px; font-weight: bold;">EVENT PRO</div>
+          <div style="font-size: 16px; font-weight: bold;">TICKSY</div>
           <div style="font-size: 10px; color: #666;">Ticket Receipt</div>
         </div>
 
@@ -189,7 +189,7 @@ export default function AttendeePastEventDetail() {
   const handleSubmitReview = async ({ rating, comment }) => {
     try {
       await new Promise((resolve) => setTimeout(resolve, 500));
-      toast.success("Review submitted!");
+      toast.success("Thank you for your review!");
 
       const fakeReview = {
         id: Date.now(),
