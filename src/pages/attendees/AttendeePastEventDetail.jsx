@@ -10,22 +10,41 @@ import RateEventModal from "../../components/RateEventModal";
 export default function AttendeePastEventDetail() {
   const { eventId } = useParams();
   const [eventDetails, setEventDetails] = useState(null);
+  const [hasReviewed, setHasReviewed] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const pdfRef = useRef();
   const [showModal, setShowModal] = useState(false);
+  const pdfRef = useRef();
 
   useEffect(() => {
-    axiosInstance
-      .get(`/profile/my-past-events/${eventId}`)
-      .then((res) => {
-        setEventDetails(res.data);
+    const fetchData = async () => {
+      try {
+        const [eventRes, reviewRes] = await Promise.all([
+          axiosInstance.get(`/profile/my-past-events/${eventId}`),
+          axiosInstance.get(`/events/${eventId}/reviews`),
+        ]);
+
+        const user = JSON.parse(localStorage.getItem("user"));
+        const userId = user?.user?.id;
+
+        const alreadyReviewed = reviewRes.data.some(
+          (r) => r.attendee?.id === userId
+        );
+
+        setEventDetails({
+          ...eventRes.data,
+          reviews: reviewRes.data,
+        });
+
+        setHasReviewed(alreadyReviewed);
+      } catch {
+        setError("Failed to load event details.");
+      } finally {
         setLoading(false);
-      })
-      .catch(() => {
-        setError("Failed to fetch event details.");
-        setLoading(false);
-      });
+      }
+    };
+
+    fetchData();
   }, [eventId]);
 
   const handleDownloadPDF = async () => {
@@ -33,144 +52,147 @@ export default function AttendeePastEventDetail() {
     if (!element) return;
 
     try {
-      const canvas = await html2canvas(element, { scale: 2 });
-      const imgData = canvas.toDataURL("image/png");
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+      });
 
+      const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF("p", "mm", "a4");
+
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
 
       pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
       pdf.save(`event_${eventDetails.id || "details"}.pdf`);
-    } catch (error) {
-      console.error("PDF generation failed:", error);
-      alert("Something went wrong while generating the PDF.");
+    } catch {
+      alert("PDF generation failed.");
     }
   };
 
   const handleSubmitReview = async ({ rating, comment }) => {
     try {
-      const res = await axiosInstance.post(`/reviews/${eventId}`, {
+      await axiosInstance.post(`/events/${eventId}/reviews`, {
         rating,
         comment,
       });
 
       alert("Review submitted!");
       setShowModal(false);
+      setHasReviewed(true);
 
-      // Refresh reviews
-      const refreshed = await axiosInstance.get(`/reviews/${eventId}`);
+      const updatedReviews = await axiosInstance.get(`/events/${eventId}/reviews`);
       setEventDetails((prev) => ({
         ...prev,
-        reviews: refreshed.data,
+        reviews: updatedReviews.data,
       }));
     } catch (err) {
       alert(err.response?.data?.message || "Failed to submit review.");
     }
   };
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p className="text-red-500">{error}</p>;
+  if (loading) return <p className="p-6">Loading...</p>;
+  if (error) return <p className="text-red-500 p-6">{error}</p>;
   if (!eventDetails) return null;
 
   return (
     <>
       <AttendeeNavBar />
-      <div className="max-w-7xl mx-auto p-4 flex gap-6">
+      <div className="max-w-7xl mx-auto p-4 flex gap-6 text-black">
         <AttendeeSideBar />
-
-        <div className="flex-1 text-black">
-          {/* PDF Content */}
-          <div ref={pdfRef} className="bg-white p-4 rounded shadow mb-6">
+        <div className="flex-1">
+          <div
+            ref={pdfRef}
+            className="bg-white p-4 rounded shadow mb-6"
+            style={{ backgroundColor: "#ffffff", color: "#000000" }}
+          >
             <h2 className="text-2xl font-bold mb-4">{eventDetails.title}</h2>
+            <img
+              src={eventDetails.image_url}
+              alt={eventDetails.title}
+              className="w-full h-64 object-cover rounded mb-4"
+            />
+            <p className="text-gray-600 mb-2">
+              {new Date(eventDetails.start_time).toLocaleString()} –{" "}
+              {new Date(eventDetails.end_time).toLocaleString()}
+            </p>
+            <p className="mb-2">{eventDetails.location}</p>
+            <p className="mb-4">{eventDetails.description}</p>
 
-            {/* Tickets */}
-            <div className="mb-6">
-              <h3 className="text-lg font-semibold mb-2">Your Tickets</h3>
-              {eventDetails.tickets?.map((ticket) => (
-                <div
-                  key={ticket.id || `${ticket.ticket_type}-${Math.random()}`}
-                  className="mb-2"
-                >
-                  <p className="text-sm">ID: {ticket.id}</p>
-                  <p className="text-sm">Type: {ticket.ticket_type}</p>
-                </div>
-              ))}
-            </div>
-
-            {/* Purchase Summary */}
-            <div className="mb-6">
-              <h3 className="text-lg font-semibold mb-2">Purchase Details</h3>
-              <table className="w-full text-left border">
-                <thead>
-                  <tr className="border-b">
-                    <th className="p-2">Ticket</th>
-                    <th className="p-2">Price</th>
-                    <th className="p-2">Qty</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {eventDetails.ticket_summary?.map((item) => (
-                    <tr
-                      key={`${item.ticket_type}-${item.price}-${item.quantity}`}
-                    >
-                      <td className="p-2">{item.ticket_type}</td>
-                      <td className="p-2">Ksh.{item.price}</td>
-                      <td className="p-2">{item.quantity}</td>
+            {eventDetails.ticket_summary?.length > 0 && (
+              <div className="mb-4">
+                <h3 className="text-lg font-semibold mb-2">Tickets</h3>
+                <table className="w-full text-left border">
+                  <thead>
+                    <tr className="border-b">
+                      <th className="p-2">Type</th>
+                      <th className="p-2">Price</th>
+                      <th className="p-2">Quantity</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-              <p className="mt-2 font-semibold">
-                Total: Ksh.{eventDetails.total_price}
-              </p>
-            </div>
+                  </thead>
+                  <tbody>
+                    {eventDetails.ticket_summary.map((item, i) => (
+                      <tr key={i}>
+                        <td className="p-2">{item.ticket_type}</td>
+                        <td className="p-2">Ksh.{item.price}</td>
+                        <td className="p-2">{item.quantity}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
 
-            {/* Reviews */}
-            <div>
-              <h3 className="text-lg font-semibold mb-2">Event Reviews</h3>
-              {eventDetails.reviews && eventDetails.reviews.length > 0 ? (
-                eventDetails.reviews.map((review, index) => (
-                  <div
-                    key={review.id || `${review.comment}-${review.rating}-${index}`}
-                    className="mb-4 border-b pb-2"
-                  >
-                    <p className="text-yellow-500">
-                      {"★".repeat(review.rating)}
-                    </p>
-                    <p>{review.comment}</p>
-                  </div>
-                ))
-              ) : (
-                <p>No reviews yet.</p>
-              )}
-            </div>
+            <p className="font-semibold">Total: Ksh.{eventDetails.total_price}</p>
           </div>
 
-          {/* Buttons */}
-          <div className="flex gap-4">
+          <div className="flex gap-4 mb-6">
             <button
               onClick={handleDownloadPDF}
-              className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
+              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
             >
               Download PDF
             </button>
-            <button
-              onClick={() => setShowModal(true)}
-              className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
-            >
-              Rate Event
-            </button>
+
+            {!hasReviewed && (
+              <button
+                onClick={() => setShowModal(true)}
+                className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
+              >
+                Rate & Review
+              </button>
+            )}
           </div>
 
-          {/* Modal */}
-          <RateEventModal
-            visible={showModal}
-            onClose={() => setShowModal(false)}
-            onSubmit={handleSubmitReview}
-          />
+          <div className="mb-8">
+            <h3 className="text-xl font-semibold mb-2">Reviews</h3>
+            {eventDetails.reviews?.length === 0 ? (
+              <p className="text-gray-500">No reviews yet.</p>
+            ) : (
+              <ul className="space-y-4">
+                {eventDetails.reviews.map((review) => (
+                  <li key={review.id} className="border p-3 rounded">
+                    <p className="font-semibold">
+                      {review.attendee?.first_name} {review.attendee?.last_name}
+                    </p>
+                    <p className="text-yellow-600">Rating: {review.rating}/5</p>
+                    <p>{review.comment}</p>
+                    <p className="text-sm text-gray-500">
+                      {new Date(review.created_at).toLocaleDateString()}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
       </div>
+
+      <RateEventModal
+        visible={showModal}
+        onClose={() => setShowModal(false)}
+        onSubmit={handleSubmitReview}
+      />
     </>
   );
 }

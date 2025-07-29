@@ -9,6 +9,8 @@ export default function AttendeePastEvents() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const userId = JSON.parse(localStorage.getItem("user"))?.id;
+
   useEffect(() => {
     axiosInstance
       .get("/profile/my-past-events")
@@ -16,7 +18,7 @@ export default function AttendeePastEvents() {
         setPastEvents(res.data);
         setLoading(false);
       })
-      .catch((err) => {
+      .catch(() => {
         setError("Failed to fetch past events.");
         setLoading(false);
       });
@@ -35,12 +37,17 @@ export default function AttendeePastEvents() {
           {loading && <p>Loading...</p>}
           {error && <p className="text-red-500">{error}</p>}
           {!loading && pastEvents.length === 0 && (
-            <p className="text-gray-500">You have not attended any events yet.</p>
+            <p className="text-gray-500">
+              You have not attended any events yet.
+            </p>
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {pastEvents.map((event) => (
-              <div key={event.id} className="bg-white p-4 rounded shadow text-black">
+              <div
+                key={event.id}
+                className="bg-white p-4 rounded shadow text-black"
+              >
                 <img
                   src={event.image_url}
                   alt={event.title}
@@ -54,7 +61,7 @@ export default function AttendeePastEvents() {
                 <p className="mb-2">{event.location}</p>
 
                 <Link
-                  to={`/attendee/${event.attendee_id || "me"}/past-events/${event.id}`}
+                  to={`/attendee/${userId}/past-events/${event.id}`}
                   className="inline-block mt-2 text-purple-600 border border-purple-600 px-3 py-1 rounded hover:bg-purple-600 hover:text-white transition"
                 >
                   View Details
