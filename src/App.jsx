@@ -1,22 +1,24 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+
 import EventsList from './pages/EventsList';
-
-import AttendeeProfile from './pages/attendees/AttendeeProfile';
-import OrgProfile from './pages/organizer/OrgProfile';
-import Unauthorized from './pages/Unauthorized';
-import Login from './pages/Login';
-import Register from "./pages/Register";
-
-import AdminProfile from './pages/admin/AdminProfile';
-// import OrgDashboard from './pages/organizer/OrgDashboard';
-
-import AttendeeUpcoming from './pages/attendees/AttUpcoming'
 import LandingPage from './pages/LandingPage';
 import EventDetails from './pages/EventDetails';
 
+import Login from './pages/Login';
+import Register from "./pages/Register";
 
+import Unauthorized from './pages/Unauthorized';
+
+import AttendeeProfile from './pages/attendees/AttendeeProfile';
+import AttendeeUpcoming from './pages/attendees/AttendeeUpcomingEvents';
+
+import OrgProfile from './pages/organizer/OrgProfile';
+import AdminProfile from './pages/admin/AdminProfile';
+import MyOrders from './pages/attendees/MyOrders';
+
+// import OrgDashboard from './pages/organizer/OrgDashboard'; // If needed later
 
 function ProtectedRoute({ children, roles }) {
   const user = useSelector((state) => state.auth.currentUser);
@@ -28,45 +30,62 @@ function ProtectedRoute({ children, roles }) {
 }
 
 function App() {
-
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<LandingPage/>} />
+        {/* Public Routes */}
+        <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/events/:id" element={<EventDetails />} />
         <Route path="/events" element={<EventsList />} />
-        
-
+        <Route path="/events/:id" element={<EventDetails />} />
 
         {/* Attendee Protected Routes */}
-        <Route path="/attendee/:id/profile" element={
+        <Route
+          path="/attendee/:id/profile"
+          element={
             <ProtectedRoute roles={['attendee']}>
               <AttendeeProfile />
             </ProtectedRoute>
           }
         />
-        <Route path="/attendee/:id/upcoming-events" element={
+        <Route
+          path="/attendee/:id/upcoming-events"
+          element={
             <ProtectedRoute roles={['attendee']}>
               <AttendeeUpcoming />
             </ProtectedRoute>
           }
         />
+        <Route
+  path="/attendee/:id/orders"
+  element={
+    <ProtectedRoute roles={['attendee']}>
+      <MyOrders />
+    </ProtectedRoute>
+  }
+/>
 
-        {/* Organizer Protected Routes
-        <Route path="/organizer/:id/dashboard" element={
-            <ProtectedRoute roles={['organizer']}>
-              <OrgDashboard />
-            </ProtectedRoute> */}
-          {/* } */}
-        {/* /> */}
-        <Route path="/organizer/:id/profile" element={
+
+        {/* Organizer Protected Routes */}
+        <Route
+          path="/organizer/:id/profile"
+          element={
             <ProtectedRoute roles={['organizer']}>
               <OrgProfile />
             </ProtectedRoute>
           }
         />
+        {/* 
+        <Route
+          path="/organizer/:id/dashboard"
+          element={
+            <ProtectedRoute roles={['organizer']}>
+              <OrgDashboard />
+            </ProtectedRoute>
+          }
+        />
+        */}
 
         {/* Admin Protected Routes */}
         <Route
@@ -81,15 +100,11 @@ function App() {
         {/* Unauthorized */}
         <Route path="/unauthorized" element={<Unauthorized />} />
 
-        {/* Catch-all: Redirect unknown routes */}
+        {/* Fallback: Redirect unknown routes */}
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
     </Router>
-    
   );
 }
 
-
 export default App;
-
-

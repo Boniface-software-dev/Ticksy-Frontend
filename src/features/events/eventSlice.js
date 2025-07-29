@@ -1,4 +1,3 @@
-// src/features/events/eventSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
@@ -6,7 +5,7 @@ export const fetchEventById = createAsyncThunk(
   "events/fetchEventById",
   async (id) => {
     const res = await axios.get(`http://localhost:5000/events/${id}`);
-    return res.data;
+    return { ...res.data, ticketCount: 1 }; 
   }
 );
 
@@ -21,12 +20,12 @@ const eventSlice = createSlice({
   reducers: {
     increaseTicket: (state) => {
       if (state.selectedEvent) {
-        state.selectedEvent.tickets += 1;
+        state.selectedEvent.ticketCount += 1;
       }
     },
     decreaseTicket: (state) => {
-      if (state.selectedEvent && state.selectedEvent.tickets > 0) {
-        state.selectedEvent.tickets -= 1;
+      if (state.selectedEvent && state.selectedEvent.ticketCount > 1) {
+        state.selectedEvent.ticketCount -= 1;
       }
     },
   },
