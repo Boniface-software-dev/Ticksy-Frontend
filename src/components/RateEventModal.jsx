@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { toast } from "react-toastify";
 
 export default function RateEventModal({ visible, onClose, onSubmit }) {
   const [rating, setRating] = useState(0);
@@ -6,14 +7,19 @@ export default function RateEventModal({ visible, onClose, onSubmit }) {
 
   if (!visible) return null;
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (rating === 0) {
-      alert("Please select a rating.");
+      toast.error("Please select a rating.");
       return;
     }
-    onSubmit({ rating, comment });
-    setRating(0);
-    setComment("");
+
+    try {
+      await onSubmit({ rating, comment });
+      setRating(0);
+      setComment("");
+    } catch {
+      // Toast already shown in parent
+    }
   };
 
   return (
@@ -21,7 +27,6 @@ export default function RateEventModal({ visible, onClose, onSubmit }) {
       <div className="bg-white p-6 rounded shadow-lg w-full max-w-md">
         <h2 className="text-xl font-bold mb-4">Rate This Event</h2>
 
-        {/* Stars */}
         <div className="flex mb-4">
           {[1, 2, 3, 4, 5].map((star) => (
             <span
@@ -36,7 +41,6 @@ export default function RateEventModal({ visible, onClose, onSubmit }) {
           ))}
         </div>
 
-        {/* Comment */}
         <textarea
           className="w-full border p-2 rounded mb-4"
           rows="4"
@@ -45,7 +49,6 @@ export default function RateEventModal({ visible, onClose, onSubmit }) {
           onChange={(e) => setComment(e.target.value)}
         />
 
-        {/* Actions */}
         <div className="flex justify-end gap-2">
           <button
             onClick={onClose}
