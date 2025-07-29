@@ -1,182 +1,81 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
-import axios from "axios";
-import { 
-  fetchEventById,
-  fetchTicketsByEvent,
-  updateTicketQuantity,
-  checkoutTickets,
-} from "../features/events/eventSlice";
+import { useParams, useNavigate } from "react-router-dom";
+import { fetchEventById, fetchTicketsByEvent, checkoutTickets } from "../features/events/eventSlice";
 
-import Footer from "../components/Footer";
-
-const EventDetails = () => {
-  const { id : eventId } = useParams();
+export default function EventDetails() {
+  const { id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { selectedEvent: event, tickets, selectedTickets, status } = useSelector(
-    (state) => state.events
-  );
-  const { token } = useSelector((state) => state.auth);
+  const event = useSelector((state) => state.events.selectedEvent);
+  const status = useSelector((state) => state.events.status);
+  const error = useSelector((state) => state.events.error);
+  const token = useSelector((state) => state.auth?.token);
+  const tickets = useSelector((state) => state.tickets?.items || []);
 
-  // Fetch event details
+  // Fetch event and tickets
   useEffect(() => {
-    dispatch(fetchEventById(id));
-    dispatch(fetchTicketsByEvent(eventId));
-  }, [dispatch, eventId]);
-
-  // Fetch ticket types for the event
-  useEffect(() => {
-    const fetchTickets = async () => {
-      try {
-        const res = await axios.get(`http://localhost:5000/events/${id}/tickets`);
-        setTickets(res.data);
-      } catch (err) {
-        console.error("Error fetching tickets:", err);
-      }
-    };
-    fetchTickets();
-  }, [id]);
-
-  const handleIncrement = (ticketId) => {
-    const current = selectedQuantities[ticketId] || 0;
-    const ticket = tickets.find((t) => t.id === ticketId);
-    const remaining = ticket.quantity - ticket.sold;
-
-    if (current < remaining) {
-      setSelectedQuantities((prev) => ({
-        ...prev,
-        [ticketId]: current + 1,
-      }));
+    if (id) {
+      dispatch(fetchEventById(id));
+      dispatch(fetchTicketsByEvent(id));
     }
-  };
+  }, [dispatch, id]);
 
-  const handleDecrement = (ticketId) => {
-    const current = selectedQuantities[ticketId] || 0;
-    if (current > 0) {
-      setSelectedQuantities((prev) => ({
-        ...prev,
-        [ticketId]: current - 1,
-      }));
+  // Calculate total price safely
+  const totalPrice = useMemo(() => {
+    if (!tickets || tickets.length === 0) return 0;
+    return tickets.reduce((sum, ticket) => sum + ticket.price, 0);
+  }, [tickets]);
+
+  const handleCheckout = () => {
+    if (!token) {
+      alert("You must be logged in to buy tickets.");
+      navigate("/login");
+      return;
     }
+
+    dispatch(checkoutTickets({ eventId: id, tickets }));
   };
 
-  const calculateTotal = () => {
-    return tickets.reduce((total, ticket) => {
-      const quantity = selectedQuantities[ticket.id] || 0;
-      return total + ticket.price * quantity;
-    }, 0);
-  };
-
-  if (status === "loading") return <p>Loading...</p>;
-  if (!event) return <p>No event found.</p>;
+  if (status === "loading") return <p className="text-center py-8">Loading...</p>;
+  if (error) return <p className="text-center text-red-500">Error: {error}</p>;
+  if (!event) return <p className="text-center text-gray-600">Event not found.</p>;
 
   return (
-    <div className="bg-[#f3f3f5] min-h-screen font-poppins text-black">
-      <div className="max-w-7xl mx-auto py-10 px-5 md:px-10 grid md:grid-cols-2 gap-10">
-        {/* LEFT SECTION */}
-        <div>
-          <img
-            src={event.image_url}
-            alt={event.title}
-            className="rounded-lg w-full object-cover"
-          />
-          <div className="mt-6">
-            <h2 className="text-xl font-semibold mb-2">Description</h2>
-            <p className="text-gray-700 text-sm leading-relaxed">
-              {event.description ||
-                "Join us for a wonderful experience filled with music, food, and fun!"}
-            </p>
-          </div>
-          <div className="mt-6">
-            <h2 className="text-xl font-semibold mb-2">Tags</h2>
-            <div className="flex gap-3 flex-wrap">
-              {Array.isArray(event.tags) ? (
-                event.tags.map((tag, i) => (
-                  <span
-                    key={i}
-                    className="px-3 py-1 border border-[#9747FF] rounded-full text-sm text-[#9747FF]"
-                  >
-                    {tag}
-                  </span>
-                ))
-              ) : (
-                <span className="text-sm text-gray-500">No tags</span>
-              )}
-            </div>
-          </div>
-        </div>
+    <div className="max-w-3xl mx-auto p-6">
+      <h1 className="text-3xl font-bold mb-4">{event.title}</h1>
+      <p className="mb-2">{event.description}</p>
+      <p className="mb-2 text-gray-700">Location: {event.location}</p>
+      <p className="mb-2 text-gray-700">Date: {new Date(event.date).toLocaleDateString()}</p>
 
-        {/* RIGHT SECTION */}
-        <div>
-          <h1 className="text-4xl font-bold mb-4">{event.title}</h1>
-          <div className="text-sm text-gray-600 space-y-2 mb-6">
-            <p>📅 {new Date(event.start_time).toLocaleDateString()}</p>
-            <p>
-              🕒{" "}
-              {new Date(event.start_time).toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              })}{" "}
-              -{" "}
-              {new Date(event.end_time).toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
-            </p>
-            <p>📍 {event.location}</p>
-          </div>
-
-          {/* Tickets */}
-          <h2 className="text-2xl font-bold mb-4">Tickets</h2>
-          <div className="grid grid-cols-2 gap-4 mb-6">
-            {tickets.map((ticket) => {
-              const remaining = ticket.quantity - ticket.sold;
-              const selected = selectedQuantities[ticket.id] || 0;
-
-              return (
-                <div key={ticket.id} className="border border-[#9747FF] rounded-lg p-4">
-                  <div className="flex justify-between items-center">
-                    <h3 className="text-lg font-semibold">{ticket.type}</h3>
-                    <span className="text-sm text-gray-500">{remaining} left</span>
-                  </div>
-                  <p>Price: {ticket.price.toLocaleString()}</p>
-                  <div className="flex items-center justify-between mt-4">
-                    <button
-                      onClick={() => handleDecrement(ticket.id)}
-                      className="px-2 py-1 border rounded"
-                    >
-                      -
-                    </button>
-                    <span>{selected}</span>
-                    <button
-                      onClick={() => handleIncrement(ticket.id)}
-                      className="px-2 py-1 border rounded"
-                      disabled={selected >= remaining}
-                    >
-                      +
-                    </button>
-                  </div>
+      <div className="mt-6">
+        <h2 className="text-xl font-semibold mb-2">Available Tickets</h2>
+        {tickets.length > 0 ? (
+          <ul className="space-y-2">
+            {tickets.map((ticket) => (
+              <li key={ticket.id} className="bg-gray-100 p-3 rounded">
+                <div className="flex justify-between items-center">
+                  <span>{ticket.type}</span>
+                  <span>${ticket.price}</span>
                 </div>
-              );
-            })}
-          </div>
-
-          <div className="flex items-center gap-4">
-            <div className="flex-1 border rounded-lg px-4 py-3 text-lg font-semibold">
-              Total <span className="float-right">{calculateTotal().toLocaleString()}</span>
-            </div>
-            <button className="bg-[#9747FF] text-white px-6 py-3 rounded-lg font-medium">
-              Checkout
-            </button>
-          </div>
-        </div>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>No tickets available.</p>
+        )}
       </div>
-      <Footer />
+
+      <div className="mt-6">
+        <p className="font-bold text-lg">Total: ${totalPrice.toFixed(2)}</p>
+        <button
+          onClick={handleCheckout}
+          className="mt-3 px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+        >
+          Buy Tickets
+        </button>
+      </div>
     </div>
   );
-};
-
-export default EventDetails;
+}

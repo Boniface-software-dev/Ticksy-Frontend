@@ -1,10 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
-// import authReducer from '../features/authentification/authSlice' ❌ Comment this for now
+import authReducer from '../features/authentification/authSlice'
 import eventReducer from '../features/events/eventSlice';
 
 const store = configureStore({
   reducer: {
-    // auth: authReducer,
+    auth: authReducer,
     events: eventReducer,
   },
   middleware: (getDefaultMiddleware) =>

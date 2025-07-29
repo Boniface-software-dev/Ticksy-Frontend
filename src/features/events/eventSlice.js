@@ -2,6 +2,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
+
+// Fetch event by ID
 export const fetchEventById = createAsyncThunk(
   "events/fetchEventById",
   async (id) => {
