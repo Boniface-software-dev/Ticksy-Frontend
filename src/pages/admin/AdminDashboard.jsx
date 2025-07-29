@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import AdminSidebar from "../../components/AdminSidebar";
 import API from "../../utils/axiosInstance";
 import {
@@ -33,17 +33,25 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     setLoading(true);
-    API.get("/admin/dashboard")
-      .then((res) => {
-        setSummary(res.data.summary || {});
-        setTicketSalesData(res.data.ticket_sales_over_time || []);
-      })
-      .catch(() => setError("Could not load summary"));
+    Promise.all([
+      API.get("/admin/dashboard"),
+      API.get("/admin/analytics/ticket-sales-trends"),
+      API.get("/admin/logs"),
+    ])
+      .then(([dashboardRes, trendRes, logsRes]) => {
+        const summaryData = dashboardRes.data.summary || {};
+        const trendData = trendRes.data || [];
+        const totalSales = trendData.reduce((acc, cur) => acc + cur.sales, 0);
 
-    API.get("/admin/logs")
-      .then((res) => {
+        setSummary({
+          ...summaryData,
+          total_tickets_sold: totalSales,
+        });
+
+        setTicketSalesData(trendData);
+
         setRecentActivity(
-          res.data.slice(0, 8).map((log) => ({
+          logsRes.data.slice(0, 8).map((log) => ({
             message:
               log.action +
               (log.extra_data ? ` (${JSON.stringify(log.extra_data)})` : ""),
@@ -52,7 +60,10 @@ export default function AdminDashboard() {
           }))
         );
       })
-      .catch(() => setRecentActivity([]))
+      .catch((err) => {
+        console.error("Error loading dashboard data:", err);
+        setError("Could not load summary");
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -155,6 +166,8 @@ export default function AdminDashboard() {
             </ul>
           </div>
         </div>
+
+        {/* Floating Profile Link Removed (as per earlier update) */}
       </main>
     </div>
   );
