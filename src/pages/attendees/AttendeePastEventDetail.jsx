@@ -6,6 +6,8 @@ import AttendeeSideBar from "../../components/AttendeeSideBar";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import RateEventModal from "../../components/RateEventModal";
+import { toast } from "react-toastify";
+
 import {
   FaStar,
   FaRegStar,
@@ -101,57 +103,57 @@ export default function AttendeePastEventDetail() {
   };
 
   const handleDownloadPDF = async () => {
-    const element = pdfRef.current;
-    if (!element) return;
+  const element = pdfRef.current;
+  if (!element) return;
 
-    try {
-      const canvas = await html2canvas(element, {
-        scale: 2,
-        useCORS: true,
-      });
+  try {
+    const canvas = await html2canvas(element, {
+      scale: 2,
+      useCORS: true,
+    });
 
-      const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF("p", "mm", "a4");
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jsPDF("p", "mm", "a4");
 
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
 
-      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-      pdf.save(`event_${eventDetails.id || "details"}.pdf`);
-    } catch {
-      alert("PDF generation failed.");
-    }
-  };
+    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+    pdf.save(`event_${eventDetails.id || "details"}.pdf`);
+  } catch {
+    toast.error("PDF generation failed.");
+  }
+};
 
-  const handleSubmitReview = async ({ rating, comment }) => {
-    try {
-      await axiosInstance.post(`/events/${eventId}/reviews`, {
-        rating,
-        comment,
-      });
+const handleSubmitReview = async ({ rating, comment }) => {
+  try {
+    await axiosInstance.post(`/events/${eventId}/reviews`, {
+      rating,
+      comment,
+    });
 
-      alert("Review submitted successfully!");
-      setShowModal(false);
-      setHasReviewed(true);
+    toast.success("Review submitted successfully!");
+    setShowModal(false);
+    setHasReviewed(true);
 
-      const reviewRes = await axiosInstance.get(
-        `/events/${eventId}/reviews`
-      );
-      const avgRating =
-        reviewRes.data.length > 0
-          ? reviewRes.data.reduce((sum, r) => sum + r.rating, 0) /
-            reviewRes.data.length
-          : 0;
+    const reviewRes = await axiosInstance.get(
+      `/events/${eventId}/reviews`
+    );
+    const avgRating =
+      reviewRes.data.length > 0
+        ? reviewRes.data.reduce((sum, r) => sum + r.rating, 0) /
+          reviewRes.data.length
+        : 0;
 
-      setEventDetails((prev) => ({
-        ...prev,
-        reviews: reviewRes.data,
-        averageRating: avgRating.toFixed(1),
-      }));
-    } catch (err) {
-      alert(err.response?.data?.message || "Failed to submit review.");
-    }
-  };
+    setEventDetails((prev) => ({
+      ...prev,
+      reviews: reviewRes.data,
+      averageRating: avgRating.toFixed(1),
+    }));
+  } catch (err) {
+    toast.error(err.response?.data?.message || "Failed to submit review.");
+  }
+};
 
   if (loading) return <div className="p-6 text-center">Loading...</div>;
   if (error) return <div className="text-red-500 p-6 text-center">{error}</div>;
