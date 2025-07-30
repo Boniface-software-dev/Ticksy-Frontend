@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import AdminSidebar from "../../components/AdminSidebar";
+import AdminSidebar from "../../components/AdminPanel";
 import API from "../../utils/axiosInstance";
 import {
   AreaChart,
@@ -17,11 +17,10 @@ export default function AdminDashboard() {
   const { id } = useParams();
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.currentUser);
-  const basePath = `/admin/${user?.id}`;
 
   const [summary, setSummary] = useState({});
   const [ticketSalesData, setTicketSalesData] = useState([]);
-  const [recentActivity, setRecentActivity] = useState([]);
+  const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -33,28 +32,57 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     setLoading(true);
-    API.get("/admin/dashboard")
-      .then((res) => {
-        setSummary(res.data.summary || {});
-        setTicketSalesData(res.data.ticket_sales_over_time || []);
-      })
-      .catch(() => setError("Could not load summary"));
+    Promise.all([
+      API.get("/admin/dashboard"),
+      API.get("/admin/analytics/ticket-sales-trends"),
+      API.get("/admin/logs"),
+    ])
+      .then(([dashboardRes, trendRes, logsRes]) => {
+        const summaryData = dashboardRes.data.summary || {};
+        const trendData = trendRes.data || [];
+        const totalSales = trendData.reduce((acc, cur) => acc + cur.sales, 0);
 
-    API.get("/admin/logs")
-      .then((res) => {
-        setRecentActivity(
-          res.data.slice(0, 8).map((log) => ({
-            message:
-              log.action +
-              (log.extra_data ? ` (${JSON.stringify(log.extra_data)})` : ""),
-            status: log.status,
-            time: log.timestamp,
-          }))
-        );
+        setSummary({
+          ...summaryData,
+          total_tickets_sold: totalSales,
+        });
+
+        setTicketSalesData(trendData);
+        setLogs(logsRes.data || []);
       })
-      .catch(() => setRecentActivity([]))
+      .catch((err) => {
+        console.error("Error loading dashboard data:", err);
+        setError("Could not load summary");
+      })
       .finally(() => setLoading(false));
   }, []);
+
+  const downloadCSV = () => {
+    const headers = [
+      "id,user_id,user_name,action,target_type,target_id,status,ip_address,timestamp,extra_data",
+    ];
+    const rows = logs.map((log) =>
+      [
+        log.id,
+        log.user_id,
+        `"${log.user_name}"`,
+        `"${log.action}"`,
+        log.target_type,
+        log.target_id,
+        log.status,
+        log.ip_address,
+        log.timestamp,
+        log.extra_data ? JSON.stringify(log.extra_data) : "",
+      ].join(",")
+    );
+    const blob = new Blob([headers.concat(rows).join("\n")], {
+      type: "text/csv",
+    });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "admin_audit_logs.csv";
+    link.click();
+  };
 
   if (loading)
     return (
@@ -73,7 +101,6 @@ export default function AdminDashboard() {
   return (
     <div className="flex min-h-screen bg-[#faf8ff]">
       <AdminSidebar />
-
       <main className="flex-1 p-8 relative">
         <h1 className="text-2xl font-bold mb-5 text-[#1a1240]">
           Admin Dashboard
@@ -102,57 +129,73 @@ export default function AdminDashboard() {
           ))}
         </div>
 
-        {/* Graph and Recent Activity */}
-        <div className="flex flex-col md:flex-row gap-6 mb-7">
-          <div className="bg-white rounded-xl shadow p-6 flex-1 min-w-[320px]">
-            <div className="font-semibold text-[#1a1240] mb-2">
-              Ticket Sales Over Time
-            </div>
-            <ResponsiveContainer width="100%" height={180}>
-              <AreaChart data={ticketSalesData}>
-                <defs>
-                  <linearGradient id="colorSales" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#9747ff" stopOpacity={0.8} />
-                    <stop offset="95%" stopColor="#e7dbfa" stopOpacity={0.2} />
-                  </linearGradient>
-                </defs>
-                <XAxis dataKey="month" tick={{ fontSize: 12 }} />
-                <YAxis tick={{ fontSize: 12 }} />
-                <CartesianGrid strokeDasharray="3 3" />
-                <Tooltip />
-                <Area
-                  type="monotone"
-                  dataKey="sales"
-                  stroke="#9747ff"
-                  fillOpacity={1}
-                  fill="url(#colorSales)"
-                />
-              </AreaChart>
-            </ResponsiveContainer>
+        {/* Graph */}
+        <div className="bg-white rounded-xl shadow p-6 mb-8">
+          <div className="font-semibold text-[#1a1240] mb-2">
+            Ticket Sales Over Time
           </div>
+          <ResponsiveContainer width="100%" height={200}>
+            <AreaChart data={ticketSalesData}>
+              <defs>
+                <linearGradient id="colorSales" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#9747ff" stopOpacity={0.8} />
+                  <stop offset="95%" stopColor="#e7dbfa" stopOpacity={0.2} />
+                </linearGradient>
+              </defs>
+              <XAxis dataKey="month" tick={{ fontSize: 12 }} />
+              <YAxis tick={{ fontSize: 12 }} />
+              <CartesianGrid strokeDasharray="3 3" />
+              <Tooltip />
+              <Area
+                type="monotone"
+                dataKey="sales"
+                stroke="#9747ff"
+                fillOpacity={1}
+                fill="url(#colorSales)"
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
 
-          <div className="bg-white rounded-xl shadow p-6 flex-1 min-w-[250px]">
-            <div className="font-semibold text-[#1a1240] mb-3">
-              Recent Activity
-            </div>
-            <ul className="space-y-3">
-              {recentActivity.map((item, idx) => (
-                <li key={idx} className="flex justify-between items-center">
-                  <span className="text-sm text-[#1a1240]">{item.message}</span>
-                  <span
-                    className={`px-2 py-1 rounded text-xs font-bold ${
-                      item.status === "Success"
-                        ? "bg-green-100 text-green-700"
-                        : item.status === "Failed"
-                        ? "bg-red-100 text-red-700"
-                        : "bg-gray-100 text-gray-700"
-                    }`}
-                  >
-                    {item.status}
-                  </span>
-                </li>
-              ))}
-            </ul>
+        {/* Logs Section */}
+        <div className="bg-white rounded-xl shadow p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-[#1a1240]">
+              Recent Audit Logs
+            </h2>
+            <button
+              onClick={downloadCSV}
+              className="bg-[#9747ff] hover:bg-purple-800 text-white px-4 py-2 rounded text-sm font-medium"
+            >
+              Download Logs (.csv)
+            </button>
+          </div>
+          <div className="overflow-y-auto max-h-[320px] border-t border-gray-200 pt-3">
+            {logs.map((log) => (
+              <div
+                key={log.id}
+                className="flex justify-between items-start py-2 border-b border-gray-100"
+              >
+                <div>
+                  <p className="text-sm font-medium text-[#1a1240]">
+                    {log.user_name} —{" "}
+                    <span className="font-normal">{log.action}</span>
+                  </p>
+                  <p className="text-xs text-gray-500">{log.timestamp}</p>
+                </div>
+                <span
+                  className={`px-2 py-1 rounded text-xs font-bold ${
+                    log.status === "Success"
+                      ? "bg-green-100 text-green-700"
+                      : log.status === "Failed"
+                      ? "bg-red-100 text-red-700"
+                      : "bg-gray-100 text-gray-700"
+                  }`}
+                >
+                  {log.status}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
       </main>

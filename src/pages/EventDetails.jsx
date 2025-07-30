@@ -13,7 +13,10 @@ export default function EventDetails() {
   const event = useSelector((state) => state.events.selectedEvent);
   const status = useSelector((state) => state.events.status);
   const error = useSelector((state) => state.events.error);
-const token = localStorage.getItem("token");
+  const user = JSON.parse(localStorage.getItem("user"));
+  const token = user?.access_token;
+
+
   const tickets = useSelector((state) => state.tickets?.items || []);
 
   const [quantities, setQuantities] = useState({});
@@ -62,7 +65,7 @@ const token = localStorage.getItem("token");
         total,
       },
     });
-  }; // ✅ this closing brace was missing before
+  };
 
   if (status === "loading")
     return <p className="text-center py-8">Loading...</p>;

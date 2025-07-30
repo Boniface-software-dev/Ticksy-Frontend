@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import API from "../../utils/axiosInstance";
-import AdminSidebar from "../../components/AdminSidebar";
+import AdminSidebar from "../../components/AdminPanel";
 import { toast } from "react-toastify";
 
 const TABS = [
@@ -17,6 +17,7 @@ export default function AdminEvents() {
 
   const [events, setEvents] = useState([]);
   const [tab, setTab] = useState("all");
+  const [selectedEvent, setSelectedEvent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -26,7 +27,7 @@ export default function AdminEvents() {
     }
   }, [user, id, navigate]);
 
-  useEffect(() => {
+  const fetchEvents = () => {
     setLoading(true);
     const endpoint = tab === "pending" ? "/admin/pending" : "/events";
     API.get(endpoint)
@@ -41,13 +42,18 @@ export default function AdminEvents() {
         );
       })
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    fetchEvents();
   }, [tab]);
 
   const handleStatus = (eventId, status) => {
     API.patch(`/admin/${eventId}`, { status })
       .then(() => {
-        setEvents((prev) => prev.filter((e) => e.id !== eventId));
         toast.success(`Event marked as ${status}`);
+        setSelectedEvent(null);
+        fetchEvents();
       })
       .catch(() => toast.error("Failed to update event status."));
   };
@@ -55,7 +61,7 @@ export default function AdminEvents() {
   return (
     <div className="flex min-h-screen bg-[#f8f5ff]">
       <AdminSidebar />
-      <main className="flex-1 p-6 md:p-10">
+      <main className="flex-1 p-6 md:p-10 relative overflow-x-hidden">
         <div className="max-w-6xl mx-auto">
           <h1 className="text-3xl font-extrabold text-[#1a1240] mb-8">
             Manage Events
@@ -66,7 +72,10 @@ export default function AdminEvents() {
             {TABS.map((t) => (
               <button
                 key={t.key}
-                onClick={() => setTab(t.key)}
+                onClick={() => {
+                  setTab(t.key);
+                  setSelectedEvent(null);
+                }}
                 className={`px-5 py-2 rounded-full font-semibold border text-sm transition-all duration-200 ${
                   tab === t.key
                     ? "bg-[#9747ff] text-white border-[#9747ff] shadow-md"
@@ -94,26 +103,22 @@ export default function AdminEvents() {
                   <th className="text-left px-4 py-3">Start</th>
                   <th className="text-left px-4 py-3">End</th>
                   <th className="text-left px-4 py-3">Status</th>
-                  {tab === "pending" && (
-                    <th className="text-left px-4 py-3">Actions</th>
-                  )}
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
                   <tr>
-                    <td
-                      colSpan={tab === "pending" ? 7 : 6}
-                      className="text-center py-8 text-[#9747ff] font-semibold"
-                    >
-                      Loading...
+                    <td colSpan={6} className="text-center py-8">
+                      <span className="text-[#9747ff] font-semibold">
+                        Loading...
+                      </span>
                     </td>
                   </tr>
                 ) : events.length === 0 ? (
                   <tr>
                     <td
-                      colSpan={tab === "pending" ? 7 : 6}
-                      className="text-center text-gray-500 py-10 italic"
+                      colSpan={6}
+                      className="text-center py-10 italic text-gray-500"
                     >
                       No events found.
                     </td>
@@ -122,20 +127,17 @@ export default function AdminEvents() {
                   events.map((ev) => (
                     <tr
                       key={ev.id}
-                      className="border-b border-[#f0eafd] hover:bg-[#fbf9ff] transition"
+                      onClick={() => setSelectedEvent(ev)}
+                      className="cursor-pointer hover:bg-[#f9f6ff] transition border-b border-[#f1e9ff]"
                     >
                       <td className="px-4 py-3 font-semibold">{ev.title}</td>
-                      <td className="px-4 py-3">{ev.category || "—"}</td>
-                      <td className="px-4 py-3">{ev.location || "—"}</td>
+                      <td className="px-4 py-3">{ev.category}</td>
+                      <td className="px-4 py-3">{ev.location}</td>
                       <td className="px-4 py-3">
-                        {ev.start_time
-                          ? new Date(ev.start_time).toLocaleString()
-                          : "—"}
+                        {new Date(ev.start_time).toLocaleString()}
                       </td>
                       <td className="px-4 py-3">
-                        {ev.end_time
-                          ? new Date(ev.end_time).toLocaleString()
-                          : "—"}
+                        {new Date(ev.end_time).toLocaleString()}
                       </td>
                       <td className="px-4 py-3">
                         {tab === "pending" ? (
@@ -143,35 +145,84 @@ export default function AdminEvents() {
                             Pending
                           </span>
                         ) : (
-                          <span className="text-green-700 bg-green-100 px-3 py-1 rounded-full text-xs font-semibold">
+                          <span className="bg-green-100 text-green-700 px-3 py-1 text-xs rounded-full font-semibold">
                             Approved
                           </span>
                         )}
                       </td>
-                      {tab === "pending" && (
-                        <td className="px-4 py-3">
-                          <div className="flex gap-2">
-                            <button
-                              onClick={() => handleStatus(ev.id, "approved")}
-                              className="bg-green-600 hover:bg-green-700 text-white text-xs font-semibold px-3 py-1 rounded-full shadow transition"
-                            >
-                              Approve
-                            </button>
-                            <button
-                              onClick={() => handleStatus(ev.id, "rejected")}
-                              className="bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-3 py-1 rounded-full shadow transition"
-                            >
-                              Reject
-                            </button>
-                          </div>
-                        </td>
-                      )}
                     </tr>
                   ))
                 )}
               </tbody>
             </table>
           </div>
+
+          {/* Side Panel Event View */}
+          {selectedEvent && (
+            <div className="fixed top-0 right-0 w-full md:w-[500px] h-full bg-white border-l border-[#e4dafd] shadow-2xl z-50 overflow-y-auto p-6">
+              <button
+                onClick={() => setSelectedEvent(null)}
+                className="absolute top-4 right-4 text-gray-500 hover:text-red-500 font-bold text-xl"
+              >
+                ×
+              </button>
+
+              <h2 className="text-xl font-bold text-[#1a1240] mb-2">
+                {selectedEvent.title}
+              </h2>
+              <img
+                src={selectedEvent.image_url}
+                alt="event"
+                className="w-full h-48 object-cover rounded-md mb-4"
+              />
+              <p className="text-sm text-gray-600 mb-4">
+                {selectedEvent.description}
+              </p>
+
+              <div className="text-sm text-gray-700 space-y-2">
+                <p>
+                  <strong>Category:</strong> {selectedEvent.category}
+                </p>
+                <p>
+                  <strong>Location:</strong> {selectedEvent.location}
+                </p>
+                <p>
+                  <strong>Start:</strong>{" "}
+                  {new Date(selectedEvent.start_time).toLocaleString()}
+                </p>
+                <p>
+                  <strong>End:</strong>{" "}
+                  {new Date(selectedEvent.end_time).toLocaleString()}
+                </p>
+                <p>
+                  <strong>Tags:</strong> {selectedEvent.tags}
+                </p>
+                <p>
+                  <strong>Organizer:</strong>{" "}
+                  {selectedEvent.organizer?.first_name}{" "}
+                  {selectedEvent.organizer?.last_name}
+                </p>
+              </div>
+
+              {/* Buttons for pending event */}
+              {tab === "pending" && (
+                <div className="mt-6 flex gap-3">
+                  <button
+                    onClick={() => handleStatus(selectedEvent.id, "approved")}
+                    className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow"
+                  >
+                    Approve
+                  </button>
+                  <button
+                    onClick={() => handleStatus(selectedEvent.id, "rejected")}
+                    className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded shadow"
+                  >
+                    Reject
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </main>
     </div>
