@@ -155,7 +155,6 @@ export default function AdminProfile() {
           </div>
         </div>
 
-        {/* Actions */}
         <div className="flex flex-col md:flex-row gap-4 mt-6">
           <button
             onClick={handleBack}
