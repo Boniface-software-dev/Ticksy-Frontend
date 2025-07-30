@@ -6,7 +6,7 @@ import { fetchOrganizerEvents } from "../../features/organizer/eventSlice";
 
 export default function EventHistory() {
   const dispatch = useDispatch();
-  const { history , loading, error } = useSelector((state) => state.events);
+  const { history , loading, error } = useSelector((state) => state.organizer);
   //const user = useSelector((state) => state.auth.currentUser);
 
   useEffect(() => {
@@ -15,10 +15,8 @@ export default function EventHistory() {
 
   console.log("Our events:", history);
 
-  // Current time in milliseconds
   const now = Date.now();
 
-  // Only include events with start_time in the future
   const upcomingEvents = history?.filter((event) => {
     const eventTime = Date.parse(event.start_time);
     return eventTime < now;
@@ -26,12 +24,11 @@ export default function EventHistory() {
 
   return (
     <div className="flex min-h-screen bg-gray-100">
-      {/* Sidebar */}
+    
       <div className="w-64">
         <OrgSideBar />
       </div>
 
-      {/* Main Content */}
       <div className="flex-1 bg-white shadow-lg p-6 m-6 rounded-lg flex flex-col">
         <h2 className="text-2xl font-semibold mb-4 text-black">Upcoming Events</h2>
 

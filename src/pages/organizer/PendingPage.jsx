@@ -6,7 +6,7 @@ import { fetchOrganizerEvents } from "../../features/organizer/eventSlice";
 
 export default function PendingEvents() {
   const dispatch = useDispatch();
-  const { pendingEvents , loading, error } = useSelector((state) => state.events);
+  const { pendingEvents , loading, error } = useSelector((state) => state.organizer);
   //const user = useSelector((state) => state.auth.currentUser);
 
   useEffect(() => {
@@ -17,12 +17,9 @@ export default function PendingEvents() {
 
   return (
     <div className="flex min-h-screen bg-gray-100">
-      {/* Sidebar */}
       <div className="w-64">
         <OrgSideBar />
       </div>
-
-      {/* Main Content */}
       <div className="flex-1 bg-white shadow-lg p-6 m-6 rounded-lg flex flex-col">
         <h2 className="text-2xl font-semibold mb-4 text-black">Pending Events</h2>
 
@@ -53,6 +50,7 @@ export default function PendingEvents() {
                     <p><span>End time: </span>{new Date(event.end_time).toLocaleString()}</p>
                     <p><span>Category: </span>{event.category}</p>
                     <p><span>Tags: </span>{event.tags}</p>
+                    <p>Description: {event.description}</p>
                     
                   </div>
                 </div>

@@ -28,7 +28,7 @@ export default function UpcomingDetails() {
     quantity: "",
   });
 
-  const event = useSelector((state) => state.events.currentEventDetails);
+  const event = useSelector((state) => state.organizer.currentEventDetails);
   const attendees = useSelector((state) => state.attendees.attendeesByEvent[id] || []);
   const checkIns = useSelector((state) => state.attendees.checkIns);
 
