@@ -7,7 +7,7 @@ import { showToast } from "../../features/organizer/uiSlice";
 
 export default function RejectedEvents() {
   const dispatch = useDispatch();
-  const { rejectedEvents, loading, error } = useSelector((state) => state.events);
+  const { rejectedEvents, loading, error } = useSelector((state) => state.organizer);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [formData, setFormData] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -138,6 +138,7 @@ const handleImageChange = (e) => {
                     <p>End time: {new Date(event.end_time).toLocaleString()}</p>
                     <p>Category: {event.category}</p>
                     <p>Tags: {event.tags}</p>
+                    <p>Description: {event.description}</p>
                   </div>
                 </div>
               </div>

@@ -28,6 +28,13 @@ import AttendeePastEvents from "./pages/attendees/AttendeePastEvents";
 import AttendeePastEventDetail from "./pages/attendees/AttendeePastEventDetail";
 import AdminUserProfile from "./pages/admin/AdminUserProfile";
 
+import UpcomingEvents from './pages/organizer/UpcomingPage';
+import UpcomingDetails from './pages/organizer/UpcomingDetails';
+import EventHistory from './pages/organizer/EventHistory';
+import PendingEvents from './pages/organizer/PendingPage';
+import RejectedEvents from './pages/organizer/RejectedPage';
+import HistoryDetails from './pages/organizer/HistoryDetails';
+
 function ProtectedRoute({ children, roles }) {
   const user = useSelector((state) => state.auth.currentUser);
   if (!user) return <Navigate to="/login" />;
@@ -94,6 +101,54 @@ function App() {
           element={
             <ProtectedRoute roles={["organizer"]}>
               <OrgProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/organizer/:id/dashboard"
+          element={
+            <ProtectedRoute roles={["organizer"]}>
+              <UpcomingEvents />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/organizer/:id/events/:id"
+          element={
+            <ProtectedRoute roles={["organizer"]}>
+              <UpcomingDetails />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/organizer/:id/event-history"
+          element={
+            <ProtectedRoute roles={["organizer"]}>
+              <EventHistory />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/organizer/:id/event-history/:id"
+          element={
+            <ProtectedRoute roles={["organizer"]}>
+              <HistoryDetails />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/organizer/:id/pending-events"
+          element={
+            <ProtectedRoute roles={["organizer"]}>
+              <PendingEvents />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/organizer/:id/rejected-events"
+          element={
+            <ProtectedRoute roles={["organizer"]}>
+              <RejectedEvents />
             </ProtectedRoute>
           }
         />
