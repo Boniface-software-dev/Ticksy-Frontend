@@ -1,50 +1,76 @@
 @import "tailwindcss";
 
-
 :root {
-  font-family: "Poppins";
+  font-family: "Poppins", sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
   background-color: #f3f3f5;
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+body {
+  color: #1f2937;
+  background-color: #f3f3f5;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
+  text-decoration: none;
+  color: inherit;
 }
+
 a:hover {
-  color: #535bf2;
+  text-decoration: underline;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
 }
 
-/* button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #bf80ff;
-  cursor: pointer;
-  transition: border-color 0.25s;
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
 }
-button:hover {
-  border-color: #9747ff;
+
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
 }
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-} */
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+
+.pdf-friendly * {
+  color: #000 !important;
+  background-color: #fff !important;
+  border-color: #000 !important;
+  box-shadow: none !important;
+}

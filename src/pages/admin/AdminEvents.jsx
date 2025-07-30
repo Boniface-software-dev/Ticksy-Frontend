@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import API from "../../utils/axios";
-import AdminSidebar from "../../components/AdminSidebar";
+import API from "../../utils/axiosInstance";
+import AdminSidebar from "../../components/AdminPanel";
 import { toast } from "react-toastify";
 
 const TABS = [
@@ -20,7 +20,6 @@ export default function AdminEvents() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // ✅ Redirect unauthorized or mismatched user
   useEffect(() => {
     if (!user || user.role !== "admin" || user.id.toString() !== id) {
       navigate("/unauthorized");
@@ -95,14 +94,16 @@ export default function AdminEvents() {
                   <th className="text-left px-4 py-3">Start</th>
                   <th className="text-left px-4 py-3">End</th>
                   <th className="text-left px-4 py-3">Status</th>
-                  <th className="text-left px-4 py-3">Actions</th>
+                  {tab === "pending" && (
+                    <th className="text-left px-4 py-3">Actions</th>
+                  )}
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
                   <tr>
                     <td
-                      colSpan={7}
+                      colSpan={tab === "pending" ? 7 : 6}
                       className="text-center py-8 text-[#9747ff] font-semibold"
                     >
                       Loading...
@@ -111,7 +112,7 @@ export default function AdminEvents() {
                 ) : events.length === 0 ? (
                   <tr>
                     <td
-                      colSpan={7}
+                      colSpan={tab === "pending" ? 7 : 6}
                       className="text-center text-gray-500 py-10 italic"
                     >
                       No events found.
@@ -147,8 +148,8 @@ export default function AdminEvents() {
                           </span>
                         )}
                       </td>
-                      <td className="px-4 py-3">
-                        {tab === "pending" ? (
+                      {tab === "pending" && (
+                        <td className="px-4 py-3">
                           <div className="flex gap-2">
                             <button
                               onClick={() => handleStatus(ev.id, "approved")}
@@ -163,12 +164,8 @@ export default function AdminEvents() {
                               Reject
                             </button>
                           </div>
-                        ) : (
-                          <span className="text-gray-400 text-xs italic">
-                            —
-                          </span>
-                        )}
-                      </td>
+                        </td>
+                      )}
                     </tr>
                   ))
                 )}

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import AdminSidebar from "../../components/AdminSidebar";
-import API from "../../utils/axios";
+import AdminSidebar from "../../components/AdminPanel";
+import API from "../../utils/axiosInstance";
 import {
   LineChart,
   Line,
@@ -23,18 +23,15 @@ export default function AdminAnalytics() {
   const [summary, setSummary] = useState(null);
   const [salesTrends, setSalesTrends] = useState([]);
   const [revenueByType, setRevenueByType] = useState([]);
-  const [topEventTypes, setTopEventTypes] = useState([]);
-  const [topCategories, setTopCategories] = useState([]);
+  const [topEvents, setTopEvents] = useState([]);
 
   const [loading, setLoading] = useState({
     summary: true,
     trends: true,
     revenue: true,
-    types: true,
-    categories: true,
+    topEvents: true,
   });
 
-  // ✅ Redirect if user is invalid or doesn't match URL
   useEffect(() => {
     if (!user || user.role !== "admin" || user.id.toString() !== id) {
       navigate("/unauthorized");
@@ -57,16 +54,16 @@ export default function AdminAnalytics() {
       .catch(() => setRevenueByType([]))
       .finally(() => setLoading((prev) => ({ ...prev, revenue: false })));
 
-    API.get("/admin/analytics/top-event-types")
-      .then((res) => setTopEventTypes(res.data || []))
-      .catch(() => setTopEventTypes([]))
-      .finally(() => setLoading((prev) => ({ ...prev, types: false })));
-
     API.get("/admin/analytics/top-events-by-revenue")
-      .then((res) => setTopCategories(res.data || []))
-      .catch(() => setTopCategories([]))
-      .finally(() => setLoading((prev) => ({ ...prev, categories: false })));
+      .then((res) => setTopEvents(res.data || []))
+      .catch(() => setTopEvents([]))
+      .finally(() => setLoading((prev) => ({ ...prev, topEvents: false })));
   }, []);
+
+  const totalTicketsSold = salesTrends.reduce(
+    (acc, curr) => acc + curr.sales,
+    0
+  );
 
   return (
     <div className="flex min-h-screen bg-[#f8f4ff]">
@@ -93,7 +90,7 @@ export default function AdminAnalytics() {
               />
               <SummaryCard
                 title="Tickets Sold"
-                value={summary.total_tickets?.toLocaleString()}
+                value={totalTicketsSold.toLocaleString()}
                 color="#164e63"
               />
               <SummaryCard
@@ -109,8 +106,9 @@ export default function AdminAnalytics() {
           )}
         </div>
 
-        {/* Charts */}
+        {/* Charts Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
+          {/* Line Chart: Sales Trend */}
           <AnalyticsCard
             title="Ticket Sales (Monthly Trend)"
             loading={loading.trends}
@@ -124,14 +122,15 @@ export default function AdminAnalytics() {
                 <Line
                   type="monotone"
                   dataKey="sales"
-                  stroke="#06b6d4"
+                  stroke="#9747ff"
                   strokeWidth={3}
-                  dot={{ r: 4, stroke: "#06b6d4", fill: "#fff" }}
+                  dot={{ r: 4, stroke: "#9747ff", fill: "#fff" }}
                 />
               </LineChart>
             </ResponsiveContainer>
           </AnalyticsCard>
 
+          {/* Bar Chart: Revenue by Ticket Type */}
           <AnalyticsCard
             title="Revenue Breakdown by Ticket Type"
             loading={loading.revenue}
@@ -147,37 +146,20 @@ export default function AdminAnalytics() {
             </ResponsiveContainer>
           </AnalyticsCard>
 
+          {/* Bar Chart: Top Events by Revenue */}
           <AnalyticsCard
-            title="Top Event Types by Tickets Sold"
-            loading={loading.types}
+            title="Top Events by Revenue"
+            loading={loading.topEvents}
           >
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={topEventTypes.slice(0, 5)} layout="vertical">
+            <ResponsiveContainer width="100%" height={220}>
+              <BarChart data={topEvents.slice(0, 5)} layout="vertical">
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis type="number" />
-                <YAxis type="category" dataKey="type" width={110} />
+                <YAxis type="category" dataKey="title" width={160} />
                 <Tooltip />
-                <Bar dataKey="tickets" fill="#06b6d4" radius={[0, 8, 8, 0]} />
+                <Bar dataKey="revenue" fill="#16a34a" radius={[0, 8, 8, 0]} />
               </BarChart>
             </ResponsiveContainer>
-          </AnalyticsCard>
-
-          <AnalyticsCard
-            title="Top Event Categories by Revenue"
-            loading={loading.categories}
-          >
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={topCategories.slice(0, 5)} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis type="number" />
-                <YAxis type="category" dataKey="category" width={110} />
-                <Tooltip />
-                <Bar dataKey="count" fill="#164e63" radius={[0, 8, 8, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-            <div className="text-xs text-gray-400 mt-3">
-              Based on event categories with highest total revenue.
-            </div>
           </AnalyticsCard>
         </div>
       </main>
