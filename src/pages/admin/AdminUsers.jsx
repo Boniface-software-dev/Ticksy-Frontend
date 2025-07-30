@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import API from "../../utils/axiosInstance";
-import AdminSidebar from "../../components/AdminSidebar";
+import AdminSidebar from "../../components/AdminPanel";
 
 export default function AdminUsers() {
   const { id } = useParams(); // admin id

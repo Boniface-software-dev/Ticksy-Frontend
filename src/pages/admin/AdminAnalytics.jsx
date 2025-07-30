@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import AdminSidebar from "../../components/AdminSidebar";
+import AdminSidebar from "../../components/AdminPanel";
 import API from "../../utils/axiosInstance";
 import {
   LineChart,

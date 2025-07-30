@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import API from "../../utils/axiosInstance";
-import AdminSidebar from "../../components/AdminSidebar";
+import AdminSidebar from "../../components/AdminPanel";
 import { toast } from "react-toastify";
 
 const TABS = [
