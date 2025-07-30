@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../../utils/axiosInstance";
 
+
 export const fetchOrganizerEvents = createAsyncThunk(
   "events/fetchOrganizerEvents",
   async (_, thunkAPI) => {
@@ -76,6 +77,7 @@ const eventSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      
       .addCase(fetchOrganizerEvents.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -92,7 +94,7 @@ const eventSlice = createSlice({
 
         if (Array.isArray(action.payload)) {
           action.payload.forEach((event) => {
-            const eventDate = new Date(event.start_time); 
+            const eventDate = new Date(event.start_time); // ✅ FIXED
 
             if (event.status === "pending") {
       pending.push(event);
@@ -118,7 +120,6 @@ const eventSlice = createSlice({
         state.error = action.payload || "Failed to fetch events";
       })
 
-      // Create Event
       .addCase(createEvent.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -132,7 +133,6 @@ const eventSlice = createSlice({
         state.error = action.payload;
       })
 
-      // Update Event
       .addCase(updateEvent.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -140,7 +140,6 @@ const eventSlice = createSlice({
       .addCase(updateEvent.fulfilled, (state, action) => {
         state.loading = false;
 
-        // Remove from rejected list and add to pending
         state.rejectedEvents = state.rejectedEvents.filter(
           (event) => event.id !== action.payload.id
         );
@@ -151,7 +150,6 @@ const eventSlice = createSlice({
         state.error = action.payload;
       })
 
-      // Fetch Event Details
       .addCase(fetchEventDetails.pending, (state) => {
         state.loading = true;
         state.error = null;
