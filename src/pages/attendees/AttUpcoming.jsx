@@ -6,8 +6,9 @@ import AttendeeSideBar from "../../components/AttendeeSideBar";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { toast } from "react-toastify";
+import { FaDownload } from "react-icons/fa";
 
-export default function AttendeeUpcomingDetailsl() {
+export default function AttendeeUpcomingDetails() {
   const { eventId } = useParams();
   const [eventDetails, setEventDetails] = useState(null);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
@@ -50,6 +51,7 @@ export default function AttendeeUpcomingDetailsl() {
 
   const handleDownloadPDF = async () => {
     try {
+      setIsGeneratingPDF(true);
       const receiptContent = `
         <div style="
           font-family: 'Courier New', monospace;
@@ -145,7 +147,7 @@ export default function AttendeeUpcomingDetailsl() {
     return (
       <>
         <AttendeeNavBar />
-        <div className="max-w-7xl mx-auto p-4 text-black">Loading event details...</div>
+        <div className="max-w-7xl mx-auto p-6 text-center text-gray-600">Loading event details...</div>
       </>
     );
   }
@@ -154,7 +156,7 @@ export default function AttendeeUpcomingDetailsl() {
     return (
       <>
         <AttendeeNavBar />
-        <div className="max-w-7xl mx-auto p-4 text-red-600">{error}</div>
+        <div className="max-w-7xl mx-auto p-6 text-center text-red-600">{error}</div>
       </>
     );
   }
@@ -163,7 +165,7 @@ export default function AttendeeUpcomingDetailsl() {
     return (
       <>
         <AttendeeNavBar />
-        <div className="max-w-7xl mx-auto p-4 text-black">No event details available.</div>
+        <div className="max-w-7xl mx-auto p-6 text-center text-gray-600">No event details available.</div>
       </>
     );
   }
@@ -171,82 +173,96 @@ export default function AttendeeUpcomingDetailsl() {
   return (
     <>
       <AttendeeNavBar />
-      <div className="max-w-7xl mx-auto p-4 flex gap-6 text-black">
+      <div className="max-w-7xl mx-auto p-4 sm:p-6 flex flex-col md:flex-row gap-6 text-gray-800">
         <AttendeeSideBar />
+        
         <div className="flex-1">
-          <div ref={pdfRef} className="bg-white p-6 rounded-lg shadow-md mb-6 border border-purple-100">
-            <h1 className="text-2xl font-bold text-purple-700 mb-6">
-              {eventDetails.event.title}
-            </h1>
+          {/* Event Details Card */}
+          <div ref={pdfRef} className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+            <div className="flex justify-between items-start mb-6">
+              <h1 className="text-2xl font-bold text-gray-900">
+                {eventDetails.event.title}
+              </h1>
+              <button
+                onClick={handleDownloadPDF}
+                disabled={isGeneratingPDF}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all
+                  ${isGeneratingPDF 
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed" 
+                    : "bg-white text-purple-600 border border-purple-600 hover:bg-purple-50 hover:shadow-sm"}
+                `}
+              >
+                <FaDownload className="text-sm" />
+                {isGeneratingPDF ? "Generating..." : "Download Receipt"}
+              </button>
+            </div>
 
-            <div className="space-y-6 mb-8">
-              <div>
-                <h2 className="text-xl font-semibold text-purple-700 mb-2">Date & Time</h2>
-                <p className="text-gray-700">
-                  {formatDate(eventDetails.event.start_time)} - {formatDate(eventDetails.event.end_time)}
-                </p>
+            <div className="space-y-6 mb-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h2 className="text-lg font-semibold text-gray-800 mb-2">Date & Time</h2>
+                  <p className="text-gray-600">
+                    {formatDate(eventDetails.event.start_time)} - {formatDate(eventDetails.event.end_time)}
+                  </p>
+                </div>
+
+                <div>
+                  <h2 className="text-lg font-semibold text-gray-800 mb-2">Location</h2>
+                  <p className="text-gray-600">{eventDetails.event.location}</p>
+                </div>
               </div>
 
               <div>
-                <h2 className="text-xl font-semibold text-purple-700 mb-2">Location</h2>
-                <p className="text-gray-700">{eventDetails.event.location}</p>
-              </div>
-
-              <div>
-                <h2 className="text-xl font-semibold text-purple-700 mb-2">Your Tickets</h2>
-                <div className="space-y-1">
+                <h2 className="text-lg font-semibold text-gray-800 mb-2">Your Tickets</h2>
+                <div className="space-y-2">
                   {eventDetails.tickets?.map((ticket) => (
-                    <p key={ticket.id} className="text-gray-700">
-                      Ticket #{ticket.id} • {ticket.type}
-                    </p>
+                    <div key={ticket.id} className="flex justify-between items-center bg-gray-50 p-3 rounded-lg">
+                      <span className="text-gray-700 font-medium">#{ticket.id} • {ticket.type}</span>
+                      <span className="text-purple-600 font-medium">Ksh {ticket.price}</span>
+                    </div>
                   ))}
                 </div>
               </div>
 
               <div>
-                <h2 className="text-xl font-semibold text-purple-700 mb-2">Purchase Details</h2>
-                <table className="w-full text-sm mb-2 border border-gray-200">
-                  <thead className="bg-purple-50 border-b">
-                    <tr>
-                      <th className="text-left py-2 px-2 font-semibold">Ticket</th>
-                      <th className="text-left py-2 px-2 font-semibold">Price</th>
-                      <th className="text-left py-2 px-2 font-semibold">Quantity</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {eventDetails.tickets?.map((ticket) => (
-                      <tr key={ticket.id}>
-                        <td className="py-2 px-2">{ticket.type}</td>
-                        <td className="py-2 px-2">Ksh. {ticket.price}</td>
-                        <td className="py-2 px-2">{ticket.quantity}</td>
+                <h2 className="text-lg font-semibold text-gray-800 mb-2">Purchase Summary</h2>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="text-left py-3 px-4 font-medium text-gray-600">Ticket</th>
+                        <th className="text-left py-3 px-4 font-medium text-gray-600">Price</th>
+                        <th className="text-left py-3 px-4 font-medium text-gray-600">Quantity</th>
+                        <th className="text-left py-3 px-4 font-medium text-gray-600">Subtotal</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-                <p className="font-semibold text-lg mt-2">
-                  Total: Ksh. {eventDetails.total_amount}
-                </p>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                      {eventDetails.tickets?.map((ticket) => (
+                        <tr key={ticket.id} className="hover:bg-gray-50">
+                          <td className="py-3 px-4">{ticket.type}</td>
+                          <td className="py-3 px-4">Ksh {ticket.price}</td>
+                          <td className="py-3 px-4">{ticket.quantity}</td>
+                          <td className="py-3 px-4 font-medium">Ksh {ticket.price * ticket.quantity}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                    <tfoot className="bg-gray-50">
+                      <tr>
+                        <td colSpan="3" className="py-3 px-4 font-medium text-right">Total:</td>
+                        <td className="py-3 px-4 font-bold text-purple-600">Ksh {eventDetails.total_amount}</td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
               </div>
 
               <div>
-                <h2 className="text-xl font-semibold text-purple-700 mb-2">Description</h2>
-                <p className="text-gray-700 whitespace-pre-line">
+                <h2 className="text-lg font-semibold text-gray-800 mb-2">Description</h2>
+                <p className="text-gray-600 whitespace-pre-line">
                   {eventDetails.event.description}
                 </p>
               </div>
             </div>
-          </div>
-
-          <div className="flex gap-4 mb-6">
-            <button
-              onClick={handleDownloadPDF}
-              disabled={isGeneratingPDF}
-              className={`border border-purple-600 text-purple-600 px-4 py-2 rounded hover:bg-purple-50 transition-colors ${
-                isGeneratingPDF ? "opacity-50 cursor-not-allowed" : ""
-              }`}
-            >
-              {isGeneratingPDF ? "Generating PDF..." : "Download Receipt"}
-            </button>
           </div>
         </div>
       </div>
