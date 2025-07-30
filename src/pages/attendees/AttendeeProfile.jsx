@@ -81,12 +81,7 @@ export default function AttendeeProfile() {
             <button className="px-4 py-2 rounded text-red-600 border border-red-600 hover:bg-red-600 hover:text-white transition">
               Delete Account
             </button>
-            <button
-              onClick={handleLogout}
-              className="ml-auto px-4 py-2 rounded text-gray-600 border border-gray-600 hover:bg-gray-700 hover:text-white transition"
-            >
-              Logout
-            </button>
+            
           </div>
         </div>
 
