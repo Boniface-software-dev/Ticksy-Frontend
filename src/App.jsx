@@ -27,6 +27,7 @@ import AttendeePastEvents from "./pages/attendees/AttendeePastEvents";
 import AttendeePastEventDetail from "./pages/attendees/AttendeePastEventDetail";
 import AdminUserProfile from "./pages/admin/AdminUserProfile";
 import CheckoutForm from "./pages/CheckoutForm";
+import OrderConfirmation from "./pages/OrderConfirmation";
 
 function ProtectedRoute({ children, roles }) {
   const user = useSelector((state) => state.auth.currentUser);
@@ -45,7 +46,14 @@ function App() {
         <Route path="/events/:id" element={<EventDetails />} />
         <Route path="/events" element={<EventsList />} />
 
-        
+        <Route
+        path="/order-confirmation"
+        element={
+          <ProtectedRoute roles={["attendee", "organizer"]}>
+            <OrderConfirmation />
+          </ProtectedRoute>
+        }
+        />        
         
         <Route
           path="/attendee/:id/profile"

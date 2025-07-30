@@ -51,15 +51,15 @@ export default function CheckoutForm() {
         pay_now: payNow,
       };
 
-      await axios.post("http://localhost:5000/api/orders", payload, {
+      const res = await axios.post(`${API}/orders`, payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      alert("Order placed successfully!");
-      navigate("/thank-you");
-    } catch (err) {
-      console.error("Order submission error:", err);
-      alert("Failed to process order.");
+       navigate(`/order-confirmation/${res.data.orderId}`);
+
+    } catch (error) {
+      console.error("Order creation failed:", error);
+      alert("Failed to create order. Please try again.");
     }
   };
 
