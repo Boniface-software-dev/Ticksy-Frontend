@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
-import { fetchEventById, checkoutTickets } from "../features/events/eventSlice";
+import { fetchEventById } from "../features/events/eventSlice";
 import { fetchTicketsByEvent } from "../features/tickets/ticketsSlice";
+import { toast } from "react-toastify";
 
 export default function EventDetails() {
   const { id } = useParams();
@@ -12,10 +13,9 @@ export default function EventDetails() {
   const event = useSelector((state) => state.events.selectedEvent);
   const status = useSelector((state) => state.events.status);
   const error = useSelector((state) => state.events.error);
-  const token = useSelector((state) => state.auth?.token);
+const token = localStorage.getItem("token");
   const tickets = useSelector((state) => state.tickets?.items || []);
 
-  // Local state to track quantities
   const [quantities, setQuantities] = useState({});
 
   useEffect(() => {
@@ -25,107 +25,110 @@ export default function EventDetails() {
     }
   }, [dispatch, id]);
 
-  useEffect(() => {
-    if (tickets.length) {
-      const initial = {};
-      tickets.forEach((t) => {
-        initial[t.id] = 0;
-      });
-      setQuantities(initial);
-    }
-  }, [tickets]);
-
-  const handleQtyChange = (ticketId, delta) => {
-    setQuantities((prev) => {
-      const updated = { ...prev };
-      updated[ticketId] = Math.max(0, (updated[ticketId] || 0) + delta);
-      return updated;
-    });
+  const handleQuantityChange = (ticketId, delta) => {
+    setQuantities((prev) => ({
+      ...prev,
+      [ticketId]: Math.max(0, (prev[ticketId] || 0) + delta),
+    }));
   };
 
-  const totalPrice = useMemo(() => {
+  const total = useMemo(() => {
     return tickets.reduce((sum, ticket) => {
       const qty = quantities[ticket.id] || 0;
       return sum + qty * ticket.price;
     }, 0);
-  }, [tickets, quantities]);
+  }, [quantities, tickets]);
 
   const handleCheckout = () => {
-    if (!token) {
-      alert("You must be logged in to buy tickets.");
-      navigate("/login");
+
+
+    const selectedTickets = tickets
+      .filter((ticket) => (quantities[ticket.id] || 0) > 0)
+      .map((ticket) => ({
+        ...ticket,
+        quantity: quantities[ticket.id],
+      }));
+
+    if (selectedTickets.length === 0) {
+      alert("Please select at least one ticket.");
       return;
     }
 
-    const selectedTickets = tickets
-      .filter((t) => quantities[t.id] > 0)
-      .map((t) => ({ ...t, quantity: quantities[t.id] }));
+    navigate("/checkout", {
+      state: {
+        tickets: selectedTickets,
+        eventTitle: event.title,
+        eventId: event.id,
+        total,
+      },
+    });
+  }; // ✅ this closing brace was missing before
 
-    dispatch(checkoutTickets({ eventId: id, tickets: selectedTickets }));
-  };
-
-  if (status === "loading") return <p className="text-center py-8">Loading...</p>;
+  if (status === "loading")
+    return <p className="text-center py-8">Loading...</p>;
   if (error) return <p className="text-center text-red-500">Error: {error}</p>;
-  if (!event) return <p className="text-center text-gray-600">Event not found.</p>;
+  if (!event)
+    return <p className="text-center text-gray-600">Event not found.</p>;
 
   return (
-    <div className="max-w-5xl mx-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-      {/* Left: Poster & Description */}
+    <div className="max-w-5xl mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-2 gap-10 bg-gray-50 rounded-xl shadow-lg">
       <div>
-        <img
-          src={event.image || "/placeholder.jpg"}
-          alt={event.title}
-          className="rounded shadow-lg w-full object-cover"
-        />
-        <div className="mt-4">
-          <h2 className="text-lg font-semibold text-purple-700">Description</h2>
-          <p className="text-gray-800">{event.description}</p>
-        </div>
+        {event.image_url && (
+          <img
+            src={event.image_url}
+            alt={event.title}
+            className="w-full rounded-md mb-4"
+          />
+        )}
+        <h1 className="text-3xl font-bold text-purple-800 mb-2">
+          {event.title}
+        </h1>
+        <p className="text-gray-700 mb-2">{event.description}</p>
+        <p className="text-sm text-gray-600 mb-1">📍 {event.location}</p>
+        <p className="text-sm text-gray-600 mb-1">
+          🗓 {new Date(event.start_time).toLocaleString()} –{" "}
+          {new Date(event.end_time).toLocaleString()}
+        </p>
+        <p className="text-sm text-gray-600 mb-1">
+          🎯 Category: {event.category}
+        </p>
+        <p className="text-sm text-gray-600 mb-1">
+          🏷 Tags: {(event.tags || "").split(",").join(", ")}
+        </p>
+        <p className="text-sm text-gray-600 mb-1">
+          👤 Organizer ID: {event.organizer_id}
+        </p>
+        <p className="text-sm text-gray-600">
+          🎟️ Attendees: {event.attendee_count}
+        </p>
       </div>
 
-      {/* Right: Info + Tickets */}
-      <div className="bg-white shadow-md rounded-xl p-6">
-        <h1 className="text-3xl font-bold mb-2 text-purple-900">{event.title}</h1>
-        <p className="text-sm text-gray-600 mb-1">
-          📅{" "}
-          {event.date
-            ? new Date(event.date).toLocaleDateString("en-GB", {
-                weekday: "long",
-                day: "numeric",
-                month: "short",
-                year: "numeric",
-              })
-            : "TBD"}
-        </p>
-        <p className="text-sm text-gray-600 mb-4">📍 {event.location}</p>
-
-        <h2 className="text-xl font-semibold text-purple-800 mb-2">Tickets</h2>
+      <div>
+        <h2 className="text-xl font-semibold text-purple-700 mb-4">Tickets</h2>
         {tickets.length > 0 ? (
-          <div className="grid grid-cols-2 gap-4 mb-6">
+          <div className="grid gap-4">
             {tickets.map((ticket) => (
               <div
                 key={ticket.id}
-                className="border border-purple-300 rounded-lg p-4 text-center"
+                className="border border-purple-300 rounded p-4 shadow-sm flex justify-between items-center"
               >
-                <h3 className="font-medium text-purple-700 mb-1">{ticket.type}</h3>
-                <p className="text-gray-800">Price: {ticket.price.toLocaleString()}</p>
-                <p className="text-gray-500 text-sm">
-                  Date:{" "}
-                  {ticket.date
-                    ? new Date(ticket.date).toLocaleDateString()
-                    : "TBD"}
-                </p>
-                <div className="flex justify-center items-center mt-3 gap-3">
+                <div>
+                  <p className="font-semibold text-purple-800">
+                    {ticket.type}
+                  </p>
+                  <p className="text-sm text-gray-600">KES {ticket.price}</p>
+                </div>
+                <div className="flex items-center gap-2">
                   <button
-                    onClick={() => handleQtyChange(ticket.id, -1)}
-                    className="px-2 py-1 bg-purple-100 text-purple-600 rounded hover:bg-purple-200"
+                    className="px-2 bg-purple-100 rounded"
+                    onClick={() => handleQuantityChange(ticket.id, -1)}
                   >
-                    –
+                    -
                   </button>
                   <span>{quantities[ticket.id] || 0}</span>
                   <button
-                    onClick={() => handleQtyChange(ticket.id, 1)}
-                    className="px-2 py-1 bg-purple-100 text-purple-600 rounded hover:bg-purple-200"
+                    className="px-2 bg-purple-100 rounded"
+                    onClick={() => handleQuantityChange(ticket.id, 1)}
                   >
                     +
                   </button>
@@ -134,16 +137,16 @@ export default function EventDetails() {
             ))}
           </div>
         ) : (
-          <p className="text-gray-600">No tickets available.</p>
+          <p>No tickets available.</p>
         )}
 
-        <div className="flex justify-between items-center border-t pt-4">
-          <span className="text-lg font-semibold text-gray-800">
-            Total: {totalPrice.toLocaleString()}
-          </span>
+        <div className="mt-6">
+          <p className="font-bold text-lg text-gray-800">
+            Total: KES {total.toLocaleString()}
+          </p>
           <button
-            onClick={handleCheckout}
-            className="bg-purple-600 text-white px-6 py-2 rounded hover:bg-purple-700 transition"
+            onClick = {handleCheckout}
+            className="mt-4 px-6 py-2 bg-purple-700 text-white rounded hover:bg-purple-800"
           >
             Checkout
           </button>

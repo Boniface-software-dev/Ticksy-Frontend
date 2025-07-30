@@ -7,12 +7,14 @@ import {
 } from "react-router-dom";
 import { useSelector } from "react-redux";
 import EventsList from "./pages/EventsList";
+import CheckoutForm from "./pages/CheckoutForm";
 
 import AttendeeProfile from "./pages/attendees/AttendeeProfile";
 import OrgProfile from "./pages/organizer/OrgProfile";
 import Unauthorized from "./pages/Unauthorized";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+
 
 import AdminProfile from "./pages/admin/AdminProfile";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -26,11 +28,12 @@ import LandingPage from "./pages/LandingPage";
 import EventDetails from "./pages/EventDetails";
 
 import AdminUserProfile from "./pages/admin/AdminUserProfile";
+import { API } from "./config"; 
 
 // ...imports
 
 function ProtectedRoute({ children, roles }) {
-  const user = useSelector((state) => state.auth.currentUser);
+  const user = useSelector((state) => state.auth.currentUser) || JSON.parse(localStorage.getItem("user"));
 
   if (!user) return <Navigate to="/login" />;
   if (roles && !roles.includes(user.role)) return <Unauthorized />;
@@ -47,7 +50,10 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/events/:id" element={<EventDetails />} />
         <Route path="/events" element={<EventsList />} />
-        <Route path="/events/:id/tickets" element={<EventDetails />} />
+        <Route path="/events/:id/tickets" element={<EventDetails />} />        
+        {/* <Route path="/order-confirmation/:orderId" element={<OrderConfirmation />} /> */}
+
+
         
 
         {/* Attendee Protected Routes */}
@@ -64,6 +70,15 @@ function App() {
           element={
             <ProtectedRoute roles={["attendee"]}>
               <AttendeeUpcoming />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/checkout"
+          element={
+            <ProtectedRoute roles={["attendee"]}>
+              <CheckoutForm/>
             </ProtectedRoute>
           }
         />
