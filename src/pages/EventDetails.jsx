@@ -1,13 +1,13 @@
-// src/features/events/EventDetails.jsx
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
-import { fetchEventById, increaseTicket, decreaseTicket } from "../features/events/eventSlice";
+import { useParams, useNavigate } from "react-router-dom"; // ✅ Add useNavigate
+import { fetchEventById } from "../features/events/eventSlice";
 import Footer from "../components/Footer";
 
 const EventDetails = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate(); // ✅ Setup navigate
 
   const event = useSelector((state) => state.events.selectedEvent);
   const status = useSelector((state) => state.events.status);
@@ -23,6 +23,19 @@ const EventDetails = () => {
 
   const total = individualCount * 3000 + tableCount * 60000;
 
+  const handleCheckout = () => {
+    // You can pass data via state or URL query if needed
+    navigate("/payment", {
+      state: {
+        eventId: id,
+        total,
+        individualCount,
+        tableCount,
+        title: event.title,
+      },
+    });
+  };
+
   return (
     <div className="bg-[#f3f3f5] min-h-screen font-poppins text-black">
       <div className="max-w-7xl mx-auto py-10 px-5 md:px-10 grid md:grid-cols-2 gap-10">
@@ -37,8 +50,7 @@ const EventDetails = () => {
           <div className="mt-6">
             <h2 className="text-xl font-semibold mb-2">Description</h2>
             <p className="text-gray-700 text-sm leading-relaxed">
-              {event.description ||
-                "Join us for an unforgettable dinner experience featuring global cuisine, music, and networking opportunities."}
+              {event.description || "Join us for an unforgettable dinner..."}
             </p>
           </div>
 
@@ -78,11 +90,10 @@ const EventDetails = () => {
                 minute: "2-digit",
               })}
             </p>
-            <div className="flex ">
-             
+            <div className="flex">
               <img width="20" height="20" src="https://img.icons8.com/ios/30/marker--v1.png" alt="marker--v1"/>
               <p>{event.location}</p>
-              </div>
+            </div>
           </div>
 
           <h2 className="text-2xl font-bold mb-4">Tickets</h2>
@@ -94,9 +105,7 @@ const EventDetails = () => {
               <p>Date: {new Date(event.start_time).toLocaleDateString()}</p>
               <div className="flex items-center justify-between mt-4">
                 <button
-                  onClick={() =>
-                    setIndividualCount(Math.max(0, individualCount - 1))
-                  }
+                  onClick={() => setIndividualCount(Math.max(0, individualCount - 1))}
                   className="px-2 py-1 border rounded"
                 >
                   -
@@ -138,7 +147,10 @@ const EventDetails = () => {
             <div className="flex-1 border rounded-lg px-4 py-3 text-lg font-semibold">
               Total <span className="float-right">{total}</span>
             </div>
-            <button className="bg-[#9747FF] text-white px-6 py-3 rounded-lg font-medium">
+            <button
+              onClick={handleCheckout}
+              className="bg-[#9747FF] text-white px-6 py-3 rounded-lg font-medium"
+            >
               Checkout
             </button>
           </div>

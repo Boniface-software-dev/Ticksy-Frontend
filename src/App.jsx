@@ -42,6 +42,7 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/events" element={<EventsList />} />
         <Route path="/events/:id" element={<EventDetails />} />
         <Route path="/events" element={<EventsList />} />
 
@@ -96,6 +97,16 @@ function App() {
             </ProtectedRoute>
           }
         />
+        {/* 
+        <Route
+          path="/organizer/:id/dashboard"
+          element={
+            <ProtectedRoute roles={['organizer']}>
+              <OrgDashboard />
+            </ProtectedRoute>
+          }
+        />
+        */}
 
         <Route
           path="/admin/:id/dashboard"
