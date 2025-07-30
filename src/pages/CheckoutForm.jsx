@@ -63,53 +63,84 @@ export default function CheckoutForm() {
     }
   };
 
-  return (
+ return (
     <>
       <AttendeeNavBar />
-      <div className="max-w-7xl mx-auto p-4 flex gap-6 text-black">
+      <div className="max-w-7xl mx-auto p-6 flex gap-6">
         <AttendeeSideBar />
-        <div className="max-w-3xl mx-auto p-6 bg-white rounded shadow mt-10">
-          <h2 className="text-2xl font-bold text-purple-700 mb-6">Attendee Details</h2>
-          <p className="text-gray-600 mb-8">Event: <strong>{eventTitle}</strong></p>
 
-          <div className="space-y-6">
+        <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-6 mt-4">
+          {/* Left Panel: Form */}
+          <div className="bg-white p-6 rounded shadow">
+            <h2 className="text-2xl font-bold mb-6">Ticket Owner Details</h2>
             {attendees.map((attendee, index) => (
-              <div key={index} className="border rounded p-4">
-                <h3 className="text-lg font-semibold mb-2">Ticket {index + 1} ({attendee.ticket_type})</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <input name="first_name" value={attendee.first_name} onChange={(e) => handleChange(index, e)} placeholder="First Name" className="border p-2 rounded" />
-                  <input name="last_name" value={attendee.last_name} onChange={(e) => handleChange(index, e)} placeholder="Last Name" className="border p-2 rounded" />
-                  <input name="email" value={attendee.email} onChange={(e) => handleChange(index, e)} placeholder="Email" className="border p-2 rounded" />
-                  <input name="phone" value={attendee.phone} onChange={(e) => handleChange(index, e)} placeholder="Phone (M-Pesa)" className="border p-2 rounded" />
+              <div key={index} className="mb-6">
+                {attendees.length > 1 && (
+                  <p className="font-semibold mb-2">Ticket {index + 1} ({attendee.ticket_type})</p>
+                )}
+                <div className="space-y-4">
+                  <input
+                    name="first_name"
+                    value={attendee.first_name}
+                    onChange={(e) => handleChange(index, e)}
+                    placeholder="First Name"
+                    className="w-full border rounded p-2"
+                  />
+                  <input
+                    name="last_name"
+                    value={attendee.last_name}
+                    onChange={(e) => handleChange(index, e)}
+                    placeholder="Last Name"
+                    className="w-full border rounded p-2"
+                  />
+                  <input
+                    name="email"
+                    value={attendee.email}
+                    onChange={(e) => handleChange(index, e)}
+                    placeholder="Email"
+                    className="w-full border rounded p-2"
+                  />
+                  <input
+                    name="phone"
+                    value={attendee.phone}
+                    onChange={(e) => handleChange(index, e)}
+                    placeholder="Phone Number"
+                    className="w-full border rounded p-2"
+                  />
                 </div>
               </div>
             ))}
           </div>
 
-          <div className="mt-8 flex justify-between items-center">
-            <p className="text-xl font-semibold">
-              Total: <span className="text-purple-700">KES {total.toLocaleString()}</span>
-            </p>
-            <div className="space-x-4">
-              <button
-                onClick={() => {
-                  setPayNow(false);
-                  handleSubmit();
-                }}
-                className="text-purple-700 mb-6 px-4 py-2 border border-purple-700 rounded hover:bg-purple-100"
-              >
-                Pay Later
-              </button>
-              <button
-                onClick={() => {
-                  setPayNow(true);
-                  handleSubmit();
-                }}
-                className="bg-purple-600 text-white px-4 py-2 rounded"
-              >
-                Pay Now
-              </button>
+          {/* Right Panel: Summary */}
+          <div className="bg-white p-6 rounded shadow">
+            <h2 className="text-2xl font-bold mb-6">Order Summary</h2>
+            <p className="text-lg font-semibold mb-2">{eventTitle}</p>
+            {tickets.map((ticket, idx) => (
+              <div key={idx} className="mb-2">
+                <div className="flex justify-between">
+                  <span>{ticket.type}</span>
+                  <span>KES {(ticket.price * ticket.quantity).toLocaleString()}</span>
+                </div>
+                <p className="text-sm text-gray-500">Quantity: {ticket.quantity}</p>
+              </div>
+            ))}
+            <hr className="my-4" />
+            <div className="flex justify-between items-center text-xl font-bold">
+              <span>Total</span>
+              <span className="text-purple-600">KES {total.toLocaleString()}</span>
             </div>
+
+            <button
+              onClick={handleSubmit}
+              className="w-full mt-6 bg-purple-600 text-white py-3 rounded hover:bg-purple-700"
+            >
+              Create Order
+            </button>
+
+            <p className="text-sm text-center mt-4 text-gray-600">
+              You will receive an M-Pesa prompt to complete the payment
+            </p>
           </div>
         </div>
       </div>
