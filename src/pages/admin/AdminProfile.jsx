@@ -107,7 +107,6 @@ export default function AdminProfile() {
           </div>
         </div>
 
-        {/* Personal Info */}
         <div className="bg-white shadow-xl rounded-2xl p-6 transition-all duration-300">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-semibold text-[#1a1240]">
