@@ -7,6 +7,7 @@ import Logo from "../../components/Logo";
 import Avatar from "../../components/Avatar";
 import AttendeeSideBar from "../../components/AttendeeSideBar";
 import AttendeeNavBar from "../../components/AttendeeNavBar";
+import Footer from "../../components/Footer";
 
 export default function AdminProfile() {
   const dispatch = useDispatch();
@@ -84,7 +85,11 @@ export default function AdminProfile() {
             </button>
           </div>
         </div>
+
       </div>
+
+        <Footer />
     </>
+
   );
 }
