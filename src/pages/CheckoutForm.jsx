@@ -9,18 +9,18 @@ export default function CheckoutForm() {
   const location = useLocation();
   const navigate = useNavigate();
   const token = useSelector((state) => state.auth?.currentUser?.access_token);
-  const [payNow, setPayNow] = useState(true);
+  const currentUser = useSelector((state) => state.auth?.currentUser?.user);
 
   const { tickets = [], eventTitle = "", eventId = null, total = 0 } = location.state || {};
 
   const initialAttendees = tickets.flatMap((ticket) =>
-    Array.from({ length: ticket.quantity }, () => ({
+    Array.from({ length: ticket.quantity }, (_, i) => ({
       ticket_id: ticket.id,
       ticket_type: ticket.type,
-      first_name: "",
-      last_name: "",
-      email: "",
-      phone: "",
+      first_name: i === 0 && ticket.quantity === 1 ? currentUser?.first_name || "" : "",
+      last_name: i === 0 && ticket.quantity === 1 ? currentUser?.last_name || "" : "",
+      email: i === 0 && ticket.quantity === 1 ? currentUser?.email || "" : "",
+      phone: i === 0 && ticket.quantity === 1 ? currentUser?.phone || "" : "",
     }))
   );
 
