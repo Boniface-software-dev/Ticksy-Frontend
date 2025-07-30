@@ -5,11 +5,15 @@ import API from "../../utils/axiosInstance";
 import AdminSidebar from "../../components/AdminPanel";
 
 export default function AdminUsers() {
-  const { id } = useParams(); // admin id
+  const { id } = useParams();
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.currentUser);
 
   const [users, setUsers] = useState([]);
+  const [filtered, setFiltered] = useState([]);
+  const [search, setSearch] = useState("");
+  const [roleFilter, setRoleFilter] = useState("all");
+  const [sort, setSort] = useState("name");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -20,8 +24,6 @@ export default function AdminUsers() {
   }, [user, id, navigate]);
 
   useEffect(() => {
-    setLoading(true);
-    setError("");
     API.get("/admin/users")
       .then((res) => {
         setUsers(res.data || []);
@@ -32,6 +34,30 @@ export default function AdminUsers() {
         setLoading(false);
       });
   }, []);
+
+  useEffect(() => {
+    let results = users.filter((u) =>
+      `${u.first_name} ${u.last_name} ${u.email}`
+        .toLowerCase()
+        .includes(search.toLowerCase())
+    );
+
+    if (roleFilter !== "all") {
+      results = results.filter((u) => u.role === roleFilter);
+    }
+
+    if (sort === "name") {
+      results.sort((a, b) => a.first_name.localeCompare(b.first_name));
+    } else if (sort === "created") {
+      results.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    }
+
+    setFiltered(results);
+  }, [users, search, roleFilter, sort]);
+
+  const totalUsers = users.length;
+  const totalAttendees = users.filter((u) => u.role === "attendee").length;
+  const totalOrganizers = users.filter((u) => u.role === "organizer").length;
 
   if (loading) {
     return (
@@ -60,6 +86,44 @@ export default function AdminUsers() {
             👥 All Users
           </h1>
 
+          {/* Summary Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+            <SummaryCard label="Total Users" value={totalUsers} />
+            <SummaryCard label="Attendees" value={totalAttendees} />
+            <SummaryCard label="Organizers" value={totalOrganizers} />
+          </div>
+
+          {/* Filters */}
+          <div className="flex flex-col sm:flex-row gap-3 mb-4 items-center justify-between">
+            <input
+              type="text"
+              placeholder="Search by name or email..."
+              className="border px-4 py-2 rounded w-full sm:w-1/3 text-sm"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+
+            <select
+              value={roleFilter}
+              onChange={(e) => setRoleFilter(e.target.value)}
+              className="border px-4 py-2 rounded text-sm"
+            >
+              <option value="all">All Roles</option>
+              <option value="attendee">Attendees</option>
+              <option value="organizer">Organizers</option>
+            </select>
+
+            <select
+              value={sort}
+              onChange={(e) => setSort(e.target.value)}
+              className="border px-4 py-2 rounded text-sm"
+            >
+              <option value="name">Sort by Name</option>
+              <option value="created">Sort by Date Created</option>
+            </select>
+          </div>
+
+          {/* User Table */}
           <div className="overflow-x-auto rounded-xl border border-[#e5dbf9]">
             <table className="min-w-full text-sm text-left">
               <thead className="bg-[#e0c8f9] text-[#1a1240] uppercase text-xs font-semibold tracking-wider">
@@ -74,7 +138,7 @@ export default function AdminUsers() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#f0eafd]">
-                {users.map((u) => (
+                {filtered.map((u) => (
                   <tr
                     key={u.id}
                     onClick={() => navigate(`/admin/${id}/users/${u.id}`)}
@@ -114,6 +178,17 @@ export default function AdminUsers() {
           </div>
         </div>
       </main>
+    </div>
+  );
+}
+
+function SummaryCard({ label, value }) {
+  return (
+    <div className="bg-white rounded-xl shadow p-4 border border-[#ddd]">
+      <div className="text-sm text-gray-500">{label}</div>
+      <div className="text-2xl font-bold text-[#1a1240]">
+        {value?.toLocaleString()}
+      </div>
     </div>
   );
 }

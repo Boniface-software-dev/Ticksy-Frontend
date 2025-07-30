@@ -18,15 +18,19 @@ export default function Login() {
     dispatch(login({ email, password })).then((action) => {
       if (action.meta.requestStatus === "fulfilled") {
         const user = action.payload;
+
         if (user.token) {
           localStorage.setItem("accessToken", user.token);
         }
+
         if (!user.role || !user.id) {
           console.error("User data incomplete:", user);
           return;
         }
+
+        // 👇 FIX: redirect attendee to their proper dashboard
         if (user.role === "attendee") {
-          navigate("/events");
+          navigate(`/events`);
         } else {
           navigate(`/${user.role}/${user.id}/dashboard`);
         }
@@ -39,6 +43,13 @@ export default function Login() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="max-w-md w-full bg-white border border-gray-300 rounded-lg p-8 space-y-6 relative">
+        {/* Loading overlay (optional)
+        {isLoading && (
+          <div className="absolute inset-0 bg-white bg-opacity-70 flex items-center justify-center rounded-lg z-10">
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-green-600"></div>
+          </div>
+        )} */}
+
         <div className="text-center">
           <LogIn className="mx-auto h-10 w-10 text-purple-500" />
           <h2 className="mt-4 text-2xl font-bold text-purple-500">

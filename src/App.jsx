@@ -10,19 +10,16 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import EventsList from "./pages/EventsList";
-
 import AttendeeProfile from "./pages/attendees/AttendeeProfile";
 import OrgProfile from "./pages/organizer/OrgProfile";
 import Unauthorized from "./pages/Unauthorized";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-
 import AdminProfile from "./pages/admin/AdminProfile";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminEvents from "./pages/admin/AdminEvents";
 import AdminAnalytics from "./pages/admin/AdminAnalytics";
-
 import AttendeeUpcoming from "./pages/attendees/AttUpcoming";
 import LandingPage from "./pages/LandingPage";
 import EventDetails from "./pages/EventDetails";
@@ -32,10 +29,8 @@ import AdminUserProfile from "./pages/admin/AdminUserProfile";
 
 function ProtectedRoute({ children, roles }) {
   const user = useSelector((state) => state.auth.currentUser);
-
   if (!user) return <Navigate to="/login" />;
   if (roles && !roles.includes(user.role)) return <Unauthorized />;
-
   return children;
 }
 
@@ -50,7 +45,8 @@ function App() {
         <Route path="/events/:id" element={<EventDetails />} />
         <Route path="/events" element={<EventsList />} />
 
-        {/* Attendee Protected Routes */}
+        
+        
         <Route
           path="/attendee/:id/profile"
           element={
@@ -103,7 +99,6 @@ function App() {
         />
         */}
 
-        {/* Admin Protected Routes */}
         <Route
           path="/admin/:id/dashboard"
           element={
@@ -156,8 +151,6 @@ function App() {
         <Route path="/unauthorized" element={<Unauthorized />} />
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
-
-      
       <ToastContainer position="top-center" autoClose={3000} />
     </Router>
   );
