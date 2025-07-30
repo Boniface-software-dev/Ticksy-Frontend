@@ -20,7 +20,8 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminEvents from "./pages/admin/AdminEvents";
 import AdminAnalytics from "./pages/admin/AdminAnalytics";
-import AttendeeUpcoming from "./pages/attendees/AttUpcoming";
+import AttendeeUpcomingEvents from "./pages/attendees/AttendeeUpcomingEvents";
+import AttendeeUpcomingDetails from "./pages/attendees/AttUpcoming";
 import LandingPage from "./pages/LandingPage";
 import EventDetails from "./pages/EventDetails";
 import AttendeePastEvents from "./pages/attendees/AttendeePastEvents";
@@ -59,7 +60,7 @@ function App() {
           path="/attendee/:id/upcoming-events"
           element={
             <ProtectedRoute roles={["attendee"]}>
-              <AttendeeUpcoming />
+              <AttendeeUpcomingEvents />
             </ProtectedRoute>
           }
         />
@@ -76,6 +77,14 @@ function App() {
           element={
             <ProtectedRoute roles={["attendee"]}>
               <AttendeePastEventDetail />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/attendee/:id/upcoming-events/:eventId"
+          element={
+            <ProtectedRoute roles={["attendee"]}>
+              <AttendeeUpcomingDetails />
             </ProtectedRoute>
           }
         />
