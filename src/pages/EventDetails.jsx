@@ -16,9 +16,7 @@ export default function EventDetails() {
   const user = JSON.parse(localStorage.getItem("user"));
   const token = user?.access_token;
 
-
   const tickets = useSelector((state) => state.tickets?.items || []);
-
   const [quantities, setQuantities] = useState({});
 
   useEffect(() => {
@@ -43,8 +41,6 @@ export default function EventDetails() {
   }, [quantities, tickets]);
 
   const handleCheckout = () => {
-
-
     const selectedTickets = tickets
       .filter((ticket) => (quantities[ticket.id] || 0) > 0)
       .map((ticket) => ({
@@ -53,106 +49,123 @@ export default function EventDetails() {
       }));
 
     if (selectedTickets.length === 0) {
-      alert("Please select at least one ticket.");
+      toast.error("Please select at least one ticket.");
       return;
     }
 
     navigate("/checkout", {
       state: {
         tickets: selectedTickets,
-        eventTitle: event.title,
-        eventId: event.id,
+        eventTitle: event?.title,
+        eventId: event?.id,
         total,
       },
     });
   };
 
-  if (status === "loading")
-    return <p className="text-center py-8">Loading...</p>;
+  if (status === "loading") return <p className="text-center py-8">Loading...</p>;
   if (error) return <p className="text-center text-red-500">Error: {error}</p>;
-  if (!event)
+  if (status === "succeeded" && !event)
     return <p className="text-center text-gray-600">Event not found.</p>;
 
+  if (!event) return null;
+
+  // Convert tags string to array if it exists
+  const eventTags = event?.tags ? event.tags.split(',') : [];
+
   return (
-    <div className="max-w-5xl mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-2 gap-10 bg-gray-50 rounded-xl shadow-lg">
-      <div>
-        {event.image_url && (
-          <img
-            src={event.image_url}
-            alt={event.title}
-            className="w-full rounded-md mb-4"
-          />
-        )}
-        <h1 className="text-3xl font-bold text-purple-800 mb-2">
-          {event.title}
-        </h1>
-        <p className="text-gray-700 mb-2">{event.description}</p>
-        <p className="text-sm text-gray-600 mb-1">📍 {event.location}</p>
-        <p className="text-sm text-gray-600 mb-1">
-          🗓 {new Date(event.start_time).toLocaleString()} –{" "}
-          {new Date(event.end_time).toLocaleString()}
-        </p>
-        <p className="text-sm text-gray-600 mb-1">
-          🎯 Category: {event.category}
-        </p>
-        <p className="text-sm text-gray-600 mb-1">
-          🏷 Tags: {(event.tags || "").split(",").join(", ")}
-        </p>
-        <p className="text-sm text-gray-600 mb-1">
-          👤 Organizer ID: {event.organizer_id}
-        </p>
-        <p className="text-sm text-gray-600">
-          🎟️ Attendees: {event.attendee_count}
-        </p>
-      </div>
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+          <div className="md:flex">
+            <div className="md:w-1/2">
+              <img 
+                src={event?.image_url} 
+                alt={event?.title} 
+                className="w-full h-full object-cover" 
+              />
+            </div>
+            <div className="md:w-1/2 p-8">
+              <h1 className="text-3xl font-bold mb-4">{event?.title}</h1>
 
-      <div>
-        <h2 className="text-xl font-semibold text-purple-700 mb-4">Tickets</h2>
-        {tickets.length > 0 ? (
-          <div className="grid gap-4">
-            {tickets.map((ticket) => (
-              <div
-                key={ticket.id}
-                className="border border-purple-300 rounded p-4 shadow-sm flex justify-between items-center"
-              >
-                <div>
-                  <p className="font-semibold text-purple-800">
-                    {ticket.type}
-                  </p>
-                  <p className="text-sm text-gray-600">KES {ticket.price}</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    className="px-2 bg-purple-100 rounded"
-                    onClick={() => handleQuantityChange(ticket.id, -1)}
-                  >
-                    -
-                  </button>
-                  <span>{quantities[ticket.id] || 0}</span>
-                  <button
-                    className="px-2 bg-purple-100 rounded"
-                    onClick={() => handleQuantityChange(ticket.id, 1)}
-                  >
-                    +
-                  </button>
-                </div>
+              <div className="space-y-3 mb-6">
+                <p className="text-gray-700">{event?.description}</p>
+                <p className="text-gray-600">📍 {event?.location}</p>
+                <p className="text-gray-600">
+                  🗓 {event?.start_time ? new Date(event.start_time).toLocaleString() : ''} –{' '}
+                  {event?.end_time ? new Date(event.end_time).toLocaleString() : ''}
+                </p>
+                {event?.category && <p className="text-gray-600">Category: {event.category}</p>}
+                <p className="text-gray-600">Attendees: {event?.attendee_count || 0}</p>
               </div>
-            ))}
-          </div>
-        ) : (
-          <p>No tickets available.</p>
-        )}
 
-        <div className="mt-6">
-          <p className="font-bold text-lg text-gray-800">
-            Total: KES {total.toLocaleString()}
-          </p>
-          <button
-            onClick = {handleCheckout}
-            className="mt-4 px-6 py-2 bg-purple-700 text-white rounded hover:bg-purple-800"
-          >
-            Checkout
-          </button>
+              {eventTags.length > 0 && (
+                <div className="space-y-2 mb-6">
+                  <h3 className="text-xl font-semibold">Tags</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {eventTags.map((tag, index) => (
+                      <span 
+                        key={index} 
+                        className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm"
+                      >
+                        {tag.trim()}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <h3 className="text-xl font-semibold mb-4">Tickets</h3>
+              <div className="space-y-4">
+                {tickets.map((ticket) => (
+                  <div key={ticket.id} className="border rounded-lg p-4">
+                    <div className="flex justify-between items-center mb-2">
+                      <h4 className="font-semibold">{ticket.name}</h4>
+                      <span className="text-lg font-semibold">
+                        KES {ticket.price?.toLocaleString()}
+                      </span>
+                    </div>
+                    <p className="text-gray-600 text-sm mb-3">
+                      Valid until: {new Date(ticket.valid_until).toLocaleDateString()}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <button
+                          onClick={() => handleQuantityChange(ticket.id, -1)}
+                          className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100"
+                        >
+                          -
+                        </button>
+                        <span className="w-8 text-center">
+                          {quantities[ticket.id] || 0}
+                        </span>
+                        <button
+                          onClick={() => handleQuantityChange(ticket.id, 1)}
+                          className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-8 flex justify-between items-center">
+                <div>
+                  <p className="text-2xl font-bold">
+                    Total: KES {total.toLocaleString()}
+                  </p>
+                </div>
+                <button
+                  onClick={handleCheckout}
+                  className="bg-purple-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-purple-700"
+                >
+                  Checkout
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
