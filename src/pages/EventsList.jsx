@@ -60,83 +60,72 @@ function EventsList() {
     <div className="min-h-screen bg-gray-50">
       {currentUser ? <AttendeeNavBar /> : <GuestNavBar />}
 
-      {/* HERO SECTION */}
-      <header className="w-full px-6 border-b bg-[#F5F0FF] pt-24">
-  <div className="max-w-7xl mx-auto text-center py-12 flex flex-col items-center gap-y-4">
-    <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
-      Find Your Next Experience
-    </h1>
-    <p className="text-base md:text-lg text-gray-700 max-w-2xl">
-      Discover unforgettable events that match your interests
-    </p>
-  </div>
-</header>
-
-
-      {/* MAIN SECTION */}
-      <main className="w-full px-6 py-10">
-        {/* FILTER BAR */}
-<section className="bg-white rounded-2xl shadow-md p-6 mb-10 max-w-7xl mx-auto">
-  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-    {/* Search Input */}
-    <div className="relative">
-      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-        <FiSearch className="text-gray-400" />
+      <div className="w-full px-6 pt-24 pb-12">
+        <div className="max-w-7xl mx-auto text-center">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-800">
+            Find Your Next Experience
+          </h1>
+          <p className="mt-2 text-base md:text-lg text-gray-600 max-w-2xl mx-auto">
+            Discover unforgettable events that match your interests
+          </p>
+        </div>
       </div>
-      <input
-        type="text"
-        placeholder="Search events..."
-        className="pl-10 w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#9747FF] focus:border-transparent"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-      />
-    </div>
 
-    {/* Location Select */}
-    <select
-      name="location"
-      className="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#9747FF] focus:border-transparent"
-      value={filters.location}
-      onChange={handleFilterChange}
-    >
-      <option value="">All Locations</option>
-      {locations.map(location => (
-        <option key={location} value={location}>{location}</option>
-      ))}
-    </select>
+      <main className="w-full px-6 py-10">
+        <section className="bg-white rounded-2xl shadow-md p-6 mb-10 max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <FiSearch className="text-gray-400" />
+              </div>
+              <input
+                type="text"
+                placeholder="Search events..."
+                className="pl-10 w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#9747FF] focus:border-transparent"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
 
-    {/* Category Select */}
-    <select
-      name="category"
-      className="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#9747FF] focus:border-transparent"
-      value={filters.category}
-      onChange={handleFilterChange}
-    >
-      <option value="">All Categories</option>
-      {categories.map(category => (
-        <option key={category} value={category}>{category}</option>
-      ))}
-    </select>
+            <select
+              name="location"
+              className="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#9747FF] focus:border-transparent"
+              value={filters.location}
+              onChange={handleFilterChange}
+            >
+              <option value="">All Locations</option>
+              {locations.map(location => (
+                <option key={location} value={location}>{location}</option>
+              ))}
+            </select>
 
-    {/* Tag Text Input */}
-    <input
-      type="text"
-      name="tag"
-      placeholder="Search by tag..."
-      className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#9747FF] focus:border-transparent"
-      value={filters.tag}
-      onChange={handleFilterChange}
-    />
-  </div>
-</section>
+            <select
+              name="category"
+              className="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#9747FF] focus:border-transparent"
+              value={filters.category}
+              onChange={handleFilterChange}
+            >
+              <option value="">All Categories</option>
+              {categories.map(category => (
+                <option key={category} value={category}>{category}</option>
+              ))}
+            </select>
 
+            <input
+              type="text"
+              name="tag"
+              placeholder="Search by tag..."
+              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#9747FF] focus:border-transparent"
+              value={filters.tag}
+              onChange={handleFilterChange}
+            />
+          </div>
+        </section>
 
-        {/* COUNT */}
         <div className="max-w-7xl mx-auto mb-6 text-sm text-gray-600">
           Showing <strong>{filteredEvents.length}</strong> of <strong>{events.length}</strong> events
         </div>
 
-        {/* EVENT GRID */}
         <div className="max-w-7xl mx-auto">
           {filteredEvents.length > 0 ? (
             <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import TicketLogo from "../assets/icons8-ticket-100.png"; // ✅ Import image
+import TicketLogo from "../assets/icons8-ticket-100.png";
 
 const Navbar = () => {
   const [active, setActive] = useState("");
