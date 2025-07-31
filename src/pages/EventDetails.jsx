@@ -1,166 +1,173 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams, useNavigate } from "react-router-dom"; // ✅ Add useNavigate
+import { useParams, useNavigate } from "react-router-dom";
 import { fetchEventById } from "../features/events/eventSlice";
-import Footer from "../components/Footer";
+import { fetchTicketsByEvent } from "../features/tickets/ticketsSlice";
+import { toast } from "react-toastify";
 
-const EventDetails = () => {
+export default function EventDetails() {
   const { id } = useParams();
   const dispatch = useDispatch();
-  const navigate = useNavigate(); // ✅ Setup navigate
+  const navigate = useNavigate();
 
   const event = useSelector((state) => state.events.selectedEvent);
   const status = useSelector((state) => state.events.status);
-  const [individualCount, setIndividualCount] = useState(0);
-  const [tableCount, setTableCount] = useState(0);
+  const error = useSelector((state) => state.events.error);
+  const user = JSON.parse(localStorage.getItem("user"));
+  const token = user?.access_token;
+
+  const tickets = useSelector((state) => state.tickets?.items || []);
+  const [quantities, setQuantities] = useState({});
 
   useEffect(() => {
-    dispatch(fetchEventById(id));
+    if (id) {
+      dispatch(fetchEventById(id));
+      dispatch(fetchTicketsByEvent(id));
+    }
   }, [dispatch, id]);
 
-  if (status === "loading") return <p>Loading...</p>;
-  if (!event) return <p>No event found.</p>;
+  const handleQuantityChange = (ticketId, delta) => {
+    setQuantities((prev) => ({
+      ...prev,
+      [ticketId]: Math.max(0, (prev[ticketId] || 0) + delta),
+    }));
+  };
 
-  const total = individualCount * 3000 + tableCount * 60000;
+  const total = useMemo(() => {
+    return tickets.reduce((sum, ticket) => {
+      const qty = quantities[ticket.id] || 0;
+      return sum + qty * ticket.price;
+    }, 0);
+  }, [quantities, tickets]);
 
   const handleCheckout = () => {
-    // You can pass data via state or URL query if needed
-    navigate("/payment", {
+    const selectedTickets = tickets
+      .filter((ticket) => (quantities[ticket.id] || 0) > 0)
+      .map((ticket) => ({
+        ...ticket,
+        quantity: quantities[ticket.id],
+      }));
+
+    if (selectedTickets.length === 0) {
+      toast.error("Please select at least one ticket.");
+      return;
+    }
+
+    navigate("/checkout", {
       state: {
-        eventId: id,
+        tickets: selectedTickets,
+        eventTitle: event?.title,
+        eventId: event?.id,
         total,
-        individualCount,
-        tableCount,
-        title: event.title,
       },
     });
   };
 
+  if (status === "loading") return <p className="text-center py-8">Loading...</p>;
+  if (error) return <p className="text-center text-red-500">Error: {error}</p>;
+  if (status === "succeeded" && !event)
+    return <p className="text-center text-gray-600">Event not found.</p>;
+
+  if (!event) return null;
+
+  // Convert tags string to array if it exists
+  const eventTags = event?.tags ? event.tags.split(',') : [];
+
   return (
-    <div className="bg-[#f3f3f5] min-h-screen font-poppins text-black">
-      <div className="max-w-7xl mx-auto py-10 px-5 md:px-10 grid md:grid-cols-2 gap-10">
-        {/* Left Section */}
-        <div>
-          <img
-            src={event.image_url}
-            alt={event.title}
-            className="rounded-lg w-full object-cover"
-          />
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+          <div className="md:flex">
+            <div className="md:w-1/2">
+              <img 
+                src={event?.image_url} 
+                alt={event?.title} 
+                className="w-full h-full object-cover" 
+              />
+            </div>
+            <div className="md:w-1/2 p-8">
+              <h1 className="text-3xl font-bold mb-4">{event?.title}</h1>
 
-          <div className="mt-6">
-            <h2 className="text-xl font-semibold mb-2">Description</h2>
-            <p className="text-gray-700 text-sm leading-relaxed">
-              {event.description || "Join us for an unforgettable dinner..."}
-            </p>
-          </div>
+              <div className="space-y-3 mb-6">
+                <p className="text-gray-700">{event?.description}</p>
+                <p className="text-gray-600">📍 {event?.location}</p>
+                <p className="text-gray-600">
+                  🗓 {event?.start_time ? new Date(event.start_time).toLocaleString() : ''} –{' '}
+                  {event?.end_time ? new Date(event.end_time).toLocaleString() : ''}
+                </p>
+                {event?.category && <p className="text-gray-600">Category: {event.category}</p>}
+                <p className="text-gray-600">Attendees: {event?.attendee_count || 0}</p>
+              </div>
 
-          <div className="mt-6">
-            <h2 className="text-xl font-semibold mb-2">Tags</h2>
-            <div className="flex gap-3 flex-wrap">
-              {Array.isArray(event.tags) ? (
-                event.tags.map((tag, i) => (
-                  <span
-                    key={i}
-                    className="px-3 py-1 border border-[#9747FF] rounded-full text-sm text-[#9747FF]"
-                  >
-                    {tag}
-                  </span>
-                ))
-              ) : (
-                <span className="text-sm text-gray-500">No tags available</span>
+              {eventTags.length > 0 && (
+                <div className="space-y-2 mb-6">
+                  <h3 className="text-xl font-semibold">Tags</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {eventTags.map((tag, index) => (
+                      <span 
+                        key={index} 
+                        className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm"
+                      >
+                        {tag.trim()}
+                      </span>
+                    ))}
+                  </div>
+                </div>
               )}
-            </div>
-          </div>
-        </div>
 
-        {/* Right Section */}
-        <div>
-          <h1 className="text-4xl font-bold mb-4">{event.title}</h1>
-          <div className="text-sm text-gray-600 space-y-2 mb-6">
-            <p>📅 {new Date(event.start_time).toLocaleDateString()}</p>
-            <p>
-              🕒{" "}
-              {new Date(event.start_time).toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              })}{" "}
-              -{" "}
-              {new Date(event.end_time).toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
-            </p>
-            <div className="flex">
-              <img width="20" height="20" src="https://img.icons8.com/ios/30/marker--v1.png" alt="marker--v1"/>
-              <p>{event.location}</p>
-            </div>
-          </div>
+              <h3 className="text-xl font-semibold mb-4">Tickets</h3>
+              <div className="space-y-4">
+                {tickets.map((ticket) => (
+                  <div key={ticket.id} className="border rounded-lg p-4">
+                    <div className="flex justify-between items-center mb-2">
+                      <h4 className="font-semibold">{ticket.name}</h4>
+                      <span className="text-lg font-semibold">
+                        KES {ticket.price?.toLocaleString()}
+                      </span>
+                    </div>
+                    <p className="text-gray-600 text-sm mb-3">
+                      Valid until: {new Date(ticket.valid_until).toLocaleDateString()}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <button
+                          onClick={() => handleQuantityChange(ticket.id, -1)}
+                          className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100"
+                        >
+                          -
+                        </button>
+                        <span className="w-8 text-center">
+                          {quantities[ticket.id] || 0}
+                        </span>
+                        <button
+                          onClick={() => handleQuantityChange(ticket.id, 1)}
+                          className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
 
-          <h2 className="text-2xl font-bold mb-4">Tickets</h2>
-          <div className="grid grid-cols-2 gap-4 mb-6">
-            {/* Individual Ticket */}
-            <div className="border border-[#9747FF] rounded-lg p-4">
-              <h3 className="text-center font-semibold mb-2">Individual</h3>
-              <p>Price: 3000</p>
-              <p>Date: {new Date(event.start_time).toLocaleDateString()}</p>
-              <div className="flex items-center justify-between mt-4">
+              <div className="mt-8 flex justify-between items-center">
+                <div>
+                  <p className="text-2xl font-bold">
+                    Total: KES {total.toLocaleString()}
+                  </p>
+                </div>
                 <button
-                  onClick={() => setIndividualCount(Math.max(0, individualCount - 1))}
-                  className="px-2 py-1 border rounded"
+                  onClick={handleCheckout}
+                  className="bg-purple-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-purple-700"
                 >
-                  -
-                </button>
-                <span>{individualCount}</span>
-                <button
-                  onClick={() => setIndividualCount(individualCount + 1)}
-                  className="px-2 py-1 border rounded"
-                >
-                  +
+                  Checkout
                 </button>
               </div>
             </div>
-
-            {/* Table Ticket */}
-            <div className="border border-[#9747FF] rounded-lg p-4">
-              <h3 className="text-center font-semibold mb-2">Table</h3>
-              <p>Price: 60,000</p>
-              <p>Date: {new Date(event.start_time).toLocaleDateString()}</p>
-              <div className="flex items-center justify-between mt-4">
-                <button
-                  onClick={() => setTableCount(Math.max(0, tableCount - 1))}
-                  className="px-2 py-1 border rounded"
-                >
-                  -
-                </button>
-                <span>{tableCount}</span>
-                <button
-                  onClick={() => setTableCount(tableCount + 1)}
-                  className="px-2 py-1 border rounded"
-                >
-                  +
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <div className="flex-1 border rounded-lg px-4 py-3 text-lg font-semibold">
-              Total <span className="float-right">{total}</span>
-            </div>
-            <button
-              onClick={handleCheckout}
-              className="bg-[#9747FF] text-white px-6 py-3 rounded-lg font-medium"
-            >
-              Checkout
-            </button>
           </div>
         </div>
       </div>
-      <footer>
-        <Footer />
-      </footer>
     </div>
   );
-};
-
-export default EventDetails;
+}

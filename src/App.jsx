@@ -27,6 +27,8 @@ import EventDetails from "./pages/EventDetails";
 import AttendeePastEvents from "./pages/attendees/AttendeePastEvents";
 import AttendeePastEventDetail from "./pages/attendees/AttendeePastEventDetail";
 import AdminUserProfile from "./pages/admin/AdminUserProfile";
+import CheckoutForm from "./pages/CheckoutForm";
+import OrderConfirmation from "./pages/OrderConfirmation";
 
 import UpcomingEvents from './pages/organizer/UpcomingPage';
 import UpcomingDetails from './pages/organizer/UpcomingDetails';
@@ -53,7 +55,14 @@ function App() {
         <Route path="/events/:id" element={<EventDetails />} />
         <Route path="/events" element={<EventsList />} />
 
-        
+        <Route
+        path="/order-confirmation"
+        element={
+          <ProtectedRoute roles={["attendee", "organizer"]}>
+            <OrderConfirmation />
+          </ProtectedRoute>
+        }
+        />        
         
         <Route
           path="/attendee/:id/profile"
@@ -211,6 +220,14 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/checkout"
+          element={
+          <ProtectedRoute roles={["attendee", "organizer"]}>
+            <CheckoutForm />
+          </ProtectedRoute>
+          }
+           />
 
         <Route path="/unauthorized" element={<Unauthorized />} />
         <Route path="*" element={<Navigate to="/login" />} />
