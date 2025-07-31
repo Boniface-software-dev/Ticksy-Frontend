@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
+import TicketLogo from "../assets/icons8-ticket-100.png";
 
 const Navbar = () => {
   const [active, setActive] = useState("");
@@ -15,8 +16,11 @@ const Navbar = () => {
         if (element) {
           const offsetTop = element.offsetTop;
           const offsetHeight = element.offsetHeight;
-          
-          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
+
+          if (
+            scrollPosition >= offsetTop &&
+            scrollPosition < offsetTop + offsetHeight
+          ) {
             current = id;
             break;
           }
@@ -31,34 +35,18 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
- const linkClass = (id) =>
-  `font-semibold transition-colors duration-200 ${
-    active === id
-      ? "!text-[#9747FF] !font-bold border-b-2 !border-[#9747FF] pb-1" 
-      : "text-gray-600 hover:text-[#9747FF]"
-  }`;
+  const linkClass = (id) =>
+    `font-semibold transition-colors duration-200 ${
+      active === id
+        ? "!text-[#9747FF] !font-bold border-b-2 !border-[#9747FF] pb-1"
+        : "text-gray-600 hover:text-[#9747FF]"
+    }`;
 
   return (
     <nav className="bg-white shadow-sm py-4 px-6 w-full fixed top-0 left-0 z-50">
       <div className="flex items-center justify-between w-full">
         <div className="flex items-center space-x-2">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="30"
-            height="30"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#9747FF"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="m4.5 8 10.58-5.06a1 1 0 0 1 1.342.488L18.5 8" />
-            <path d="M6 10V8" />
-            <path d="M6 14v1" />
-            <path d="M6 19v2" />
-            <rect x="2" y="8" width="20" height="13" rx="2" />
-          </svg>
+          <img src={TicketLogo} alt="Ticksy Logo" className="w-8 h-8" /> {/* ✅ Updated logo */}
           <span className="text-2xl font-extrabold text-[#9747FF] tracking-tight">
             Ticksy
           </span>
