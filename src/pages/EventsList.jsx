@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axios from "../utils/axiosInstance";
 import { Link, NavLink } from "react-router-dom";
 import { FiSearch, FiMapPin, FiCalendar, FiTag, FiHome } from "react-icons/fi";
 import { useSelector } from "react-redux";
@@ -28,7 +28,7 @@ function EventsList({ showNavbar = true }) {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/events");
+        const res = await axios.get("/events");
         setEvents(res.data);
         setFilteredEvents(res.data);
       } catch (error) {

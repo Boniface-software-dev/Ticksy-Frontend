@@ -5,6 +5,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import AttendeeNavBar from "../components/AttendeeNavBar";
 import AttendeeSideBar from "../components/AttendeeSideBar";
 
+const API = "http://127.0.0.1:5000";
+
 export default function CheckoutForm() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -38,32 +40,48 @@ export default function CheckoutForm() {
     setAttendees(updated);
   };
 
-  const handleSubmit = async () => {
-    if (!token) {
-      alert("Please log in to continue.");
+const handleSubmit = async () => {
+  if (!token) {
+    alert("Please log in to continue.");
+    return navigate("/login");
+  }
+
+  if (tickets.length !== 1) {
+    alert("Only one ticket type is supported per order at the moment.");
+    return;
+  }
+
+  const ticket = tickets[0];
+
+  const payload = {
+    ticket_id: ticket.id,
+    quantity: ticket.quantity,
+    attendees,
+  };
+
+  try {
+    const res = await axios.post(`${API}/orders`, payload, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    const { payment_url, order } = res.data;
+
+    alert("M-Pesa payment request sent. Please check your phone.");
+    navigate(`/order-confirmation/${order.order_id}`);
+  } catch (error) {
+    console.error("Order creation failed:", error.response?.data || error.message);
+
+    if (error.response?.status === 401) {
+      alert("Session expired. Please log in again.");
       return navigate("/login");
     }
 
-    try {
-      const payload = {
-        event_id: eventId,
-        attendees,
-        pay_now: payNow,
-      };
+    alert(error.response?.data?.message || "Failed to create order. Please try again.");
+  }
+};
 
-      const res = await axios.post(`${API}/orders`, payload, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
 
-       navigate(`/order-confirmation/${res.data.orderId}`);
-
-    } catch (error) {
-      console.error("Order creation failed:", error);
-      alert("Failed to create order. Please try again.");
-    }
-  };
-
- return (
+  return (
     <>
       <AttendeeNavBar />
       <div className="max-w-7xl mx-auto p-6 flex gap-6">
@@ -146,4 +164,4 @@ export default function CheckoutForm() {
       </div>
     </>
   );
-}
+};
