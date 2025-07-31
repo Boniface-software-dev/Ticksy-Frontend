@@ -30,12 +30,12 @@ import AdminUserProfile from "./pages/admin/AdminUserProfile";
 import CheckoutForm from "./pages/CheckoutForm";
 import OrderConfirmation from "./pages/OrderConfirmation";
 
-import UpcomingEvents from './pages/organizer/UpcomingPage';
-import UpcomingDetails from './pages/organizer/UpcomingDetails';
-import EventHistory from './pages/organizer/EventHistory';
-import PendingEvents from './pages/organizer/PendingPage';
-import RejectedEvents from './pages/organizer/RejectedPage';
-import HistoryDetails from './pages/organizer/HistoryDetails';
+import UpcomingEvents from "./pages/organizer/UpcomingPage";
+import UpcomingDetails from "./pages/organizer/UpcomingDetails";
+import EventHistory from "./pages/organizer/EventHistory";
+import PendingEvents from "./pages/organizer/PendingPage";
+import RejectedEvents from "./pages/organizer/RejectedPage";
+import HistoryDetails from "./pages/organizer/HistoryDetails";
 
 function ProtectedRoute({ children, roles }) {
   const user = useSelector((state) => state.auth.currentUser);
@@ -45,6 +45,7 @@ function ProtectedRoute({ children, roles }) {
 }
 
 function App() {
+  // all routes are liste here
   return (
     <Router>
       <Routes>
@@ -56,14 +57,14 @@ function App() {
         <Route path="/events" element={<EventsList />} />
 
         <Route
-        path="/order-confirmation"
-        element={
-          <ProtectedRoute roles={["attendee", "organizer"]}>
-            <OrderConfirmation />
-          </ProtectedRoute>
-        }
-        />        
-        
+          path="/order-confirmation"
+          element={
+            <ProtectedRoute roles={["attendee", "organizer"]}>
+              <OrderConfirmation />
+            </ProtectedRoute>
+          }
+        />
+
         <Route
           path="/attendee/:id/profile"
           element={
@@ -223,11 +224,11 @@ function App() {
         <Route
           path="/checkout"
           element={
-          <ProtectedRoute roles={["attendee", "organizer"]}>
-            <CheckoutForm />
-          </ProtectedRoute>
+            <ProtectedRoute roles={["attendee", "organizer"]}>
+              <CheckoutForm />
+            </ProtectedRoute>
           }
-           />
+        />
 
         <Route path="/unauthorized" element={<Unauthorized />} />
         <Route path="*" element={<Navigate to="/login" />} />
