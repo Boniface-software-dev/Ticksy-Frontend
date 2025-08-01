@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import axios from "axios";
+import axios from "../utils/axiosInstance";
 import { useLocation, useNavigate } from "react-router-dom";
 import AttendeeNavBar from "../components/AttendeeNavBar";
 import AttendeeSideBar from "../components/AttendeeSideBar";
 
-const API = "http://127.0.0.1:5000";
+
 
 export default function CheckoutForm() {
   const location = useLocation();
@@ -60,7 +60,7 @@ const handleSubmit = async () => {
   };
 
   try {
-    const res = await axios.post(`${API}/orders`, payload, {
+    const res = await axios.post(`/orders`, payload, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
