@@ -107,14 +107,14 @@ const handleImageChange = (e) => {
       </div>
 
       <div className="flex-1 bg-white shadow-lg p-6 m-6 rounded-lg flex flex-col">
-        <h2 className="text-2xl font-semibold mb-4 text-black">Pending Events</h2>
+        <h2 className="text-2xl font-semibold mb-4 text-black">Rejected Events</h2>
 
         {loading ? (
           <p className="text-gray-600">Loading events...</p>
         ) : error ? (
           <p className="text-red-500">Error: {error}</p>
         ) : !rejectedEvents || rejectedEvents.length === 0 ? (
-          <p className="text-gray-600">You have no pending events.</p>
+          <p className="text-gray-600">You have no rejected events.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {rejectedEvents.map((event) => (
