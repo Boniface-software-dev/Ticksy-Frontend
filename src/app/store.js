@@ -6,14 +6,14 @@ import ticketsReducer from '../features/tickets/ticketsSlice';
 import attendeeReducer from "../features/organizer/attendeeSlice";
 import reviewReducer from "../features/organizer/reviewSlice";
 import uiReducer from "../features/organizer/uiSlice";
-import eventsReducer from "../features/organizer/eventSlice";
+import eventReducer from "../features/organizer/eventSlice";
 
 const store = configureStore({
   reducer: {
     auth: authReducer,
     events: eventReducer,
     tickets: ticketsReducer,
-    organizer: eventsReducer,
+    organizer: eventReducer,
     attendees: attendeeReducer,
     reviews: reviewReducer,
     ui: uiReducer,
