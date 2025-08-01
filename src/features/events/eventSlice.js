@@ -1,12 +1,12 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import axios from "../../utils/axiosInstance";
 
 
-// Fetch event by ID
+
 export const fetchEventById = createAsyncThunk(
   "events/fetchEventById",
   async (id) => {
-    const res = await axios.get(`http://localhost:5000/events/${id}`);
+    const res = await axios.get(`/events/${id}`);
     return { ...res.data, ticketCount: 1 }; 
   }
 );
@@ -18,7 +18,7 @@ export const checkoutTickets = createAsyncThunk(
     const token = state.auth.token;
 
     const response = await axios.post(
-      `http://localhost:5000/events/${eventId}/checkout`,
+      `/events/${eventId}/checkout`,
       { tickets },
       {
         headers: {

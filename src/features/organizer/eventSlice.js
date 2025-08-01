@@ -94,7 +94,7 @@ const eventSlice = createSlice({
 
         if (Array.isArray(action.payload)) {
           action.payload.forEach((event) => {
-            const eventDate = new Date(event.start_time); // ✅ FIXED
+            const eventDate = new Date(event.start_time); 
 
             if (event.status === "pending") {
       pending.push(event);
@@ -126,7 +126,7 @@ const eventSlice = createSlice({
       })
       .addCase(createEvent.fulfilled, (state, action) => {
         state.loading = false;
-        state.pendingEvents.push(action.payload); // New events go to pending
+        state.pendingEvents.push(action.payload); 
       })
       .addCase(createEvent.rejected, (state, action) => {
         state.loading = false;

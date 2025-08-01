@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import axios from "../../utils/axiosInstance";
 import Navbar from "../components/Navbar";
 import videoSrc from "../assets/4916768-hd_1920_1080_30fps.mp4";
 import Footer from "../components/Footer";
@@ -47,7 +47,7 @@ const LandingPage = () => {
     }
 
     axios
-      .get("https://ticksy-backend.onrender.com/events")
+      .get("/events")
       .then((res) => {
         setEvents(res.data.slice(0, 4));
         setLoading(false);

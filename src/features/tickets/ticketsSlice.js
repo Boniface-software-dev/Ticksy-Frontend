@@ -1,11 +1,11 @@
 // src/features/tickets/ticketsSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import axios from "../../utils/axiosInstance";
 
 export const fetchTicketsByEvent = createAsyncThunk(
   'tickets/fetchTicketsByEvent',
   async (eventId) => {
-    const response = await axios.get(`http://localhost:5000/events/${eventId}/tickets`);
+    const response = await axios.get(`/events/${eventId}/tickets`);
     return response.data;
   }
 );

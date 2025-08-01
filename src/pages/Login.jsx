@@ -28,7 +28,7 @@ export default function Login() {
           return;
         }
 
-        // 👇 FIX: redirect attendee to their proper dashboard
+        
         if (user.role === "attendee") {
           navigate(`/events`);
         } else {
