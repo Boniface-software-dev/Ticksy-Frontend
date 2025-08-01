@@ -30,7 +30,7 @@ export default function EventHistory() {
       </div>
 
       <div className="flex-1 bg-white shadow-lg p-6 m-6 rounded-lg flex flex-col">
-        <h2 className="text-2xl font-semibold mb-4 text-black">Upcoming Events</h2>
+        <h2 className="text-2xl font-semibold mb-4 text-black">Event History</h2>
 
         {loading ? (
           <p className="text-gray-600">Loading events...</p>
