@@ -1,11 +1,30 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import axios from "../../utils/axiosInstance";
+
+
 
 export const fetchEventById = createAsyncThunk(
   "events/fetchEventById",
   async (id) => {
-    const res = await axios.get(`http://localhost:5000/events/${id}`);
+    const res = await axios.get(`/events/${id}`);
     return { ...res.data, ticketCount: 1 }; 
+  }
+);
+//Ticket management slice for Redux Toolkit
+export const checkoutTickets = createAsyncThunk(
+  "events/checkoutTickets",
+  async ({ eventId, tickets }, thunkAPI ) => {
+    const state = thunkAPI.getState();
+    const token = state.auth.token;
+
+    const response = await axios.post(
+      `/events/${eventId}/checkout`,
+      { tickets },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,}}
+    );
+    return response.data;
   }
 );
 
@@ -41,9 +60,20 @@ const eventSlice = createSlice({
       .addCase(fetchEventById.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
-      });
+      })
+      .addCase(checkoutTickets.pending, (state) => {
+        state.status = "processing";
+      })
+      .addCase(checkoutTickets.fulfilled, (state, action) => {
+        state.status = "successd";
+        state.selectedTicket = {};
+      })
+      .addCase(checkoutTickets.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      }); 
   },
 });
 
-export const { increaseTicket, decreaseTicket } = eventSlice.actions;
+export const { updateTicketQuantity } = eventSlice.actions;
 export default eventSlice.reducer;

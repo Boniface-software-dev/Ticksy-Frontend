@@ -28,6 +28,15 @@ import EventDetails from "./pages/EventDetails";
 import AttendeePastEvents from "./pages/attendees/AttendeePastEvents";
 import AttendeePastEventDetail from "./pages/attendees/AttendeePastEventDetail";
 import AdminUserProfile from "./pages/admin/AdminUserProfile";
+import CheckoutForm from "./pages/CheckoutForm";
+import OrderConfirmation from "./pages/OrderConfirmation";
+
+import UpcomingEvents from "./pages/organizer/UpcomingPage";
+import UpcomingDetails from "./pages/organizer/UpcomingDetails";
+import EventHistory from "./pages/organizer/EventHistory";
+import PendingEvents from "./pages/organizer/PendingPage";
+import RejectedEvents from "./pages/organizer/RejectedPage";
+import HistoryDetails from "./pages/organizer/HistoryDetails";
 
 
 function ProtectedRoute({ children, roles }) {
@@ -38,7 +47,9 @@ function ProtectedRoute({ children, roles }) {
 }
 
 function App() {
+  // all routes are liste here
   return (
+
     <div className="min-h-screen bg-white text-black dark:bg-gray-950 dark:text-white transition-colors">
       <Router>
         
@@ -147,6 +158,190 @@ function App() {
               </ProtectedRoute>
             }
           />
+
+    <Router>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/events" element={<EventsList />} />
+        <Route path="/events/:id" element={<EventDetails />} />
+        <Route path="/events" element={<EventsList />} />
+
+        <Route
+          path="/order-confirmation"
+          element={
+            <ProtectedRoute roles={["attendee", "organizer"]}>
+              <OrderConfirmation />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/attendee/:id/profile"
+          element={
+            <ProtectedRoute roles={["attendee"]}>
+              <AttendeeProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/attendee/:id/upcoming-events"
+          element={
+            <ProtectedRoute roles={["attendee"]}>
+              <AttendeeUpcomingEvents />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/attendee/:id/past-events"
+          element={
+            <ProtectedRoute roles={["attendee"]}>
+              <AttendeePastEvents />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/attendee/:id/past-events/:eventId"
+          element={
+            <ProtectedRoute roles={["attendee"]}>
+              <AttendeePastEventDetail />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/attendee/:id/upcoming-events/:eventId"
+          element={
+            <ProtectedRoute roles={["attendee"]}>
+              <AttendeeUpcomingDetails />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/organizer/:id/profile"
+          element={
+            <ProtectedRoute roles={["organizer"]}>
+              <OrgProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/organizer/:id/dashboard"
+          element={
+            <ProtectedRoute roles={["organizer"]}>
+              <UpcomingEvents />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/organizer/:id/events/:id"
+          element={
+            <ProtectedRoute roles={["organizer"]}>
+              <UpcomingDetails />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/organizer/:id/event-history"
+          element={
+            <ProtectedRoute roles={["organizer"]}>
+              <EventHistory />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/organizer/:id/event-history/:id"
+          element={
+            <ProtectedRoute roles={["organizer"]}>
+              <HistoryDetails />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/organizer/:id/pending-events"
+          element={
+            <ProtectedRoute roles={["organizer"]}>
+              <PendingEvents />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/organizer/:id/rejected-events"
+          element={
+            <ProtectedRoute roles={["organizer"]}>
+              <RejectedEvents />
+            </ProtectedRoute>
+          }
+        />
+        {/* 
+        <Route
+          path="/organizer/:id/dashboard"
+          element={
+            <ProtectedRoute roles={['organizer']}>
+              <OrgDashboard />
+            </ProtectedRoute>
+          }
+        />
+        */}
+
+        <Route
+          path="/admin/:id/dashboard"
+          element={
+            <ProtectedRoute roles={["admin"]}>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/:id/users"
+          element={
+            <ProtectedRoute roles={["admin"]}>
+              <AdminUsers />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/:id/events"
+          element={
+            <ProtectedRoute roles={["admin"]}>
+              <AdminEvents />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/:id/analytics"
+          element={
+            <ProtectedRoute roles={["admin"]}>
+              <AdminAnalytics />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/:id/profile"
+          element={
+            <ProtectedRoute roles={["admin"]}>
+              <AdminProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/:adminId/users/:userId"
+          element={
+            <ProtectedRoute roles={["admin"]}>
+              <AdminUserProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/checkout"
+          element={
+            <ProtectedRoute roles={["attendee", "organizer"]}>
+              <CheckoutForm />
+            </ProtectedRoute>
+          }
+        />
+
 
           <Route path="/unauthorized" element={<Unauthorized />} />
           <Route path="*" element={<Navigate to="/login" />} />

@@ -61,7 +61,7 @@ export default function AdminProfile() {
 
   const handleSave = () => {
     API.put("/profile/me", form)
-      .then((res) => {
+      .then(() => {
         setAdmin({ ...admin, ...form });
         setEditing(false);
       })
@@ -87,85 +87,83 @@ export default function AdminProfile() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f4f3fb] py-10 px-4 flex flex-col items-center">
-      <div className="w-full max-w-3xl space-y-6">
+    <div className="min-h-screen bg-[#f4f3fb] py-12 px-4 flex flex-col items-center">
+      <div className="w-full max-w-3xl space-y-8">
         {/* Header */}
-        <div className="text-2xl font-semibold text-[#1a1240] underline">
-          My Profile
+        <div className="text-3xl font-bold text-[#1a1240] border-b border-[#9747ff] pb-2">
+          Admin Profile
         </div>
 
         {/* Profile Card */}
-        <div className="bg-white shadow-md rounded-xl p-6 flex items-center gap-6">
-          <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 text-3xl font-bold">
+        <div className="bg-white shadow-xl hover:shadow-2xl transition-all duration-300 rounded-2xl p-6 flex items-center gap-6">
+          <div className="w-16 h-16 bg-[#9747ff] text-white rounded-full flex items-center justify-center text-2xl font-bold shadow-md">
             {admin?.first_name?.charAt(0)}
           </div>
           <div>
             <div className="font-semibold text-[#1a1240] text-lg">
               {admin.first_name} {admin.last_name}
             </div>
-            <div className="text-sm text-gray-700">{admin.email}</div>
+            <div className="text-sm text-gray-600">{admin.email}</div>
           </div>
         </div>
 
-        {/* Personal Info */}
-        <div className="bg-white shadow-md rounded-xl p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-[#1a1240]">
+        <div className="bg-white shadow-xl rounded-2xl p-6 transition-all duration-300">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-semibold text-[#1a1240]">
               Personal Information
             </h2>
             {!editing ? (
               <button
                 onClick={() => setEditing(true)}
-                className="text-sm bg-purple-500 hover:bg-purple-600 text-white px-4 py-1 rounded-md flex items-center gap-1"
+                className="text-sm bg-[#9747ff] hover:bg-[#7a33d5] transition-all duration-200 text-white px-4 py-2 rounded-md shadow"
               >
-                <span>Edit</span>
+                Edit Profile
               </button>
             ) : (
               <button
                 onClick={handleSave}
-                className="text-sm bg-green-600 hover:bg-green-700 text-white px-4 py-1 rounded-md flex items-center gap-1"
+                className="text-sm bg-green-600 hover:bg-green-700 transition-all duration-200 text-white px-4 py-2 rounded-md shadow"
               >
-                <span>Save</span>
+                Save Changes
               </button>
             )}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 text-sm text-gray-700">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-gray-700">
             {["first_name", "last_name", "email", "phone"].map((field) => (
               <div key={field}>
-                <span className="font-medium text-[#1a1240] capitalize">
+                <label className="block text-[#1a1240] font-medium capitalize">
                   {field.replace("_", " ")}
-                </span>
+                </label>
                 {editing ? (
                   <input
                     name={field}
                     value={form[field]}
                     onChange={handleChange}
-                    className="w-full mt-1 border border-gray-300 rounded-md px-3 py-2 text-sm"
+                    className="mt-1 w-full border border-gray-300 rounded-md px-4 py-2 text-sm focus:ring-[#9747ff] focus:border-[#9747ff] outline-none"
                   />
                 ) : (
-                  <div className="mt-1">
+                  <p className="mt-1">
                     {admin[field] || (
                       <span className="italic text-gray-400">Not provided</span>
                     )}
-                  </div>
+                  </p>
                 )}
               </div>
             ))}
           </div>
         </div>
 
-        {/* Buttons */}
-        <div className="flex flex-col md:flex-row gap-3 mt-4">
+        <div className="flex flex-col md:flex-row gap-4 mt-6">
           <button
             onClick={handleBack}
-            className="w-full md:w-auto bg-purple-700 hover:bg-purple-800 text-white px-6 py-2 rounded-lg font-semibold"
+            className="w-full md:w-auto bg-[#9747ff] hover:bg-[#7a33d5] transition-all duration-200 text-white px-6 py-2 rounded-lg font-semibold shadow"
           >
             Back to Dashboard
           </button>
           <button
             onClick={handleLogout}
-            className="w-full md:w-auto bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg font-semibold"
+            className="w-full md:w-auto bg-red-600 hover:bg-red-700 transition-all duration-200 text-white px-6 py-2 rounded-lg font-semibold shadow"
           >
             Log Out
           </button>
