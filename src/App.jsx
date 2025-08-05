@@ -8,6 +8,7 @@ import {
 import { useSelector } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Toaster } from 'react-hot-toast';
 
 import EventsList from "./pages/EventsList";
 import AttendeeProfile from "./pages/attendees/AttendeeProfile";
@@ -54,8 +55,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/events" element={<EventsList />} />
         <Route path="/events/:id" element={<EventDetails />} />
-        <Route path="/events" element={<EventsList />} />
-
+        <Route path="/events" element={<EventsList />} />        
         <Route
           path="/order-confirmation"
           element={
@@ -234,6 +234,7 @@ function App() {
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
       <ToastContainer position="top-center" autoClose={3000} />
+      <Toaster/>
     </Router>
   );
 }

@@ -27,7 +27,6 @@ export default function Login() {
           console.error("User data incomplete:", user);
           return;
         }
-
         
         if (user.role === "attendee") {
           navigate(`/events`);
