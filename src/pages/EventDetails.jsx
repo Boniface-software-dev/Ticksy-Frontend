@@ -115,19 +115,17 @@ export default function EventDetails() {
                 </div>
               )}
 
-              <h3 className="text-xl font-semibold mb-4">Tickets</h3>
+              <h3 className="text-xl font-semibold mb-4 text-black">Tickets</h3>
               <div className="space-y-4">
                 {tickets.map((ticket) => (
                   <div key={ticket.id} className="border rounded-lg p-4">
                     <div className="flex justify-between items-center mb-2">
-                      <h4 className="font-semibold">{ticket.name}</h4>
+                      <h4 className="font-semibold">{ticket.type} Ticket</h4>
                       <span className="text-lg font-semibold">
                         KES {ticket.price?.toLocaleString()}
                       </span>
                     </div>
-                    <p className="text-gray-600 text-sm mb-3">
-                      Valid until: {new Date(ticket.valid_until).toLocaleDateString()}
-                    </p>
+                    
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
                         <button
